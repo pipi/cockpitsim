@@ -316,7 +316,7 @@
     }
     { Property = "ProjectFlags"
       { Data = '70 72 6f 6a 65 63 74 5f 66 6c 61 67 73 3d 32 65 20
-           32 30 30 00'
+           31 30 33 30 30 00'
       }
     }
   }
@@ -340,19 +340,35 @@
     { NodeType = ".lib" }
     { Id = 7 }
   }
+  { Node = "..\can.h"
+    { NodeType = ".h" }
+    { Id = 8 }
+  }
+  { Node = "main.c"
+    { NodeType = ".c" }
+    { Id = 9 }
+  }
 }
 { SubSystem = Tree
     { Node = 1 ; beck.pdl [.pdl]
-      { NodeFlag = BuildDepends | OutOfDate }
+      { NodeFlag = BuildDepends }
       { StyleSheet = "Default Project Options" }
         { Node = 2 ; beck.exe [.exe]
-          { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
+          { NodeFlag = BuildDepends | FatFile | UserGen }
           { Builder = "LinkTarget" }
           { Overrides = "ASFN:beck.exe0"
             { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT;" }
             { Link = "-Tee" }
             { Assemble = "-dSC123;$INHERIT;" }
           }
+            { Node = 8 ; ..\can.h [.h]
+              { NodeFlag = BuildDepends | FatFile | UserGen }
+              { Builder = "HeaderInclude" }
+            }
+            { Node = 9 ; main.c [.c]
+              { NodeFlag = BuildDepends | FatFile | UserGen }
+              { Builder = "CCompile" }
+            }
             { Node = 4 ; c0lx.obj [.obj]
               { NodeFlag = BuildDepends | FatFile | Skeleton }
             }

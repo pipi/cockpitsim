@@ -54,7 +54,7 @@ int can_init(unsigned int am, unsigned int ac, unsigned short baudrate) {
   
   ret = UcanInitCanEx(canHandle, &params);
   if(ret != 0) {
-    return ret;
+    return -1;
   }
   
   return 0;
