@@ -1,7 +1,7 @@
-﻿/*
+/*
  * Simulator project
  *
- * Institut de Formation des Ingénieurs de Paris-Sud
+ * Institut de Formation des Ing�nieurs de Paris-Sud
  * 2008-2009
  *
  * Sub-project : CAN library
@@ -14,16 +14,13 @@
  * Creation date : 25/03/2009
  */
  
- #ifndef _CAN_H_
- #define _CAN_H_
- 
  /*! 
   \file can.h
   \brief CAN library header file
  */
  
  /*!
-  * CAN event message.
+ CAN event message
  */
 typedef struct {
   //! The event id
@@ -45,16 +42,18 @@ typedef struct {
 #define CAN_BAUDRATE_10K    8
 
 /*!
+ * CAN initialization.
  * \brief Intialize the CAN node with the given parameters.
  *
- * \param am acceptance mask (left aligned)
- * \param ac acceptance code (left aligned)
+ * \param am acceptance mask
+ * \param ac acceptance code
  * \param baudrate the bus baudrate
  * \return 0 on success, -1 on errors
  */
 int can_init(unsigned int am, unsigned int ac, unsigned short baudrate);
 
 /*!
+ * CAN event message sending
  * \brief Send a CAN event on the bus.
  *
  * \param msg the can event message
@@ -63,7 +62,8 @@ int can_init(unsigned int am, unsigned int ac, unsigned short baudrate);
 int can_send(can_event_msg_t msg);
 
 /*!
- * \brief Receive a message from the bus
+ * CAN event receiving
+ * \brief Receive a message on the bus
  *
  * \param timeout max delay after which the function returns if no message is pending
  * \param msg the CAN event message to be filled
@@ -71,4 +71,13 @@ int can_send(can_event_msg_t msg);
  */
 int can_recv(unsigned int timeout, can_event_msg_t* msg);
 
-#endif
+
+
+/*!
+ * close CAN port
+ * \brief close the CAN port.
+ *
+ *
+ *
+ */
+void can_destroy(void);

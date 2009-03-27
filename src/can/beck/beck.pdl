@@ -1,0 +1,374 @@
+ ;    Copyright (c) 2003 Paradigm Systems.  All rights reserved.
+ ;    Portions Copyright (C) 1996, Borland International
+ ;    -- Machine generated for input - do not modify --
+{ Version = 400 }
+{ SubSystem = StyleSheets
+  { StyleSheet = "Default Project Options"
+    { CppCompile = "-I$ENV(PCROOT)\include;$ENV(PCROOT)\include\beck -H=beck.csm" }
+    { Link = "-L$ENV(PCROOT)\lib;$ENV(PCROOT)\lib\beck" }
+  }
+  { StyleSheet = "Optimized (Speed)"
+    { CppCompile = "-O-d -O -Ob -Oe -Og -Oi -Ol -Om -Ot -Op -Ov -k- -Z" }
+  }
+  { StyleSheet = "Optimized (Size)"
+    { CppCompile = "-O-d -O -Ob -Oe -Os -Ol -Oc -k- -Z" }
+  }
+  { StyleSheet = "Optimized (Dead Code)"
+    { CppCompile = "-O-d -Z -Ob" }
+  }
+  { StyleSheet = "Debug Info (Full)"
+    { CppCompile = "-v -vi- -R" }
+    { Link = "-v" }
+    { Assemble = "-zi" }
+  }
+  { StyleSheet = "Debug Info (No browser)"
+    { CppCompile = "-v -vi- -R-" }
+    { Link = "-v" }
+    { Assemble = "-zi" }
+  }
+  { StyleSheet = "Debug Info (Inlines inline)"
+    { CppCompile = "-v -vi" }
+    { Link = "-v" }
+    { Assemble = "-zi" }
+  }
+}
+{ SubSystem = Tool
+  { Tool = "RunExecutable"
+    { Category = Viewer }
+    { CmdLine = "$ARGS" }
+    { MenuText = "&Run" }
+    { HelpHint = "Run executable using IDE Debugger" }
+    { SearchPath = OutputPath }
+    { ToolFlag = LocalMenu | ReadOnly }
+    { AppliesTo = ".exe;" }
+  }
+  { Tool = "TraceInto"
+    { Category = Viewer }
+    { CmdLine = "$ARGS" }
+    { MenuText = "&Debug" }
+    { HelpHint = "Trace into first instruction of executable" }
+    { SearchPath = OutputPath }
+    { ToolFlag = LocalMenu | ReadOnly }
+    { AppliesTo = ".exe;" }
+    { DefaultFor = ".exe;" }
+  }
+  { Tool = "DebugSymbolsOnly"
+    { Category = Viewer }
+    { CmdLine = "$ARGS" }
+    { MenuText = "Debug with &symbols only" }
+    { HelpHint = "Create a debug session using only the symbol table of the target node" }
+    { SearchPath = OutputPath }
+    { ToolFlag = LocalMenu | ReadOnly }
+    { AppliesTo = ".exe;" }
+  }
+  { Tool = "ViewEmuFile"
+    { Category = Viewer }
+    { CmdLine = "$ARGS" }
+    { MenuText = "&Current .emu file" }
+    { HelpHint = "Edit the .emu file that the debugger will load prior to creating a debug session" }
+    { SearchPath = OutputPath }
+    { ToolFlag = LocalMenu | ReadOnly }
+    { AppliesTo = ".exe;" }
+  }
+  { Tool = "EditText"
+    { Category = Viewer }
+    { CmdLine = "$EDNAME" }
+    { MenuText = "&Text Edit" }
+    { HelpHint = "Edit node's source file" }
+    { SearchPath = SourcePath }
+    { ToolFlag = LocalMenu | ReadOnly | FileOpen | FileNew }
+    { AppliesTo = ".cpp;.c;.cas;.h;.hpp;AutoDepend;.asm;.asi;.inc;.ash;.css;.def;.ini;.mak;.txt;.spp;.emu;.map;.hex;.htm;.html;" }
+    { DefaultFor = ".cpp;.c;.cas;.h;.hpp;AutoDepend;.asm;.asi;.inc;.ash;.css;.def;.ini;.mak;.txt;.spp;.emu;.map;.hex;.htm;.html;" }
+  }
+  { Tool = "Debug@Chip"
+    { Category = Viewer }
+    { CmdLine = "$SAVE ALL $DEBUG `$PRJNAME` `$TARGET`" }
+    { MenuText = "&Debug@Chip debugger" }
+    { HelpHint = "Run Debug@Chip on current target node" }
+    { SearchPath = 0 }
+    { ToolFlag = LocalMenu | ToolsMenu | ReadOnly }
+    { AppliesTo = ".exe;" }
+  }
+  { Tool = "Project"
+    { Category = Viewer }
+    { CmdLine = "$EDNAME" }
+    { MenuText = "&Project" }
+    { SearchPath = 0 }
+    { ToolFlag = ReadOnly | FileOpen | FileNew }
+    { AppliesTo = ".pdl;.ide;" }
+    { DefaultFor = ".pdl;.ide;" }
+  }
+  { Tool = "CHIPTool"
+    { Category = Viewer }
+    { MenuText = "&CHIPTool utility" }
+    { HelpHint = "IPC@CHIPTool target management utility" }
+    { SearchPath = 0 }
+    { ToolFlag = ToolsMenu | ReadOnly }
+  }
+  { Tool = "HeaderInclude"
+    { Category = Translator }
+    { HelpHint = "Include C/C++ header file in source build" }
+    { SearchPath = IncludePath }
+    { ToolFlag = MakeTool | ReadOnly }
+    { AppliesTo = ".h;.hpp;AutoDepend;" }
+    { DefaultFor = ".h;.hpp;AutoDepend;" }
+    { DependencyChecker = NopDepend }
+  }
+  { Tool = "AsmInclude"
+    { Category = Translator }
+    { HelpHint = "Include assembler header file in source build" }
+    { SearchPath = IncludePath }
+    { ToolFlag = MakeTool | ReadOnly }
+    { AppliesTo = ".ash;.asi;.inc;" }
+    { DefaultFor = ".ash;.asi;.inc;" }
+    { DependencyChecker = NopDepend }
+  }
+  { Tool = "BinInclude"
+    { Category = Translator }
+    { HelpHint = "Include library file in target build" }
+    { SearchPath = LibPath }
+    { ToolFlag = MakeTool | ReadOnly }
+    { AppliesTo = ".obj;.lib;" }
+    { DefaultFor = ".obj;.lib;" }
+    { DependencyChecker = NopDepend }
+  }
+  { Tool = "MakeNode"
+    { Category = Translator }
+    { HelpHint = "Make node and dependencies" }
+    { SearchPath = 0 }
+    { ToolFlag = TargetTranslator | MakeTool | ReadOnly }
+    { AppliesTo = "SourcePool;.pdl;.ide;" }
+    { DefaultFor = "SourcePool;.pdl;.ide;" }
+    { DependencyChecker = CollectorDepend }
+  }
+  { Tool = "StripAutoDepends"
+    { Category = Translator }
+    { MenuText = "Remove &AutoDepends" }
+    { HelpHint = "Remove all [AutoDepend] nodes from a node" }
+    { SearchPath = SourcePath }
+    { ToolFlag = ReadOnly }
+    { AppliesTo = ".cpp;.exe;.lib;.c;" }
+    { DependencyChecker = NopDepend }
+  }
+  { Tool = "CppCompile"
+    { Category = Translator }
+    { MenuText = "&C++ Compile" }
+    { HelpHint = "C++ compile node to .obj" }
+    { SearchPath = SourcePath }
+    { ToolFlag = LocalMenu | ReadOnly }
+    { AppliesTo = ".cpp;.c;.cas;.h;.hpp;" }
+    { DefaultFor = ".cpp;" }
+    { TranslateTo = ".obj" }
+    { DependencyChecker = AutoDepend }
+  }
+  { Tool = "CCompile"
+    { Category = Translator }
+    { MenuText = "&C Compile" }
+    { HelpHint = "C compile node to .obj" }
+    { SearchPath = SourcePath }
+    { ToolFlag = LocalMenu | ReadOnly }
+    { AppliesTo = ".c;.cas;.h;.hpp;" }
+    { DefaultFor = ".c;.cas;" }
+    { TranslateTo = ".obj" }
+    { DependencyChecker = AutoDepend }
+  }
+  { Tool = "CtoAssembler"
+    { Category = Translator }
+    { MenuText = "&C to Assembler" }
+    { HelpHint = "Generate .asm from C node" }
+    { SearchPath = SourcePath }
+    { ToolFlag = LocalMenu }
+    { AppliesTo = ".c;.cas;.hpp;.h;" }
+    { TranslateTo = ".asm" }
+    { DependencyChecker = TimeStamp }
+  }
+  { Tool = "CppToAssembler"
+    { Category = Translator }
+    { MenuText = "C++ to &Assembler" }
+    { HelpHint = "Generate .asm from C++ node" }
+    { SearchPath = SourcePath }
+    { ToolFlag = LocalMenu }
+    { AppliesTo = ".c;.cas;.cpp;.h;.hpp;" }
+    { TranslateTo = ".asm" }
+    { DependencyChecker = TimeStamp }
+  }
+  { Tool = "CViaAssembler"
+    { Category = Translator }
+    { MenuText = "C &via Assembler" }
+    { HelpHint = "Generate .obj from C node thru PASM" }
+    { SearchPath = SourcePath }
+    { AppliesTo = ".c;.cas;.hpp;.h;" }
+    { TranslateTo = ".obj" }
+    { DependencyChecker = AutoDepend }
+  }
+  { Tool = "CppViaAssembler"
+    { Category = Translator }
+    { MenuText = "C++ &via Assembler" }
+    { HelpHint = "Generate .obj from C++ node thru PASM" }
+    { SearchPath = SourcePath }
+    { AppliesTo = ".c;.cas;.cpp;.h;.hpp;" }
+    { TranslateTo = ".obj" }
+    { DependencyChecker = AutoDepend }
+  }
+  { Tool = "LinkTarget"
+    { Category = Translator }
+    { MenuText = "&Link" }
+    { HelpHint = "Link target node" }
+    { SearchPath = OutputPath }
+    { ToolFlag = LocalMenu | TargetTranslator | ReadOnly }
+    { AppliesTo = ".exe;" }
+    { DefaultFor = ".exe;" }
+    { DependencyChecker = CollectorDepend }
+  }
+  { Tool = "LibraryCreate"
+    { Category = Translator }
+    { MenuText = "&Create Library" }
+    { HelpHint = "Create a static library" }
+    { SearchPath = LibPath }
+    { ToolFlag = LocalMenu | TargetTranslator | ReadOnly }
+    { AppliesTo = ".lib;" }
+    { DependencyChecker = CollectorDepend }
+  }
+  { Tool = "Assemble"
+    { Category = Translator }
+    { MenuText = "&Assemble" }
+    { HelpHint = "Assemble current node to .obj" }
+    { SearchPath = SourcePath }
+    { ToolFlag = LocalMenu | ReadOnly }
+    { AppliesTo = ".asm;.inc;.asi;.ash;" }
+    { DefaultFor = ".asm;" }
+    { TranslateTo = ".obj" }
+    { DependencyChecker = AutoDepend }
+  }
+  { Tool = "CppPreprocessor"
+    { Category = Translator }
+    { CmdLine = "$SAVE ACT $NOSWAP $CAP MSG(PARA2MSG) +$RSP(-I$INC -D$DEF -o$RELNAME($OUTNAME)) $RELNAME($EDNAME)" }
+    { MenuText = "&Preprocess" }
+    { HelpHint = "Preprocess C/C++ node to .i file" }
+    { SearchPath = SourcePath }
+    { ToolFlag = LocalMenu | ReadOnly }
+    { AppliesTo = ".cpp;.c;.cas;" }
+    { TranslateTo = ".i" }
+    { DependencyChecker = TimeStamp }
+  }
+  { Tool = "RunScriptFile"
+    { Category = Translator }
+    { MenuText = "&Load and Run Script" }
+    { HelpHint = "Load and run a cScript file" }
+    { SearchPath = SourcePath }
+    { ToolFlag = LocalMenu | ReadOnly }
+    { AppliesTo = ".spp;" }
+    { DefaultFor = ".spp;" }
+    { DependencyChecker = TimeStamp }
+  }
+  { Tool = "ConvertHeader"
+    { Category = Translator }
+    { CmdLine = "$SAVE ACT $NOSWAP $CAP MSG(PARA2MSG) +$RSP(-I$INC -D$DEF -n$DIR($RELNAME($EDNAME))) $RELNAME($EDNAME)" }
+    { MenuText = "&Convert Header" }
+    { HelpHint = "Convert a C/C++ header file to a .ASH assembler include file" }
+    { SearchPath = IncludePath }
+    { ToolFlag = LocalMenu | ReadOnly }
+    { AppliesTo = ".h;.hpp;" }
+    { TranslateTo = ".ash" }
+    { DependencyChecker = TimeStamp }
+  }
+}
+{ SubSystem = NodeGraph
+  { Dependencies = Auto }
+  { BreakOn = Errors }
+  { Node = "beck.pdl"
+    { NodeType = ".pdl" }
+    { Id = 1 }
+  }
+  { Node = "beck.exe"
+    { NodeType = ".exe" }
+    { Id = 2 }
+    { Property = TargetInfo
+      { Target = ExeApplication }
+      { Platform = ExtendedMode }
+      { Libs = NOEH | RTL }
+      { Image = Large }
+    }
+    { Property = "PdkEmulator"
+      { Data = '4e 6f 20 64 65 62 75 67 67 69 6e 67 5c 72 65 61 6c
+           00'
+      }
+    }
+    { Property = "PdkController"
+      { Data = '53 43 31 32 33 2f 53 43 31 34 33 00'
+      }
+    }
+    { Property = "PdkControllerDefine"
+      { Data = '53 43 31 32 33 00'
+      }
+    }
+    { Property = "ProjectArguments"
+      { Data = '00'
+      }
+    }
+    { Property = "ProjectSourcePath"
+      { Data = '00'
+      }
+    }
+    { Property = "ProjectWhichMain"
+      { Data = '6d 61 69 6e 00'
+      }
+    }
+    { Property = "ProjectFlags"
+      { Data = '70 72 6f 6a 65 63 74 5f 66 6c 61 67 73 3d 32 65 20
+           32 30 30 00'
+      }
+    }
+  }
+  { Node = "beck.c"
+    { NodeType = ".c" }
+    { Id = 3 }
+  }
+  { Node = "c0lx.obj"
+    { NodeType = ".obj" }
+    { Id = 4 }
+  }
+  { Node = "noehl.lib"
+    { NodeType = ".lib" }
+    { Id = 5 }
+  }
+  { Node = "clibl.lib"
+    { NodeType = ".lib" }
+    { Id = 6 }
+  }
+  { Node = "cl.lib"
+    { NodeType = ".lib" }
+    { Id = 7 }
+  }
+}
+{ SubSystem = Tree
+    { Node = 1 ; beck.pdl [.pdl]
+      { NodeFlag = BuildDepends | OutOfDate }
+      { StyleSheet = "Default Project Options" }
+        { Node = 2 ; beck.exe [.exe]
+          { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
+          { Builder = "LinkTarget" }
+          { Overrides = "ASFN:beck.exe0"
+            { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT;" }
+            { Link = "-Tee" }
+            { Assemble = "-dSC123;$INHERIT;" }
+          }
+            { Node = 4 ; c0lx.obj [.obj]
+              { NodeFlag = BuildDepends | FatFile | Skeleton }
+            }
+            { Node = 3 ; beck.c [.c]
+              { NodeFlag = BuildDepends | FatFile | UserGen }
+              { Builder = "CCompile" }
+            }
+            { Node = 5 ; noehl.lib [.lib]
+              { NodeFlag = BuildDepends | FatFile | Skeleton }
+            }
+            { Node = 6 ; clibl.lib [.lib]
+              { NodeFlag = BuildDepends | FatFile | Skeleton }
+            }
+            { Node = 7 ; cl.lib [.lib]
+              { NodeFlag = BuildDepends | FatFile | Skeleton }
+            }
+        }
+    }
+}
