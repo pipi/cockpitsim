@@ -49,7 +49,7 @@ int can_init(unsigned int am, unsigned int ac, unsigned short baudrate){
    can0Init.fDisable_Rx = 0; //FALSE /* We want to be able to receive data. */
    can0Init.Rx_Q_Size = 10;
    can0Init.Tx_Q_Size[0] = 10;
-   can0Init.Tx_Q_Size[1] = 10;
+   can0Init.Tx_Q_Size[1] = 0;
    can0Init.Tx_Q_Size[2] = 0;
 
    can0Init.Config.Baud = baudrate_tab[baudrate];
@@ -62,9 +62,9 @@ int can_init(unsigned int am, unsigned int ac, unsigned short baudrate){
     * (read from left to right) and are placed in B15 to B5
     * (do not forget to shift id of 5 positions).
     */
-   can0RxFilter.Id_Mask.Normal = am; /* Node addr on 2 MSB bits */
+   can0RxFilter.Id_Mask.Normal = am;
    can0RxFilter.Id_Mask.Extended = 0xFFFF; /* Don't use 29 bits mode */
-   can0RxFilter.Id_Value.Normal = ac; /* Node id = 01 (MSB) */
+   can0RxFilter.Id_Value.Normal = ac;
    can0RxFilter.Id_Value.Extended = 0xFFFF;
    can0RxFilter.Data_Mask = 0xFFFF; /* No mask on data */
 	can0RxFilter.Data_Value = 0xFFFF;
@@ -102,7 +102,7 @@ int can_send(can_event_msg_t msg){
 
    ret=CAN_Send(CAN0_PORT,CAN_TX1,&message);
 
-   if(ret != 0){
+   if(ret != 0) {
         printf("Sending CAN message error \n");
         return -1;
    }
@@ -122,11 +122,13 @@ int can_recv(unsigned int timeout, can_event_msg_t* ptr_msg){
    ret=CAN_Recv(CAN0_PORT,&message,timeout);
 
    if(ret != 0){
-        printf("Receiving error or timeout\n");
-        return -1;
+   	if(ret != CAN_EC_TIMEOUT) {
+   		printf("Receiving error\n");
+      }
+      return -1;
    }
 
-   ptr_msg->id=message.Id.Normal;
+   ptr_msg->id = message.Id.Normal;
    for(i=0;i<8;i++){
    	ptr_msg->data[i]=message.Data[i];
    }
@@ -134,34 +136,9 @@ int can_recv(unsigned int timeout, can_event_msg_t* ptr_msg){
    ptr_msg->length=message.Len_Ctrl&CAN_DLC_FIELD;
 
    return 0;
-
 }
 
 void can_destroy(void){
 	CAN_Close_Port(CAN0_PORT);
 }
-
-void main(){
-   int test;
-   unsigned int am=0x3FFF,ac=0x4000;
-   baudrate= CAN_BAUDRATE_1M;
-   can_event_msg_t msg;
-
-   test=can_init(am,ac,baudrate);
-
-
-   //BIOS_Set_Focus(FOCUS_BOTH);
-
-   while(1){
-
-   	can_recv(0,&msg);
-
-
-   }
-
-
-}
-
-
-
 
