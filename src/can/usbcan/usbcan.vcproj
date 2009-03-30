@@ -171,6 +171,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\can.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Usbcan32.h"
 				>
 			</File>
@@ -188,6 +192,10 @@
 			>
 			<File
 				RelativePath=".\can.c"
+				>
+			</File>
+			<File
+				RelativePath=".\main.c"
 				>
 			</File>
 		</Filter>
