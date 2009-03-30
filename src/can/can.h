@@ -26,7 +26,7 @@ typedef struct {
   //! The event id
   unsigned int id;
   //! The lenght of the data
-  unsigned short length;
+  unsigned char length;
   //! The data
   unsigned char data[8];
 } can_event_msg_t;
