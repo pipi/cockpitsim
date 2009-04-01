@@ -15,9 +15,19 @@ void main(){
    BIOS_Set_Focus(FOCUS_BOTH);
 
    while(1){
-   	if(can_recv(50, &msg) == 0) {
+   	/*if(can_recv(50, &msg) == 0) {
 	      printf("Message id = 0x%04X\n", (msg.id >> 5));
+         printf("Data length = %d\n", msg.length);
+         if(msg.length == 1) {
+      		printf("Data content = %d\n", msg.data[0]);
+         }
+         msg.id=0x2000;
          can_send(msg);
-      }
+      }*/
+      msg.id = 0x1000;
+      msg.data[0] = 12;
+      msg.length = 1;
+      can_send(msg);
+      sleep(1);
    }
 }

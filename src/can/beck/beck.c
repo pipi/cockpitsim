@@ -47,8 +47,8 @@ int can_init(unsigned int am, unsigned int ac, unsigned short baudrate){
 	int ret;
 
    can0Init.fDisable_Rx = 0; //FALSE /* We want to be able to receive data. */
-   can0Init.Rx_Q_Size = 10;
-   can0Init.Tx_Q_Size[0] = 10;
+   can0Init.Rx_Q_Size = 100;
+   can0Init.Tx_Q_Size[0] = 100;
    can0Init.Tx_Q_Size[1] = 0;
    can0Init.Tx_Q_Size[2] = 0;
 
@@ -103,9 +103,11 @@ int can_send(can_event_msg_t msg){
    ret=CAN_Send(CAN0_PORT,CAN_TX1,&message);
 
    if(ret != 0) {
-        printf("Sending CAN message error \n");
-        return -1;
+   	printf("Sending CAN message error \n");
+      return -1;
    }
+   printf("CAN message sended id = %04X, data length = %d\n", (msg.id >> 5),
+   	msg.length);
    return 0;
 }
 

@@ -16,21 +16,22 @@
  
 #include <string.h>
 #include <windows.h>
+#include <stdio.h>
 
 #include "Usbcan32.h"
 
 #include "../can.h"
  
 static DWORD baudrates[] = {
-  USBCAN_BAUDEX_1MBit,
-  USBCAN_BAUDEX_800kBit,
-  USBCAN_BAUDEX_500kBit,
-  USBCAN_BAUDEX_250kBit,
-  USBCAN_BAUDEX_125kBit,
-  USBCAN_BAUDEX_100kBit,
-  USBCAN_BAUDEX_50kBit,
-  USBCAN_BAUDEX_20kBit,
-  USBCAN_BAUDEX_10kBit
+  USBCAN_BAUD_1MBit,
+  USBCAN_BAUD_800kBit,
+  USBCAN_BAUD_500kBit,
+  USBCAN_BAUD_250kBit,
+  USBCAN_BAUD_125kBit,
+  USBCAN_BAUD_100kBit,
+  USBCAN_BAUD_50kBit,
+  USBCAN_BAUD_20kBit,
+  USBCAN_BAUD_10kBit
 };
  
 static tUcanHandle canHandle;
@@ -42,21 +43,27 @@ int can_init(unsigned int am, unsigned int ac, unsigned short baudrate) {
   
   ret = UcanInitHardware(&canHandle, USBCAN_ANY_MODULE, NULL);
   if(ret != 0) {
-    return ret;
+    return -1;
   }
   
+  memset(&params, 0, sizeof(tUcanInitCanParam));
   params.m_dwSize = sizeof(params);
   params.m_bMode = kUcanModeNormal;
   params.m_bBTR0 = HIBYTE(baudrates[baudrate]);
   params.m_bBTR1 = LOBYTE(baudrates[baudrate]);
-  params.m_bOCR = 0x1A;
+  params.m_bOCR = USBCAN_OCR_DEFAULT;
   params.m_dwAMR = am >> 5; /* Id is on 11 bits and is left aligned ! */
   params.m_dwACR = ac >> 5;
   params.m_dwBaudrate = USBCAN_BAUDEX_USE_BTR01;
-  params.m_wNrOfRxBufferEntries = 10;
-  params.m_wNrOfTxBufferEntries = 10;
+  params.m_wNrOfRxBufferEntries = 100;
+  params.m_wNrOfTxBufferEntries = 100;
 
-  ret = UcanInitCanEx(canHandle, &params);
+  ret = UcanInitCanEx2(canHandle, USBCAN_CHANNEL_CH0, &params);
+  if(ret != 0) {
+    return -1;
+  }
+
+  ret = UcanResetCanEx(canHandle, USBCAN_CHANNEL_CH0, USBCAN_RESET_ONLY_ALL_BUFF);
   if(ret != 0) {
     return -1;
   }
@@ -89,21 +96,26 @@ int can_send(can_event_msg_t msg) {
 
 int can_recv(unsigned int timeout, can_event_msg_t* msg) {
   UCANRET ret;
-  tCanMsgStruct ucan_msg;
+  tCanMsgStruct ucan_msgs[1];
+  DWORD count[1] = { 1 };
+  BYTE chans[1] = { USBCAN_CHANNEL_CH0 };
 
   if(!initialized || msg == NULL) {
     return -1;
   }
 
-  ret = UcanReadCanMsg(canHandle, &ucan_msg);
-  if(ret < 0) {
+  ret = UcanReadCanMsgEx(canHandle, chans, ucan_msgs, count);
+  if(ret != 0) {
+    if(ret == USBCAN_WARN_NODATA) {
+      printf("No data!\n");
+    }
     memset(msg, 0, sizeof(can_event_msg_t));
     return -1;
   }
 
-  msg->id = ucan_msg.m_dwID << 5;
-  msg->length = ucan_msg.m_bDLC;
-  memcpy(msg->data, ucan_msg.m_bData, 8);
+  msg->id = ucan_msgs[0].m_dwID << 5;
+  msg->length = ucan_msgs[0].m_bDLC;
+  memcpy(msg->data, ucan_msgs[0].m_bData, 8);
 
   return 0;
 }
