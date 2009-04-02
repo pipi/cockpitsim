@@ -1,0 +1,12 @@
+**/Debug
+*.bak
+*.suo
+*.vcproj.*
+*.obj
+*.exe*
+*.map
+*.mrt
+*.mbt
+*.pds
+*.pm2
+*.ncb
