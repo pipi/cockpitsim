@@ -24,7 +24,7 @@
  */
 typedef struct {
   //! The event id
-  unsigned int id;
+  unsigned short id;
   //! The lenght of the data
   unsigned char length;
   //! The data
@@ -43,14 +43,16 @@ typedef struct {
 
 /*!
  * CAN initialization.
- * \brief Intialize the CAN node with the given parameters.
+ * \brief Intialize the CAN node with the given parameters
+ * (ATTENTION : be careful of on how much bits unsigned
+ * integers are represented).
  *
  * \param am acceptance mask
  * \param ac acceptance code
  * \param baudrate the bus baudrate
  * \return 0 on success, -1 on errors
  */
-int can_init(unsigned int am, unsigned int ac, unsigned short baudrate);
+int can_init(unsigned short am, unsigned short ac, unsigned short baudrate);
 
 /*!
  * CAN event message sending
@@ -69,7 +71,7 @@ int can_send(can_event_msg_t msg);
  * \param msg the CAN event message to be filled
  * \return 0 on success, -1 on errors
  */
-int can_recv(unsigned int timeout, can_event_msg_t* msg);
+int can_recv(unsigned short timeout, can_event_msg_t* msg);
 
 
 

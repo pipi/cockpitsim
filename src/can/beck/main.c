@@ -3,7 +3,6 @@
 #include "../can.h"
 
 void main(){
-   int test;
    unsigned int am=0x3FFF,ac=0x4000;
    can_event_msg_t msg;
 
@@ -14,10 +13,19 @@ void main(){
 
    BIOS_Set_Focus(FOCUS_BOTH);
 
-   while(1){
-   	if(can_recv(50, &msg) == 0) {
-	      printf("Message id = 0x%04X\n", (msg.id >> 5));
-         can_send(msg);
+   while(1) {
+      /*msg.id = 0x1000;
+      msg.data[0] = i;
+      msg.length = 1;*/
+
+      if(can_recv(10, &msg) == 0) {
+   		printf("Message received from 0x%04X\n", (msg.id >> 5));
+
+	      msg.id = 0x1000;
+	   	can_send(msg);
+	      printf("Message sended with id = 0x%04X\n", (msg.id >> 5));
       }
    }
+
+   can_destroy();
 }
