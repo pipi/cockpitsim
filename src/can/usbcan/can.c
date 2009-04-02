@@ -37,7 +37,7 @@ static DWORD baudrates[] = {
 static tUcanHandle canHandle;
 static short initialized = 0;
  
-int can_init(unsigned int am, unsigned int ac, unsigned short baudrate) {
+int can_init(unsigned short am, unsigned short ac, unsigned short baudrate) {
   UCANRET ret;
   tUcanInitCanParam params;
   
@@ -52,8 +52,8 @@ int can_init(unsigned int am, unsigned int ac, unsigned short baudrate) {
   params.m_bBTR0 = HIBYTE(baudrates[baudrate]);
   params.m_bBTR1 = LOBYTE(baudrates[baudrate]);
   params.m_bOCR = USBCAN_OCR_DEFAULT;
-  params.m_dwAMR = am >> 5; /* Id is on 11 bits and is left aligned ! */
-  params.m_dwACR = ac >> 5;
+  params.m_dwAMR = (am << 16) | 0x0000FFFF; /* Id is on 11 bits and is left aligned ! */
+  params.m_dwACR = (ac << 16) | 0x0000FFFF;
   params.m_dwBaudrate = USBCAN_BAUDEX_USE_BTR01;
   params.m_wNrOfRxBufferEntries = 100;
   params.m_wNrOfTxBufferEntries = 100;
@@ -80,7 +80,7 @@ int can_send(can_event_msg_t msg) {
     return -1;
   }
   
-  ucan_msg.m_dwID = msg.id >> 5; /* Id is on 11 bits and is left aligned ! */
+  ucan_msg.m_dwID = msg.id >> 5; /* msg id is on 11 bits and is left aligned ! */
   ucan_msg.m_bFF = USBCAN_MSG_FF_STD;
   ucan_msg.m_bDLC = msg.length;
   memcpy(ucan_msg.m_bData, msg.data, 8);
@@ -94,7 +94,7 @@ int can_send(can_event_msg_t msg) {
   return 0;
 }
 
-int can_recv(unsigned int timeout, can_event_msg_t* msg) {
+int can_recv(unsigned short timeout, can_event_msg_t* msg) {
   UCANRET ret;
   tCanMsgStruct ucan_msgs[1];
   DWORD count[1] = { 1 };
@@ -107,12 +107,13 @@ int can_recv(unsigned int timeout, can_event_msg_t* msg) {
   ret = UcanReadCanMsgEx(canHandle, chans, ucan_msgs, count);
   if(ret != 0) {
     if(ret == USBCAN_WARN_NODATA) {
-      printf("No data!\n");
+      //printf("No data!\n");
     }
     memset(msg, 0, sizeof(can_event_msg_t));
     return -1;
   }
 
+  /* msg id is left aligned and ucan_msg id is right aligned. */
   msg->id = ucan_msgs[0].m_dwID << 5;
   msg->length = ucan_msgs[0].m_bDLC;
   memcpy(msg->data, ucan_msgs[0].m_bData, 8);

@@ -42,7 +42,7 @@ unsigned int baudrate_tab[9]={
 	10
 };
 
-int can_init(unsigned int am, unsigned int ac, unsigned short baudrate){
+int can_init(unsigned short am, unsigned short ac, unsigned short baudrate){
 
 	int ret;
 
@@ -106,12 +106,10 @@ int can_send(can_event_msg_t msg){
    	printf("Sending CAN message error \n");
       return -1;
    }
-   printf("CAN message sended id = %04X, data length = %d\n", (msg.id >> 5),
-   	msg.length);
    return 0;
 }
 
-int can_recv(unsigned int timeout, can_event_msg_t* ptr_msg){
+int can_recv(unsigned short timeout, can_event_msg_t* ptr_msg){
 	CAN_MSG message;
    int i;
    int ret;
