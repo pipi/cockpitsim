@@ -25,6 +25,7 @@
 #include "../../lib/i2c/i2c.h"
 #include "../../lib/can-i2c.h"
 
+#define mask_ID_CAN 0xFFE0
 
 int send_changes(can_i2c_trans_t trans[], unsigned short length){
    char buffer[8];
@@ -60,8 +61,26 @@ int send_changes(can_i2c_trans_t trans[], unsigned short length){
 
 
 
-int update_values(can_event_msg_t msg, can_i2c_trans_t trans[], unsigned short length){
+int update_values(can_event_msg_t msg, can_i2c_trans_t trans[], unsigned short length_tab){
 
+   int i,j,test;
+
+
+
+   for(i=0;i<length_tab;i++){
+   	if((trans[i].idCan & mask_ID_CAN) == (msg.id & mask_ID_CAN)){
+      	test=i2c_write(trans[i].idI2C, msg.data, msg.length);
+         if(test!=0){
+         	return -1;
+         }
+         trans[i].length=msg.length;
+         for(j=0;j<8;j++){
+         	trans[i].data[j]=msg.data[j];
+         }
+      }//end if
+   }
+
+   return 0;
 }
 
 

@@ -21,11 +21,15 @@
 /*!
  translation table
  */
+
+#ifndef _CAN_I2C_H_
+#define _CAN_I2C_H_
+
 typedef struct{
    //! The CAN event id
  	unsigned short idCan;
    //! The I2C node id
-   unsigned char idI2C;
+   unsigned char idI2C;//WARNING it is the read mode 
    //! the last value
    char data[8];
    //! The data length
@@ -61,4 +65,4 @@ int update_values(can_event_msg_t msg,
 						can_i2c_trans_t trans[],
                   unsigned short length);
 
-
+#endif

@@ -1,3 +1,7 @@
+
+#ifndef _I2C_H_
+#define _I2C_H_
+
 #include <clib.h>
 //initialiser le bus i2c
 void i2c_init(void);
@@ -13,3 +17,5 @@ slave-- I2C adresse
 buffer--ou va enregistrer les donnees reçues
 length--nombre de donnees reçues*/ 
 int i2c_read(unsigned char slave, char far *buffer, int length);
+
+#endif

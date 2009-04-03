@@ -128,6 +128,9 @@ int can_recv(unsigned short timeout, can_event_msg_t* ptr_msg){
    		printf("Receiving error\n");
       }
       return -1;
+      if(ret == CAN_EC_TIMEOUT){
+      	return -2;
+      }
    }
 
    ptr_msg->id = message.Id.Normal;

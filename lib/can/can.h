@@ -13,7 +13,10 @@
  *
  * Creation date : 25/03/2009
  */
- 
+
+#ifndef _CAN_H_
+#define _CAN_H_
+
  /*! 
   \file can.h
   \brief CAN library header file
@@ -28,7 +31,7 @@ typedef struct {
   //! The lenght of the data
   unsigned char length;
   //! The data
-  unsigned char data[8];
+  char data[8];
 } can_event_msg_t;
 
 #define CAN_BAUDRATE_1M     0
@@ -69,7 +72,7 @@ int can_send(can_event_msg_t msg);
  *
  * \param timeout max delay after which the function returns if no message is pending
  * \param msg the CAN event message to be filled
- * \return 0 on success, -1 on errors
+ * \return 0 on success, -1 on errors, -2 Time period expired and still no message available
  */
 int can_recv(unsigned short timeout, can_event_msg_t* msg);
 
@@ -83,3 +86,6 @@ int can_recv(unsigned short timeout, can_event_msg_t* msg);
  *
  */
 void can_destroy(void);
+
+#endif
+
