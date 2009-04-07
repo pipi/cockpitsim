@@ -34,6 +34,13 @@ typedef struct {
   char data[8];
 } can_event_msg_t;
 
+typedef struct {
+   //! The CAN event id
+ 	unsigned short canId;
+   //! The CAN event handler
+   void (*handler)(can_event_msg_t);
+} can_handler_t;
+
 #define CAN_BAUDRATE_1M     0
 #define CAN_BAUDRATE_800K   1
 #define CAN_BAUDRATE_500K   2

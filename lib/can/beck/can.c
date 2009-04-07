@@ -18,12 +18,12 @@
 
 #include <can_api.h>
 
-#include "../../lib/can/can.h"
+#include <can/can.h>
 
 CAN_PORT_INIT can0Init;
 CAN_RX_FILT can0RxFilter;
 
-unsigned int baudrate_tab[9]={
+unsigned int baudrate_tab[9] = {
 	1000,
 	800,
 	500,

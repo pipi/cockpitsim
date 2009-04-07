@@ -16,26 +16,26 @@
 
 #include <string.h>
 
-#include "../../lib/can/can.h"
-#include "../../lib/i2c/i2c.h"
-#include "../../lib/can-i2c.h"
+#include <can/can.h>
+#include <i2c/i2c.h>
+#include <can-i2c.h>
 
 #define mask_ID_CAN 0xFFE0
 
-int send_changes(can_i2c_trans_t trans[],
-					  unsigned short length){
+int send_changes(i2c_can_trans_t trans[],
+					  unsigned short length) {
    char buffer[8];
    can_event_msg_t msg;
 	int i, j, ret;
 
    ret = 0;
    for(i = 0; i < length; i++){
-   	i2c_read(trans[i].idI2C, buffer, trans[i].length);
-      for(j = 0; j < trans[i].length; j++){
-      	if(trans[i].data[j] != buffer[j]){
-         	memcpy(trans[i].data, buffer, trans[i].length);
+   	i2c_read(trans[i].i2cAddr, buffer, trans[i].length);
+      for(j = 0; j < trans[i].length; j++) {
+      	if(trans[i].oldData[j] != buffer[j]) {
+         	memcpy(trans[i].oldData, buffer, trans[i].length);
          	memcpy(msg.data, buffer, trans[i].length);
-         	msg.id = trans[i].idCan;
+         	msg.id = trans[i].canId;
       		msg.length = trans[i].length;
          	if(can_send(msg) == -1) {;
             	ret = -1;
@@ -47,21 +47,19 @@ int send_changes(can_i2c_trans_t trans[],
    return ret;
 }
 
-
-
 int update_values(can_event_msg_t msg,
-						can_i2c_trans_t trans[],
+						i2c_can_trans_t trans[],
                   unsigned short length_tab){
 
    int i;
 
    for(i = 0; i < length_tab; i++){
-   	if((trans[i].idCan & mask_ID_CAN) == (msg.id & mask_ID_CAN)){
-      	if(i2c_write(trans[i].idI2C, msg.data, msg.length) != 0) {
+   	if((trans[i].canId & mask_ID_CAN) == (msg.id & mask_ID_CAN)){
+      	if(i2c_write(trans[i].i2cAddr, msg.data, msg.length) != 0) {
          	return -1;
          }
          trans[i].length = msg.length;
-         memcpy(trans[i].data, msg.data, msg.length);
+         memcpy(trans[i].oldData, msg.data, msg.length);
       }
    }
 

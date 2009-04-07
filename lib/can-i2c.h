@@ -27,16 +27,15 @@
  */
 
 typedef struct {
-   //! The CAN event id
- 	unsigned short idCan;
-   //! The I2C node id
-   unsigned char idI2C; //WARNING it is the read mode 
-   //! the last value
-   char data[8];
+	//! The I2C address
+   unsigned char i2cAddr;
+   //! The I2C node old data
+   char oldData[8];
    //! The data length
-   unsigned short length;
-} can_i2c_trans_t;
-
+   unsigned char length;
+   //! The CAN id
+   unsigned short canId;
+} i2c_can_trans_t;
 
 /*!
  * Check and send changes.
@@ -47,7 +46,7 @@ typedef struct {
  * \param length the array length
  * \return 0 on success, -1 on errors
  */
-int send_changes(can_i2c_trans_t trans[],
+int send_changes(i2c_can_trans_t trans[],
 					  unsigned short length);
 
 
@@ -62,7 +61,7 @@ int send_changes(can_i2c_trans_t trans[],
  * \return 0 on success, -1 on errors
  */
 int update_values(can_event_msg_t msg,
-						can_i2c_trans_t trans[],
+						i2c_can_trans_t trans[],
                   unsigned short length);
 
 #endif
