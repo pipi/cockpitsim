@@ -4,9 +4,11 @@
 
 #include "../../lib/i2c/i2c.h"
 
-void i2c_init()
+int i2c_init()
 {
 	I2C_init();
+
+   return 0;
 }
 
 int i2c_write(unsigned char slave, const char far *buffer, int length)

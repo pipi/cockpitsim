@@ -7,8 +7,8 @@
  * Sub-project : CAN library
  *
  * Authors : Julien Peeters <julien.peeters@u-psud.fr>
- *			     Fabien Provost <fabien.provost@u-psud.fr>
- *			     Feng Xiong <feng.xiong@u-psud.fr>
+ *			    Fabien Provost <fabien.provost@u-psud.fr>
+ *			    Feng Xiong <feng.xiong@u-psud.fr>
  *           Yongchao Xu <yongchao.xu@u-psud.fr>
  *
  * Creation date : 25/03/2009
@@ -17,13 +17,13 @@
 #ifndef _CAN_H_
 #define _CAN_H_
 
- /*! 
-  \file can.h
-  \brief CAN library header file
- */
- 
- /*!
- CAN event message
+/*!
+ \file can.h
+ \brief CAN library header file
+*/
+
+/*!
+ * CAN event message
  */
 typedef struct {
   //! The event id
@@ -45,44 +45,45 @@ typedef struct {
 #define CAN_BAUDRATE_10K    8
 
 /*!
- * CAN initialization.
  * \brief Intialize the CAN node with the given parameters
- * (ATTENTION : be careful of on how much bits unsigned
- * integers are represented).
+ *
+ * ATTENTION : be careful of on how much bits unsigned
+ * integers are represented.
  *
  * \param am acceptance mask
  * \param ac acceptance code
  * \param baudrate the bus baudrate
+ *
  * \return 0 on success, -1 on errors
  */
-int can_init(unsigned short am, unsigned short ac, unsigned short baudrate);
+int can_init(unsigned short am,
+				 unsigned short ac,
+             unsigned short baudrate);
 
 /*!
- * CAN event message sending
  * \brief Send a CAN event on the bus.
  *
  * \param msg the can event message
+ *
  * \return 0 on success, -1 on errors
  */
 int can_send(can_event_msg_t msg);
 
 /*!
- * CAN event receiving
- * \brief Receive a message on the bus
+ * \brief Receive a message from the bus
+ *
+ * REMARK : if the timeout is set to zero the function is blocking.
  *
  * \param timeout max delay after which the function returns if no message is pending
  * \param msg the CAN event message to be filled
+ *
  * \return 0 on success, -1 on errors, -2 Time period expired and still no message available
  */
-int can_recv(unsigned short timeout, can_event_msg_t* msg);
-
-
+int can_recv(unsigned short timeout,
+				 can_event_msg_t* msg);
 
 /*!
- * close CAN port
- * \brief close the CAN port.
- *
- *
+ * \brief Close the CAN port.
  *
  */
 void can_destroy(void);

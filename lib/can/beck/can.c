@@ -1,14 +1,4 @@
 /*
-// Sample C code - customize as your Beck IPC application
-*/
-
-#include <stdio.h>
-
-#include <can_api.h>
-
-#include "../../lib/can/can.h"
-
-/*
  * Simulator project
  *
  * Institut de Formation des Ingénieurs de Paris-Sud
@@ -17,17 +7,18 @@
  * Sub-project : CAN library
  *
  * Authors : Julien Peeters <julien.peeters@u-psud.fr>
- *			     Fabien Provost <fabien.provost@u-psud.fr>
- *			     Feng Xiong <feng.xiong@u-psud.fr>
+ *			    Fabien Provost <fabien.provost@u-psud.fr>
+ *			    Feng Xiong <feng.xiong@u-psud.fr>
  *           Yongchao Xu <yongchao.xu@u-psud.fr>
  *
  * Creation date : 25/03/2009
  */
 
- /*!
-  \file beck.h
-  \brief CAN library header file for beck
- */
+#include <stdio.h>
+
+#include <can_api.h>
+
+#include "../../lib/can/can.h"
 
 CAN_PORT_INIT can0Init;
 CAN_RX_FILT can0RxFilter;

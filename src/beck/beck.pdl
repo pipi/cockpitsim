@@ -370,7 +370,7 @@
       { NodeFlag = BuildDepends | OutOfDate }
       { StyleSheet = "Default Project Options" }
         { Node = 2 ; beck.exe [.exe]
-          { NodeFlag = BuildDepends | FatFile | UserGen }
+          { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
           { Builder = "LinkTarget" }
           { Overrides = "ASFN:beck.exe0"
             { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT;" }
