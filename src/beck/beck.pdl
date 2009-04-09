@@ -373,8 +373,8 @@
           { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
           { Builder = "LinkTarget" }
           { Overrides = "ASFN:beck.exe0"
-            { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT;" }
-            { Link = "-Tee" }
+            { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT; -I../../LIB;$ENV(PCROOT)\INCLUDE;$ENV(PCROOT)\INCLUDE\BECK" }
+            { Link = "-Tee -L../../LIB;$ENV(PCROOT)\LIB;$ENV(PCROOT)\LIB\BECK" }
             { Assemble = "-dSC123;$INHERIT;" }
           }
             { Node = 13 ; ..\..\lib\can-i2c.h [.h]

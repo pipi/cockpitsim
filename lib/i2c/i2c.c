@@ -2,7 +2,7 @@
 // Sample C code - customize as your Beck IPC application
 */
 
-#include <i2c/i2c.h>
+#include <i2c.h>
 
 int i2c_init()
 {

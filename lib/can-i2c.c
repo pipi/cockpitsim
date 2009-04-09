@@ -16,8 +16,8 @@
 
 #include <string.h>
 
-#include <can/can.h>
-#include <i2c/i2c.h>
+#include <can.h>
+#include <i2c.h>
 #include <can-i2c.h>
 
 #define mask_ID_CAN 0xFFE0

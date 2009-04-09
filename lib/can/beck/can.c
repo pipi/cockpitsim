@@ -18,7 +18,7 @@
 
 #include <can_api.h>
 
-#include <can/can.h>
+#include <can.h>
 
 CAN_PORT_INIT can0Init;
 CAN_RX_FILT can0RxFilter;
@@ -117,8 +117,8 @@ int can_recv(unsigned short timeout, can_event_msg_t* ptr_msg){
    if(ret != 0){
    	if(ret != CAN_EC_TIMEOUT) {
    		printf("Receiving error\n");
+         return -1;
       }
-      return -1;
       if(ret == CAN_EC_TIMEOUT){
       	return -2;
       }

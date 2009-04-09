@@ -34,6 +34,9 @@ typedef struct {
   char data[8];
 } can_event_msg_t;
 
+/*!
+ * CAN event handler
+ */
 typedef struct {
    //! The CAN event id
  	unsigned short canId;
