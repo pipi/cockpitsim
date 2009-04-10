@@ -1,7 +1,7 @@
 /*
  * Simulator project
  *
- * Institut de Formation des IngÃ©nieurs de Paris-Sud
+ * Institut de Formation des Ingénieurs de Paris-Sud
  * 2008-2009
  *
  * Sub-project : CAN-I2C library

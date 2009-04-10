@@ -1,7 +1,7 @@
 /*
  * Simulator project
  *
- * Institut de Formation des IngÃ©nieurs de Paris-Sud
+ * Institut de Formation des Ingénieurs de Paris-Sud
  * 2008-2009
  *
  * Sub-project : CAN-I2C library
@@ -40,10 +40,11 @@ int send_changes(i2c_can_trans_t trans[],
          	if(can_send(msg) == -1) {;
             	ret = -1;
          	}
+            break;
          }
       }
    }
-   
+
    return ret;
 }
 
@@ -61,6 +62,7 @@ int update_values(can_event_msg_t msg,
          trans[i].length = msg.length;
          memcpy(trans[i].oldData, msg.data, msg.length);
       }
+      break;
    }
 
    return 0;

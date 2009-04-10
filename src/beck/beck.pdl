@@ -4,8 +4,9 @@
 { Version = 400 }
 { SubSystem = StyleSheets
   { StyleSheet = "Default Project Options"
-    { CppCompile = "-I$ENV(PCROOT)\include;$ENV(PCROOT)\include\beck -H=beck.csm" }
-    { Link = "-L$ENV(PCROOT)\lib;$ENV(PCROOT)\lib\beck" }
+    { IDE = "-S" }
+    { CppCompile = "-I../../INCLUDE;$ENV(PCROOT)\INCLUDE;$ENV(PCROOT)\INCLUDE\BECK -H=beck.csm" }
+    { Link = "-L../../LIB;$ENV(PCROOT)\LIB;$ENV(PCROOT)\LIB\BECK" }
   }
   { StyleSheet = "Optimized (Speed)"
     { CppCompile = "-O-d -O -Ob -Oe -Og -Oi -Ol -Om -Ot -Op -Ov -k- -Z" }
@@ -340,10 +341,6 @@
     { NodeType = ".c" }
     { Id = 9 }
   }
-  { Node = "..\..\lib\can\can.h"
-    { NodeType = ".h" }
-    { Id = 3 }
-  }
   { Node = "..\..\lib\can\beck\can.c"
     { NodeType = ".c" }
     { Id = 8 }
@@ -352,17 +349,9 @@
     { NodeType = ".c" }
     { Id = 10 }
   }
-  { Node = "..\..\lib\i2c\i2c.h"
-    { NodeType = ".h" }
-    { Id = 11 }
-  }
   { Node = "..\..\lib\can-i2c.c"
     { NodeType = ".c" }
     { Id = 12 }
-  }
-  { Node = "..\..\lib\can-i2c.h"
-    { NodeType = ".h" }
-    { Id = 13 }
   }
 }
 { SubSystem = Tree
@@ -373,21 +362,13 @@
           { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
           { Builder = "LinkTarget" }
           { Overrides = "ASFN:beck.exe0"
-            { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT; -I../../LIB;$ENV(PCROOT)\INCLUDE;$ENV(PCROOT)\INCLUDE\BECK" }
+            { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT; -I../../INCLUDE;$ENV(PCROOT)\INCLUDE;$ENV(PCROOT)\INCLUDE\BECK" }
             { Link = "-Tee -L../../LIB;$ENV(PCROOT)\LIB;$ENV(PCROOT)\LIB\BECK" }
             { Assemble = "-dSC123;$INHERIT;" }
           }
-            { Node = 13 ; ..\..\lib\can-i2c.h [.h]
-              { NodeFlag = BuildDepends | FatFile | UserGen }
-              { Builder = "HeaderInclude" }
-            }
             { Node = 12 ; ..\..\lib\can-i2c.c [.c]
               { NodeFlag = BuildDepends | FatFile | UserGen }
               { Builder = "CCompile" }
-            }
-            { Node = 11 ; ..\..\lib\i2c\i2c.h [.h]
-              { NodeFlag = BuildDepends | FatFile | UserGen }
-              { Builder = "HeaderInclude" }
             }
             { Node = 10 ; ..\..\lib\i2c\i2c.c [.c]
               { NodeFlag = BuildDepends | FatFile | UserGen }
@@ -397,12 +378,8 @@
               { NodeFlag = BuildDepends | FatFile | UserGen }
               { Builder = "CCompile" }
             }
-            { Node = 3 ; ..\..\lib\can\can.h [.h]
-              { NodeFlag = BuildDepends | FatFile | UserGen }
-              { Builder = "HeaderInclude" }
-            }
             { Node = 9 ; main.c [.c]
-              { NodeFlag = BuildDepends | FatFile | UserGen }
+              { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
               { Builder = "CCompile" }
             }
             { Node = 4 ; c0lx.obj [.obj]
