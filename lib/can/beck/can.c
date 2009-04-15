@@ -126,7 +126,7 @@ int can_recv(unsigned short timeout, can_event_msg_t* ptr_msg){
 
    ptr_msg->id = message.Id.Normal;
    ptr_msg->length = message.Len_Ctrl&CAN_DLC_FIELD;
-   memcpy(ptr_msg->data, message.data, ptr_msg->length);
+   memcpy(ptr_msg->data, message.Data , ptr_msg->length);
 
    return 0;
 }
