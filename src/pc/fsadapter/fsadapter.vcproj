@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="events"
-	ProjectGUID="{0E900C3B-7F96-4E1C-A38A-742E6D971529}"
+	Name="fsadapter"
+	ProjectGUID="{7C66BD85-7FCD-4E99-839C-2932435E76A0}"
 	>
 	<Platforms>
 		<Platform
@@ -76,6 +76,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -144,11 +145,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\..\lib\can\usbcan\can.c"
-				>
-			</File>
-			<File
-				RelativePath=".\main.c"
+				RelativePath="..\..\..\lib\can\usbcan\can.c"
 				>
 			</File>
 		</Filter>
@@ -158,11 +155,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\..\lib\can\can.h"
+				RelativePath="..\..\..\include\can.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\lib\can\usbcan\Usbcan32.h"
+				RelativePath="..\..\..\lib\can\usbcan\Usbcan32.h"
 				>
 			</File>
 		</Filter>
@@ -173,7 +170,7 @@
 			>
 		</Filter>
 		<File
-			RelativePath="..\..\..\..\lib\can\usbcan\USBCAN32.lib"
+			RelativePath=".\USBCAN32.lib"
 			>
 		</File>
 	</Files>

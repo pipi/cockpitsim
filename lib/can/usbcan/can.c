@@ -20,7 +20,7 @@
 
 #include "Usbcan32.h"
 
-#include "../can.h"
+#include <can.h>
  
 static DWORD baudrates[] = {
   USBCAN_BAUD_1MBit,
