@@ -3,7 +3,8 @@
 	ProjectType="Visual C++"
 	Version="8,00"
 	Name="fsadapter"
-	ProjectGUID="{7C66BD85-7FCD-4E99-839C-2932435E76A0}"
+	ProjectGUID="{FF48CEAB-A01E-4609-A519-C4D10C5D7E93}"
+	RootNamespace="fsadapter"
 	>
 	<Platforms>
 		<Platform
@@ -36,6 +37,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\projet\Mes documents\cockpitsim\include&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -76,7 +78,6 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -148,6 +149,14 @@
 				RelativePath="..\..\..\lib\can\usbcan\can.c"
 				>
 			</File>
+			<File
+				RelativePath=".\src\IPCuser.c"
+				>
+			</File>
+			<File
+				RelativePath=".\src\main.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Fichiers d&apos;en-tête"
@@ -159,7 +168,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\lib\can\usbcan\Usbcan32.h"
+				RelativePath=".\src\CConnector.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\COffsetAccessor.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\FSUIPC_User.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\IPCuser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Offsets.h"
 				>
 			</File>
 		</Filter>
@@ -169,6 +194,10 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
+		<File
+			RelativePath=".\FSUIPC_User.lib"
+			>
+		</File>
 		<File
 			RelativePath=".\USBCAN32.lib"
 			>

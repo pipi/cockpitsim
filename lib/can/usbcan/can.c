@@ -13,10 +13,9 @@
  *
  * Creation date : 25/03/2009
  */
- 
+
 #include <string.h>
 #include <windows.h>
-#include <stdio.h>
 
 #include "Usbcan32.h"
 
@@ -106,9 +105,6 @@ int can_recv(unsigned short timeout, can_event_msg_t* msg) {
 
   ret = UcanReadCanMsgEx(canHandle, chans, ucan_msgs, count);
   if(ret != 0) {
-    if(ret == USBCAN_WARN_NODATA) {
-      //printf("No data!\n");
-    }
     memset(msg, 0, sizeof(can_event_msg_t));
     return -1;
   }
