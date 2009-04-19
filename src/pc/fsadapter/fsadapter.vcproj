@@ -37,7 +37,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\projet\Mes documents\cockpitsim\include&quot;"
+				AdditionalIncludeDirectories="&quot;..\..\..\include&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -50,6 +50,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				UseLibraryDependencyInputs="false"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -78,6 +79,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			>
@@ -146,7 +148,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\src\CAbstractOffsetFamily.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\lib\can\usbcan\can.c"
+				>
+			</File>
+			<File
+				RelativePath=".\src\CConnector.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\CFsAdapter.cpp"
 				>
 			</File>
 			<File
@@ -157,6 +171,14 @@
 				RelativePath=".\src\main.cpp"
 				>
 			</File>
+			<Filter
+				Name="families"
+				>
+				<File
+					RelativePath=".\src\families\CAutoPilotFamily.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Fichiers d&apos;en-tête"
@@ -164,11 +186,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\include\can.h"
+				RelativePath=".\src\CAbstractOffsetData.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\CAbstractOffsetFamily.h"
 				>
 			</File>
 			<File
 				RelativePath=".\src\CConnector.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\CFsAdapter.h"
 				>
 			</File>
 			<File
@@ -187,6 +217,14 @@
 				RelativePath=".\src\Offsets.h"
 				>
 			</File>
+			<Filter
+				Name="families"
+				>
+				<File
+					RelativePath=".\src\families\CAutoPilotFamily.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Fichiers de ressources"

@@ -35,7 +35,7 @@ unsigned int baudrate_tab[9] = {
 	10
 };
 
-int can_init(unsigned short am, unsigned short ac, unsigned short baudrate){
+int can_init(WORD am, WORD ac, WORD baudrate){
 
 	int ret;
 
@@ -102,7 +102,7 @@ int can_send(can_event_msg_t msg){
    return 0;
 }
 
-int can_recv(unsigned short timeout, can_event_msg_t* ptr_msg){
+int can_recv(WORD timeout, can_event_msg_t* ptr_msg){
 	CAN_MSG message;
    int i;
    int ret;

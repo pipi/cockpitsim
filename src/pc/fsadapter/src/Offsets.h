@@ -3,7 +3,9 @@
 
 #include "COffsetAccessor.h"
 
-typedef COffsetAccessor<__int32, 0x0574> AltitudeOffset;
-typedef COffsetAccessor<__int16, 0x0842> VertSpeedOffset;
+/* Offset creation. */
+
+typedef COffsetAccessor<INT32, 0x0574> AltitudeOffset;
+typedef COffsetAccessor<INT16, 0x0842> VertSpeedOffset;
 
 #endif
