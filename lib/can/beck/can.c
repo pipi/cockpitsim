@@ -35,7 +35,7 @@ unsigned int baudrate_tab[9] = {
 	10
 };
 
-int can_init(unsigned short am, unsigned short ac, unsigned short baudrate){
+int can_init(WORD am, WORD ac, WORD baudrate){
 
 	int ret;
 
@@ -102,7 +102,7 @@ int can_send(can_event_msg_t msg){
    return 0;
 }
 
-int can_recv(unsigned short timeout, can_event_msg_t* ptr_msg){
+int can_recv(WORD timeout, can_event_msg_t* ptr_msg){
 	CAN_MSG message;
    int i;
    int ret;
@@ -125,8 +125,8 @@ int can_recv(unsigned short timeout, can_event_msg_t* ptr_msg){
    }
 
    ptr_msg->id = message.Id.Normal;
-   ptr_msg->length=message.Len_Ctrl&CAN_DLC_FIELD;
-	memcpy(ptr_msg->data, message.Data, ptr_msg->length);
+   ptr_msg->length = message.Len_Ctrl&CAN_DLC_FIELD;
+   memcpy(ptr_msg->data, message.Data , ptr_msg->length);
 
    return 0;
 }

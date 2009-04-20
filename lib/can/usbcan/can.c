@@ -13,16 +13,15 @@
  *
  * Creation date : 25/03/2009
  */
- 
-#include <string.h>
-#include <windows.h>
-#include <stdio.h>
 
+#include <string.h>
+
+#include <can.h>
+ 
+#include <windows.h> // Needed by Usbcan32.h
 #include "Usbcan32.h"
 
-#include "../can.h"
- 
-static DWORD baudrates[] = {
+static WORD baudrates[] = {
   USBCAN_BAUD_1MBit,
   USBCAN_BAUD_800kBit,
   USBCAN_BAUD_500kBit,
@@ -37,7 +36,7 @@ static DWORD baudrates[] = {
 static tUcanHandle canHandle;
 static short initialized = 0;
  
-int can_init(unsigned short am, unsigned short ac, unsigned short baudrate) {
+int can_init(WORD am, WORD ac, WORD baudrate) {
   UCANRET ret;
   tUcanInitCanParam params;
   
@@ -94,7 +93,7 @@ int can_send(can_event_msg_t msg) {
   return 0;
 }
 
-int can_recv(unsigned short timeout, can_event_msg_t* msg) {
+int can_recv(WORD timeout, can_event_msg_t* msg) {
   UCANRET ret;
   tCanMsgStruct ucan_msgs[1];
   DWORD count[1] = { 1 };
@@ -106,9 +105,6 @@ int can_recv(unsigned short timeout, can_event_msg_t* msg) {
 
   ret = UcanReadCanMsgEx(canHandle, chans, ucan_msgs, count);
   if(ret != 0) {
-    if(ret == USBCAN_WARN_NODATA) {
-      //printf("No data!\n");
-    }
     memset(msg, 0, sizeof(can_event_msg_t));
     return -1;
   }
