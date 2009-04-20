@@ -109,6 +109,7 @@ int fpga_changes_lookup(i2c_can_trans_t* trans) {
    	printf("has changed = %d \nread new value=  0x%4x\n",hasChanged,*(unsigned int*)dataBuf);
    }
 	memcpy(trans->oldData, dataBuf, trans->dataLength);
+
    //printf("oldData=  0x%4x\n",*(unsigned int*)trans->oldData);
    //printf("msg send : 0x%4x0x%4x\n",*(unsigned int*)dataBuf,*(unsigned int*)(dataBuf+2));
    return (hasChanged != 0 ? 0 : -1);
@@ -136,6 +137,78 @@ int fpga_send_changes(i2c_can_trans_t trans[],
 
    return ret;
 }
+
+
+int altitude_changes_lookup(i2c_can_trans_t* trans,unsigned long* nextAlt) {
+	short i, index;
+   char dataBuf[8];
+   unsigned char hasChanged;
+   char plop=0x00;
+   short ret;
+   short test;
+   unsigned int oldPosition;
+   unsigned int newPosition;
+
+
+   hasChanged=0;
+   index = 0;
+   for(i = 0; i < trans->nodesLength; ++i) {
+      i2c_write(trans->i2cNodes[i].nodeAddr, &plop, 1);
+     	test=i2c_read(trans->i2cNodes[i].nodeAddr, dataBuf+index,
+      		trans->i2cNodes[i].dataLength);
+   	if(test != 0) {
+      	// If there is no new value, copy the old one.
+			memcpy(dataBuf+index, trans->oldData+index,
+         	trans->i2cNodes[i].dataLength);
+   	}
+      index += trans->i2cNodes[i].dataLength;
+   }
+
+
+   hasChanged = memcmp(dataBuf, trans->oldData, trans->dataLength);
+
+   if(hasChanged!=0){
+   	printf("has changed = %d \nread new value=  0x%4x\n",hasChanged,*(unsigned int*)dataBuf);
+      oldPosition=((unsigned int)(trans->oldData[1])&0x00FF)|(((unsigned int)(trans->oldData[0])<<8)&0xFF00);
+      newPosition=((unsigned int)(dataBuf[1])&0x00FF)|(((unsigned int)(dataBuf[0])<<8)&0xFF00);
+      *nextAlt=*nextAlt+(100*(newPosition-oldPosition));
+   }
+	memcpy(trans->oldData, dataBuf, trans->dataLength);
+
+   //printf("oldData=  0x%4x\n",*(unsigned int*)trans->oldData);
+   //printf("msg send : 0x%4x0x%4x\n",*(unsigned int*)dataBuf,*(unsigned int*)(dataBuf+2));
+   return (hasChanged != 0 ? 0 : -1);
+}
+
+
+int altitude_send_changes(i2c_can_trans_t trans[],
+					  		unsigned short length, unsigned long nextAlt) {
+   short i;
+   int ret;
+   can_event_msg_t msg;
+
+   ret = 0;
+   for(i = 0; i < length; ++i) {
+      if(altitude_changes_lookup(& trans[i],&nextAlt) == 0) {
+
+
+      	memset(&msg, 0, sizeof(msg));
+         msg.id = trans[i].canId;
+         msg.data[0] =(nextAlt>>24)&0x000000FF;
+         msg.data[1] =(nextAlt>>16)&0x000000FF;
+         msg.data[2] =(nextAlt>>8)&0x000000FF;
+         msg.data[3] =(nextAlt)&0x000000FF;
+         msg.length = trans[i].dataLength;
+      	ret = (can_send(msg) == -1) ? -1 : ret;
+         printf("read new value=  0x%4x0x%4x\n",*(unsigned int*)msg.data,*(unsigned int*)(msg.data+2));
+      } else {
+        //	printf("No changes on I2C nodes\n");
+      }
+   }
+
+   return ret;
+}
+
 
 int update_values(can_event_msg_t msg,
 						i2c_can_trans_t trans[],
