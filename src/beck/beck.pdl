@@ -356,7 +356,7 @@
 }
 { SubSystem = Tree
     { Node = 1 ; beck.pdl [.pdl]
-      { NodeFlag = BuildDepends | OutOfDate }
+      { NodeFlag = BuildDepends }
       { StyleSheet = "Default Project Options" }
         { Node = 2 ; beck.exe [.exe]
           { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
@@ -367,7 +367,7 @@
             { Assemble = "-dSC123;$INHERIT;" }
           }
             { Node = 12 ; ..\..\lib\can-i2c.c [.c]
-              { NodeFlag = BuildDepends | FatFile | UserGen }
+              { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
               { Builder = "CCompile" }
             }
             { Node = 10 ; ..\..\lib\i2c\i2c.c [.c]
@@ -379,7 +379,7 @@
               { Builder = "CCompile" }
             }
             { Node = 9 ; main.c [.c]
-              { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
+              { NodeFlag = BuildDepends | FatFile | UserGen }
               { Builder = "CCompile" }
             }
             { Node = 4 ; c0lx.obj [.obj]

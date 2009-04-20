@@ -14,7 +14,7 @@
  * Creation date : 25/03/2009
  */
 
-#include <stdio.h>
+#include <string.h>
 
 #include <can_api.h>
 
@@ -125,11 +125,8 @@ int can_recv(unsigned short timeout, can_event_msg_t* ptr_msg){
    }
 
    ptr_msg->id = message.Id.Normal;
-   for(i=0;i<8;i++){
-   	ptr_msg->data[i]=message.Data[i];
-   }
-
    ptr_msg->length=message.Len_Ctrl&CAN_DLC_FIELD;
+	memcpy(ptr_msg->data, message.Data, ptr_msg->length);
 
    return 0;
 }
