@@ -33,11 +33,11 @@ void CFsAdapter::lookupForFsuipcChanges() {
 CFsAdapter::CFsAdapter(CCanNodeConfig& oNodeConfig,
 					   CConnector& oConnector): m_oConnector(oConnector) {
 	if(!m_oConnector.isOpened() && !m_oConnector.open()) {
-		throw new std::exception("Error while opening FSUIPC connection.");
+		throw std::exception("Error while opening FSUIPC connection.");
 	}
 	if(can_init(oNodeConfig.m_wAcceptanceMask, 
 			oNodeConfig.m_wAcceptanceCode, oNodeConfig.m_wBaudrate) != 0) {
-		throw new std::exception("Error while initializing CAN.");
+		throw std::exception("Error while initializing CAN.");
 	}
 }
 
