@@ -14,7 +14,7 @@
  * Creation date : 25/03/2009
  */
 
-#include <stdio.h>
+#include <string.h>
 
 #include <can_api.h>
 

@@ -22,33 +22,56 @@
 #ifndef _CAN_I2C_H_
 #define _CAN_I2C_H_
 
+typedef struct {
+	//! I2C node address
+	unsigned char nodeAddr;
+	//! I2C node data length
+   unsigned char dataLength;
+} i2c_node_t;
+
 /*!
  * CAN-I2C translation entry.
  */
 
 typedef struct {
-	//! The I2C address
-   unsigned char i2cAddr;
-   //! The I2C node old data
-   char oldData[8];
-   //! The data length
-   unsigned char length;
-   //! The CAN id
+	//! The CAN id.
    unsigned short canId;
+	//! The I2C nodes.
+   i2c_node_t i2cNodes[8];
+   //! Number of I2C nodes.
+   unsigned char nodesLength;
+   //! The I2C node old data.
+   char oldData[8];
+   //! The data length.
+   unsigned char dataLength;
 } i2c_can_trans_t;
 
 /*!
  * Check and send changes.
  * \brief This function checks if there is such modifications of values
- * for each I²C node and a CAN message if necessary.
+ * for each I²C node linked to an unique CAN message and send the
+ * corresponding CAN message if necessary.
  *
  * \param trans translation array between I2C and CAN
  * \param length the array length
  * \return 0 on success, -1 on errors
  */
-int send_changes(i2c_can_trans_t trans[],
-					  unsigned short length);
+int i2c_send_changes(i2c_can_trans_t trans[],
+					  		unsigned short length);
 
+
+/*!
+ * Check and send changes of FPGA.
+ * \brief This function checks if there is such modifications of values
+ * for I²C node, especially FPGA, linked to an unique CAN message and send the
+ * corresponding CAN message if necessary.
+ *
+ * \param trans translation array for FPGA between I2C and CAN
+ * \param length the array length
+ * \return 0 on success, -1 on errors
+ */
+int fpga_send_changes(i2c_can_trans_t trans[],
+					  		unsigned short length);
 
 /*!
  * Interpretation of CAN message.
