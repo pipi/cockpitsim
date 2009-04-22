@@ -21,6 +21,10 @@
 #include "CConnector.h"
 #include "CAbstractOffsetData.h"
 
+#ifdef DEBUG
+#include <iostream>
+#endif
+
 template<typename T, DWORD dwOffset>
 class COffsetAccessor: public CAbstractOffsetData {
 
@@ -56,18 +60,35 @@ template<typename T, DWORD dwOffset>
 T COffsetAccessor<T, dwOffset>::getValue() const {
     T v;
 	CConnector::getInstance()->read<T>(dwOffset, &v);
+
+#ifdef DEBUG
+	std::cout << "Value got from offset " << dwOffset << " : "
+		<< v << std::endl;
+#endif
+
     return v;
 }
 
 template<typename T, DWORD dwOffset>
 void COffsetAccessor<T, dwOffset>::setValue(const T& newValue) {
 	CConnector::getInstance()->write<T>(dwOffset, &static_cast<T>(newValue));
+
+#ifdef DEBUG
+	std::cout << "Value set to offset " << dwOffset << " : "
+		<< newValue << std::endl;
+#endif
+
 	update();
 }
 
 template<typename T, DWORD dwOffset>
 void COffsetAccessor<T, dwOffset>::update() {
 	m_lastFetchedData = getValue();
+
+#ifdef DEBUG
+	std::cout << "Value of offset " << dwOffset << " updated to "
+		<< m_lastFetchedData << std::endl;
+#endif
 }
 
 template<typename T, DWORD dwOffset>

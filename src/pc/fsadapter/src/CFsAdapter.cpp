@@ -3,6 +3,7 @@
 #include <can.h>
 
 #include "CFsAdapter.h"
+#include "CLogger.h"
 
 #ifdef DEBUG
 #include <iostream>
@@ -12,14 +13,15 @@ void CFsAdapter::lookupForCanMessages() {
 	can_event_msg_t msg;
 
 #ifdef DEBUG
-	std::cout << "Lookup for CAN messages..." << std::endl;
+	CLogger::log(CLogger::LINFO) << "Lookup for CAN messages..."
+		<< std::endl;
 	unsigned int msgCnt = 0;
 #endif
 
 	while(can_recv(1, &msg) == 0) { // empty the input queue.
 		
 #ifdef DEBUG
-		std::cout << "CAN message received with id " 
+		CLogger::log(CLogger::LINFO) << "CAN message received with id " 
 			<< msg.id << "." << std::endl;
 		msgCnt++;
 #endif

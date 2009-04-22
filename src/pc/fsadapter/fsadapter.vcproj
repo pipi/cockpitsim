@@ -170,6 +170,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\CLogger.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Families.h"
 				>
 			</File>
@@ -209,6 +213,10 @@
 			</File>
 			<File
 				RelativePath=".\src\CFsAdapter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\CLogger.h"
 				>
 			</File>
 			<File
