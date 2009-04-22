@@ -1,3 +1,4 @@
+#include <can.h>
 //------Control table-------
 #define P_ID 3
 #define P_BAUD_RATE 4
@@ -45,8 +46,8 @@
 
 #define START 0xFF
 #define ID_MASK 0xFF000000
-#define POS_MSB_MASK 0x00FF0000
-#define POS_LSB_MASK 0x0000FF00
+#define POS_MSB_MASK 0xFF00
+#define POS_LSB_MASK 0x00FF
 #define TORQUE_MASK 0x000000FF
 
 //---------data_length-----
@@ -118,7 +119,7 @@ int transfer_data(sDataAX12* dataAX12[], sDataAX12* dataCAN[]);
 
 int decode_Msg_CAN(can_event_msg_t* ptr_msg);
 
-int create_msg_CAN(sDataAX12* data_CAN[], can_event_msg* ptrmsg );
+int create_msg_CAN(sDataAX12* data_CAN[], can_event_msg_t* ptrmsg );
 
 
 

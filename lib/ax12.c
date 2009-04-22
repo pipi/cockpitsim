@@ -1,10 +1,12 @@
 /*
 // Sample C code - customize as your Beck IPC application
 */
-
+#include <stdio.h>
 #include <clib.h>
 #include <ax12.h>
 #include <can.h>
+
+ can_event_msg_t* ptrmsg;                                         
 
 void init_AX12() //à faire------------
 {
@@ -343,17 +345,17 @@ int decode_Msg_CAN(can_event_msg_t* ptr_msg)
 
 
 
-int create_msg_CAN(sDataAX12* data_CAN[],can_event_msg* ptrmsg )
+int create_msg_CAN(sDataAX12* data_CAN[],can_event_msg_t* ptrmsg )
 {
 
-	switch ((data_CAN[dern_remplie(dataAX12,size_dataAX12)-i]->ID))
+	switch ((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->ID))
 	{
 	case ID_AX1:
 		{
-			prtmsg->id=ID_GAZ1;
-			prtmsg->length=2;
-			prtmsg->data[0]=(unsigned char)(((data_CAN[dern_remplie(dataAX12,size_dataAX12)-i]->angle)& POS_MSB_MASK)>>8);//après conversion
-			prtmsg->data[1]=(unsigned char)(((data_CAN[dern_remplie(dataAX12,size_dataAX12)-i]->angle) & POS_LSB_MASK));//après conversion
+			ptrmsg->id=ID_GAZ1;
+			ptrmsg->length=2;
+			ptrmsg->data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle)& POS_MSB_MASK)>>8);//après conversion
+			ptrmsg->data[1]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle) & POS_LSB_MASK));//après conversion
 
 			return 1;
 
@@ -361,20 +363,20 @@ int create_msg_CAN(sDataAX12* data_CAN[],can_event_msg* ptrmsg )
 
 	case ID_AX2:
 		{
-			prtmsg->id=ID_GAZ2;
-			prtmsg->length=2;
-			prtmsg->data[0]=(unsigned char)(((data_CAN[dern_remplie(dataAX12,size_dataAX12)-i]->angle)& POS_MSB_MASK)>>8);//après conversion
-			prtmsg->data[1]=(unsigned char)(((data_CAN[dern_remplie(dataAX12,size_dataAX12)-i]->angle) & POS_LSB_MASK));//après conversion
+			ptrmsg->id=ID_GAZ2;
+			ptrmsg->length=2;
+			ptrmsg->data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle)& POS_MSB_MASK)>>8);//après conversion
+			ptrmsg->data[1]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle) & POS_LSB_MASK));//après conversion
 
 			return 1;
 		}break;
 
 	case ID_AX3:
 		{
-			prtmsg->id=ID_TRIM;
-			prtmsg->length=2;
-			prtmsg->data[0]=(unsigned char)(((data_CAN[dern_remplie(dataAX12,size_dataAX12)-i]->angle)& POS_MSB_MASK)>>8);//après conversion
-			prtmsg->data[1]=(unsigned char)(((data_CAN[dern_remplie(dataAX12,size_dataAX12)-i]->angle) & POS_LSB_MASK));//après conversion
+			ptrmsg->id=ID_TRIM;
+			ptrmsg->length=2;
+			ptrmsg->data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle)& POS_MSB_MASK)>>8);//après conversion
+			ptrmsg->data[1]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle) & POS_LSB_MASK));//après conversion
 
 			return 1;
 		}break;
