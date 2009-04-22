@@ -5,6 +5,7 @@
 
 #include "CConnector.h"
 #include "Offsets.h"
+#include "Families.h"
 #include "CFsAdapter.h"
 
 int main() {

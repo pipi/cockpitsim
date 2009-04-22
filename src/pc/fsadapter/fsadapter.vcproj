@@ -169,6 +169,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Families.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\IPCuser.c"
 				>
 			</File>
@@ -237,10 +241,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
-		<File
-			RelativePath=".\FSUIPC_User.lib"
-			>
-		</File>
 		<File
 			RelativePath=".\USBCAN32.lib"
 			>
