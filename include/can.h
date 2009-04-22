@@ -17,6 +17,18 @@
 #ifndef _CAN_H_
 #define _CAN_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef WIN32
+#include <windows.h>
+#else // BECK
+typedef unsigned short WORD;
+typedef unsigned char BYTE;
+#endif
+
+
 /*!
  \file can.h
  \brief CAN library header file
@@ -27,11 +39,11 @@
  */
 typedef struct {
   //! The event id
-  unsigned short id;
+  WORD id;
   //! The lenght of the data
-  unsigned char length;
+  BYTE length;
   //! The data
-  char data[8];
+  BYTE data[8];
 } can_event_msg_t;
 
 /*!
@@ -66,9 +78,9 @@ typedef struct {
  *
  * \return 0 on success, -1 on errors
  */
-int can_init(unsigned short am,
-				 unsigned short ac,
-             unsigned short baudrate);
+int can_init(WORD am,
+			 WORD ac,
+             WORD baudrate);
 
 /*!
  * \brief Send a CAN event on the bus.
@@ -90,7 +102,7 @@ int can_send(can_event_msg_t msg);
  * \return 0 on success, -1 on errors, -2 Time period expired and still no message available
  */
 int can_recv(unsigned short timeout,
-				 can_event_msg_t* msg);
+			 can_event_msg_t* msg);
 
 /*!
  * \brief Close the CAN port.
@@ -98,5 +110,8 @@ int can_recv(unsigned short timeout,
  */
 void can_destroy(void);
 
+#ifdef __cplusplus
+};
 #endif
 
+#endif
