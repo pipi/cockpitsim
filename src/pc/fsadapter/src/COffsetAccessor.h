@@ -24,12 +24,11 @@
 template<typename T, DWORD dwOffset>
 class COffsetAccessor: public CAbstractOffsetData {
 
-	CConnector m_oConnector;
 	T m_lastFetchedData;
 
 public:
 
-	COffsetAccessor(CConnector&);
+	COffsetAccessor();
 
 	T getValue() const;
 	void setValue(const T&);
@@ -45,9 +44,8 @@ public:
 /* Offset accessor implementation. */
 
 template<typename T, DWORD dwOffset>
-COffsetAccessor<T, dwOffset>::COffsetAccessor(CConnector& oConnector)
-: m_oConnector(oConnector) { 
-	if(!m_oConnector.isOpened()) {
+COffsetAccessor<T, dwOffset>::COffsetAccessor() { 
+	if(!CConnector::getInstance()->isOpened()) {
 		throw std::exception("Error while instantiating offset accessor: "
 							 "connector not opened.");
 	}
@@ -57,13 +55,13 @@ COffsetAccessor<T, dwOffset>::COffsetAccessor(CConnector& oConnector)
 template<typename T, DWORD dwOffset>
 T COffsetAccessor<T, dwOffset>::getValue() const {
     T v;
-    m_oConnector.read<T>(dwOffset, &v);
+	CConnector::getInstance()->read<T>(dwOffset, &v);
     return v;
 }
 
 template<typename T, DWORD dwOffset>
 void COffsetAccessor<T, dwOffset>::setValue(const T& newValue) {
-	m_oConnector.write<T>(dwOffset, &static_cast<T>(newValue));
+	CConnector::getInstance()->write<T>(dwOffset, &static_cast<T>(newValue));
 	update();
 }
 

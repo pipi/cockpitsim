@@ -22,12 +22,16 @@ class CConnector {
 	DWORD m_dwResult;
 	bool m_bOpened;
 
+	static CConnector* m_oInstance;
+
+	CConnector();
+	CConnector(const CConnector&) { }
+	CConnector& operator=(const CConnector&) { }
+
 public:
 
 	enum FSVersion { ANY=0, FS98, FS2000, CFS2, 
 					 CFS1, FLY, FS2002, FS2004, FSX, ESP };
-	
-	CConnector();
 	~CConnector();
 
 	bool open(FSVersion = ANY);
@@ -40,6 +44,9 @@ public:
 	bool write(DWORD, T*, bool = true);
 	
 	bool process() const;
+
+	static CConnector* getInstance();
+	static void destroyInstance();
 
 };
 

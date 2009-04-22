@@ -1,8 +1,8 @@
 #include "CAutoPilotFamily.h"
 
-CAutoPilotFamily::CAutoPilotFamily(CConnector& oConnector, WORD wCanId)
-: CAbstractOffsetFamily(oConnector, wCanId) { 
-	m_lstData.push_back(new AltitudeOffset(oConnector));
+CAutoPilotFamily::CAutoPilotFamily(WORD wCanId)
+: CAbstractOffsetFamily(wCanId) { 
+	m_lstData.push_back(new AltitudeOffset());
 	// Adding other offsets.
 	// ...
 }

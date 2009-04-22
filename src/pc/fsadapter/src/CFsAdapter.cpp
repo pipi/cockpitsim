@@ -56,9 +56,9 @@ void CFsAdapter::lookupForFsuipcChanges() {
 	}
 }
 
-CFsAdapter::CFsAdapter(CCanNodeConfig& oNodeConfig,
-					   CConnector& oConnector): m_oConnector(oConnector) {
-	if(!m_oConnector.isOpened() && !m_oConnector.open()) {
+CFsAdapter::CFsAdapter(CCanNodeConfig& oNodeConfig) {
+	if(!CConnector::getInstance()->isOpened() && 
+			!CConnector::getInstance()->open()) {
 		throw std::exception("Error while opening FSUIPC connection.");
 	}
 #ifdef DEBUG
@@ -81,7 +81,7 @@ CFsAdapter::~CFsAdapter() {
 		}
 	}
 	can_destroy();
-	m_oConnector.close();
+	CConnector::destroyInstance();
 }
 
 void CFsAdapter::addFamily(CAbstractOffsetFamily* pFamily) {

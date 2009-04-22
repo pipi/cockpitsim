@@ -15,7 +15,6 @@ class CAbstractOffsetFamily {
 protected:
 
 	WORD m_wCanId;
-	CConnector m_oConnector;
 	std::list<CAbstractOffsetData*> m_lstData;
 
 	static inline unsigned short dataIndexFromId(unsigned short uId) {
@@ -29,7 +28,7 @@ protected:
 
 public:
 
-	CAbstractOffsetFamily(CConnector&, WORD);
+	CAbstractOffsetFamily(WORD);
 	virtual ~CAbstractOffsetFamily();
 
 	bool matchesCanId(WORD) const;

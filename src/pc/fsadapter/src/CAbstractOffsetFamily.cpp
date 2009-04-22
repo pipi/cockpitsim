@@ -16,9 +16,8 @@ DWORD CAbstractOffsetFamily::totalSize() const {
 	return size;
 }
 
-CAbstractOffsetFamily::CAbstractOffsetFamily(CConnector& oConnector,
-											 WORD wCanId)
-: m_wCanId(wCanId), m_oConnector(oConnector) { }
+CAbstractOffsetFamily::CAbstractOffsetFamily(WORD wCanId)
+: m_wCanId(wCanId) { }
 
 CAbstractOffsetFamily::~CAbstractOffsetFamily() {
 	for(std::list<CAbstractOffsetData*>::iterator it;
