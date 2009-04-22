@@ -74,7 +74,7 @@ T COffsetAccessor<T, dwOffset>::getValue() const {
 
 template<typename T, DWORD dwOffset>
 void COffsetAccessor<T, dwOffset>::setValue(const T& newValue) {
-	T v = newValue << 16;
+	T v = newValue * m_fMultiple;
 	CConnector::getInstance()->write<T>(dwOffset, &v);
 
 #ifdef DEBUG

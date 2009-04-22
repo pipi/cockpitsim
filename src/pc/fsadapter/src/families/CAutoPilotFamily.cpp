@@ -2,7 +2,7 @@
 
 CAutoPilotFamily::CAutoPilotFamily(WORD wCanId)
 : CAbstractOffsetFamily(wCanId) { 
-	m_lstData.push_back(new AltitudeOffset(65536));
+	m_lstData.push_back(new AltitudeOffset());
 	// Adding other offsets.
 	// ...
 }
