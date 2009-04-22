@@ -102,7 +102,7 @@ DWORD COffsetAccessor<T, dwOffset>::sizeInBytes() const {
 
 template<typename T, DWORD dwOffset>
 bool COffsetAccessor<T, dwOffset>::dataHasChanged() const {
-	return (getValue() == m_lastFetchedData);
+	return (getValue() != m_lastFetchedData);
 }
 
 template<typename T, DWORD dwOffset>
