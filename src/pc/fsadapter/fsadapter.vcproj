@@ -38,6 +38,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\..\..\include"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -52,6 +53,7 @@
 				Name="VCLinkerTool"
 				UseLibraryDependencyInputs="false"
 				AdditionalLibraryDirectories=""
+				GenerateDebugInformation="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
