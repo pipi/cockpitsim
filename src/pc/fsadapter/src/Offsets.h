@@ -5,6 +5,6 @@
 
 /* Offset creation. */
 
-typedef COffsetAccessor<INT32, 0x0FD4> AltitudeOffset;
+typedef COffsetAccessor<INT32, 0x07D4> AltitudeOffset;
 
 #endif
