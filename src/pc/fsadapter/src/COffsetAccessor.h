@@ -50,7 +50,7 @@ template<typename T, DWORD dwOffset>
 COffsetAccessor<T, dwOffset>::COffsetAccessor(CConnector& oConnector)
 : m_oConnector(oConnector) { 
 	if(!m_oConnector.isOpened()) {
-		throw new std::exception("Error while instantiating offset accessor:"
+		throw std::exception("Error while instantiating offset accessor:"
 								 "connector not opened.");
 	}
 	m_lastFetchedData = getValue();
