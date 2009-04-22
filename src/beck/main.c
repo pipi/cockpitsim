@@ -15,7 +15,10 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <clib.h>
+#include <conio.h>
+
 
 #include <can.h>
 #include <i2c.h>
@@ -24,17 +27,20 @@
 // Program constants
 #define CAN_MASK	0xFFFF
 #define CAN_ID		0xFFFF
-#define LENGTH_TAB_I2C 10
-#define LENGTH_TAB_FPGA 10
 
 // ---------------- I2C NODES DATA TRANSLATIONS TO CAN -------------
+#define LENGTH_TAB_I2C 1
+#define LENGTH_TAB_FPGA 1
+
 i2c_can_trans_t translations_i2c[] = {
-	{ 0x00, { 0 }, 0, 0xFFFF }
+	{ 0x203f, { { 0x40, 2 } }, 1, { 0xff, 0xff }, 2 }
 };
 
 i2c_can_trans_t translations_fpga[] = {
-   { 0x00, { 0 }, 0, 0xFFFF }
+   { 0x8020, { { 0xc8, 4 } }, 1, { 0x00, 0x00, 0x00, 0x00 }, 4 }
 };
+
+static unsigned long ALTITUDE;
 // ---------------- END OF I2C NODES DATA TRANSLATIONS ------------
 
 // ----------------------- TIMER CONFIGURATION----------------------
@@ -63,12 +69,21 @@ void forward_to_ax12(can_event_msg_t msg) {
 }
 
 void forward_to_i2c(can_event_msg_t msg) {
- 	// TODO
-   // Implement the I2C action the CAN message
 
-	update_values(msg, translations_i2c,LENGTH_TAB_I2C);
+	//update_values(msg, translations_i2c, LENGTH_TAB_I2C);
    //write data to the classic i2c components
+   switch(msg.id) {
 
+   	case 0x8000: // TODO
+			ALTITUDE=((unsigned long)msg.data[0]<<24)&0xFF000000;
+         ALTITUDE=(((unsigned long)msg.data[1]<<16)&0x00FF0000)|ALTITUDE;
+         ALTITUDE=(((unsigned long)msg.data[2]<<8)&0x0000FF00)|ALTITUDE;
+         ALTITUDE=(((unsigned long)msg.data[3])&0x000000FF)|ALTITUDE;
+      	break;
+
+      default :
+     		break;
+   }
 }
 
 // Any other handler which match the following prototype
@@ -84,8 +99,8 @@ void node_manager(can_event_msg_t msg) {
 
 // Handlers look up table
 can_handler_t handlers[] = {
-	{ 0x4000, forward_to_ax12 },
-   { 0x5000, forward_to_i2c },
+	// Examples
+   { 0x8000, forward_to_i2c },
    { 0x0001, node_manager },
    { 0x0000, NULL }
 };
@@ -95,11 +110,13 @@ void can_msg_lookup(void) {
 	can_event_msg_t canMsg;
 
    if(can_recv(1, &canMsg) == 0) {
+
    	// Dispatch the CAN message to the corresponding handler.
   	   // NOTE : Suppose there is only one handler per CAN id.
     	for(i = 0; handlers[i].handler != NULL; ++i) {
     		if(handlers[i].canId == canMsg.id) {
           	handlers[i].handler(canMsg);
+            //printf("Message received and node found\n");
             break;
          }
       }
@@ -110,28 +127,39 @@ void can_msg_lookup(void) {
 
 // -------------------------- ENTRY POINT -------------------------
 void main() {
-	can_init(CAN_MASK, CAN_ID, CAN_BAUDRATE_1M);
-   i2c_init();
+   unsigned char scan, ret;
+   char plop[8];
+   char plop2[8];
+   char plop3[8];
+   char plop4[8];
+   char pouet[2];
+   char ffxx[2]={0xff,0xff};
+   int data0,data1,data;
+   can_event_msg_t msg;
+
+	if(can_init(CAN_MASK, CAN_ID, CAN_BAUDRATE_1M) == 0) {
+    	printf("CAN BUS init OK\n");
+   } else {
+   	printf("CAN BUS init FAILED\n");
+      exit(1);
+   }
+
+   if(i2c_init() == 0) {
+    	printf("I2C BUS init OK\n");
+   } else {
+    	printf("I2C BUS init FAILED\n");
+      exit(1);
+   }
 
    running = 1;
 
-   if(RTX_Start_Timer(timerID) != 0){
-   	printf("Error whil initiazing the time : invalid timer ID\n");
+   while(running){
+
+
+
+
+
    }
 
-   while(running) {
-      can_msg_lookup();
-
-      /*if(flag_timer == 1){
-      	i2c_send_changes(translations_i2c, LENGTH_TAB_I2C);
-      	fpga_send_changes(translations_fpga, LENGTH_TAB_FPGA);
-         flag_timer = 0;
-      }*/
-
-      // Other treatments...
-   }
-
-   i2c_destroy();
-   can_destroy();
 }
 // ------------------------- END OF ENTRY POINT --------------------

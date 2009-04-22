@@ -22,12 +22,16 @@ class CConnector {
 	DWORD m_dwResult;
 	bool m_bOpened;
 
+	static CConnector* m_oInstance;
+
+	CConnector();
+	CConnector(const CConnector&) { }
+	CConnector& operator=(const CConnector&) { }
+
 public:
 
 	enum FSVersion { ANY=0, FS98, FS2000, CFS2, 
 					 CFS1, FLY, FS2002, FS2004, FSX, ESP };
-	
-	CConnector();
 	~CConnector();
 
 	bool open(FSVersion = ANY);
@@ -41,32 +45,12 @@ public:
 	
 	bool process() const;
 
+	static CConnector* getInstance();
+	static void destroyInstance();
+
 };
 
-/* Template class implementation */
-
-CConnector::CConnector(): m_bOpened(false) { }
-
-CConnector::~CConnector() {
-	close();
-}
-
-bool CConnector::open(CConnector::FSVersion version) {
-	if(FSUIPC_Open(version, &m_dwResult)) {
-		m_bOpened = true;
-		return true;
-	}
-	return false;
-}
-
-void CConnector::close() {
-	FSUIPC_Close();
-	m_bOpened = false;
-}
-
-bool CConnector::isOpened() const {
-	return m_bOpened;
-}
+/* Templates implemenations. */
 
 template<typename T>
 bool CConnector::read(DWORD dwOffset, T* pDest, bool bAutoProcess) const {
@@ -88,10 +72,6 @@ bool CConnector::write(DWORD dwOffset, T* pSrc, bool bAutoProcess) {
 		return true;
 	}
 	return false;
-}
-
-bool CConnector::process() const {
-	return FSUIPC_Process(&static_cast<DWORD>(m_dwResult));
 }
 
 #endif

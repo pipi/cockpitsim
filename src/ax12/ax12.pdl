@@ -4,9 +4,8 @@
 { Version = 400 }
 { SubSystem = StyleSheets
   { StyleSheet = "Default Project Options"
-    { IDE = "-S" }
-    { CppCompile = "-I../../INCLUDE;$ENV(PCROOT)\INCLUDE;$ENV(PCROOT)\INCLUDE\BECK -H=beck.csm" }
-    { Link = "-L../../LIB;$ENV(PCROOT)\LIB;$ENV(PCROOT)\LIB\BECK" }
+    { CppCompile = "-I$ENV(PCROOT)\include;$ENV(PCROOT)\include\beck -H=ax12.csm" }
+    { Link = "-L$ENV(PCROOT)\lib;$ENV(PCROOT)\lib\beck" }
   }
   { StyleSheet = "Optimized (Speed)"
     { CppCompile = "-O-d -O -Ob -Oe -Og -Oi -Ol -Om -Ot -Op -Ov -k- -Z" }
@@ -281,7 +280,7 @@
     { NodeType = ".pdl" }
     { Id = 1 }
   }
-  { Node = "beck.exe"
+  { Node = "ax12.exe"
     { NodeType = ".exe" }
     { Id = 2 }
     { Property = TargetInfo
@@ -323,67 +322,67 @@
   }
   { Node = "c0lx.obj"
     { NodeType = ".obj" }
-    { Id = 4 }
+    { Id = 3 }
   }
   { Node = "noehl.lib"
     { NodeType = ".lib" }
-    { Id = 5 }
+    { Id = 4 }
   }
   { Node = "clibl.lib"
     { NodeType = ".lib" }
-    { Id = 6 }
+    { Id = 5 }
   }
   { Node = "cl.lib"
     { NodeType = ".lib" }
-    { Id = 7 }
+    { Id = 6 }
   }
   { Node = "main.c"
     { NodeType = ".c" }
-    { Id = 9 }
-  }
-  { Node = "..\..\lib\can\beck\can.c"
-    { NodeType = ".c" }
-    { Id = 8 }
+    { Id = 7 }
   }
   { Node = "..\..\lib\ax12.c"
     { NodeType = ".c" }
-    { Id = 10 }
+    { Id = 8 }
+  }
+  { Node = "..\..\lib\can\beck\can.c"
+    { NodeType = ".c" }
+    { Id = 9 }
   }
 }
 { SubSystem = Tree
     { Node = 1 ; ax12.pdl [.pdl]
       { NodeFlag = BuildDepends | OutOfDate }
       { StyleSheet = "Default Project Options" }
-        { Node = 2 ; beck.exe [.exe]
-          { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
+        { Node = 2 ; ax12.exe [.exe]
+          { NodeFlag = BuildDepends | FatFile | UserGen }
           { Builder = "LinkTarget" }
-          { Overrides = "ASFN:beck.exe0"
-            { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT; -I../../INCLUDE;$ENV(PCROOT)\INCLUDE;$ENV(PCROOT)\INCLUDE\BECK" }
-            { Link = "-Tee -L../../LIB;$ENV(PCROOT)\LIB;$ENV(PCROOT)\LIB\BECK" }
+          { Overrides = "ASFN:ax12.exe0"
+            { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT; -I..\..\INCLUDE;$ENV(PCROOT)\INCLUDE;$ENV(PCROOT)\INCLUDE\BECK" }
+            { Link = "-Tee -L..\..\LIB$ENV(PCROOT)\LIB;$ENV(PCROOT)\LIB\BECK" }
             { Assemble = "-dSC123;$INHERIT;" }
           }
-            { Node = 10 ; ..\..\lib\ax12.c [.c]
-              { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
-              { Builder = "CCompile" }
-            }
-            { Node = 8 ; ..\..\lib\can\beck\can.c [.c]
+            { Node = 9 ; ..\..\lib\can\beck\can.c [.c]
               { NodeFlag = BuildDepends | FatFile | UserGen }
               { Builder = "CCompile" }
             }
-            { Node = 9 ; main.c [.c]
-              { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
+            { Node = 8 ; ..\..\lib\ax12.c [.c]
+              { NodeFlag = BuildDepends | FatFile | UserGen }
               { Builder = "CCompile" }
             }
-            { Node = 4 ; c0lx.obj [.obj]
+            { Node = 7 ; main.c [.c]
+              { NodeFlag = BuildDepends | FatFile | UserGen }
+              { Builder = "CCompile" }
+            }
+            { Node = 3 ; c0lx.obj [.obj]
               { NodeFlag = BuildDepends | FatFile | Skeleton }
             }
-            { Node = 5 ; noehl.lib [.lib]
+            { Node = 4 ; noehl.lib [.lib]
               { NodeFlag = BuildDepends | FatFile | Skeleton }
             }
-            { Node = 6 ; clibl.lib [.lib]
+            { Node = 5 ; clibl.lib [.lib]
               { NodeFlag = BuildDepends | FatFile | Skeleton }
             }
-            { Node = 7 ; cl.lib [.lib]
+            { Node = 6 ; cl.lib [.lib]
               { NodeFlag = BuildDepends | FatFile | Skeleton }
             }
         }
