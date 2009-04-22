@@ -20,10 +20,10 @@ CAbstractOffsetFamily::CAbstractOffsetFamily(WORD wCanId)
 : m_wCanId(wCanId) { }
 
 CAbstractOffsetFamily::~CAbstractOffsetFamily() {
-	for(std::list<CAbstractOffsetData*>::iterator it;
-			it != m_lstData.begin(); it++) {
-		if(*it != NULL) {
-			delete *it;
+	for(std::list<CAbstractOffsetData*>::iterator it =
+		m_lstData.begin(); it != m_lstData.end(); it++) {
+		if((*it) != NULL) {
+			delete (*it);
 		}
 	}
 }
