@@ -17,7 +17,7 @@ int main() {
 
 		oAdapter.addFamily(new CAutoPilotFamily(oConnector, 0x8000));
 	} catch(std::exception& ex) {
-#ifdef _DEBUG
+#ifdef DEBUG
 		std::cerr << ">>> Exception raised <<<" << std::endl << ex.what()
 			<< std::endl;
 #endif

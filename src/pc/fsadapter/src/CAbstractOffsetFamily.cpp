@@ -17,8 +17,8 @@ DWORD CAbstractOffsetFamily::totalSize() const {
 }
 
 CAbstractOffsetFamily::CAbstractOffsetFamily(CConnector& oConnector,
-											 WORD dwCanId)
-: m_dwCanId(dwCanId), m_oConnector(oConnector) { }
+											 WORD wCanId)
+: m_wCanId(wCanId), m_oConnector(oConnector) { }
 
 CAbstractOffsetFamily::~CAbstractOffsetFamily() {
 	for(std::list<CAbstractOffsetData*>::iterator it;
@@ -29,8 +29,8 @@ CAbstractOffsetFamily::~CAbstractOffsetFamily() {
 	}
 }
 
-bool CAbstractOffsetFamily::matchesCanId(WORD someCanId) const {
-	return ((someCanId >> 8) == (m_dwCanId >> 8));
+bool CAbstractOffsetFamily::matchesCanId(WORD wCanId) const {
+	return ((wCanId >> 8) == (m_wCanId >> 8));
 }
 
 bool CAbstractOffsetFamily::dataHasChanged() const {

@@ -1,6 +1,6 @@
 #include "CConnector.h"
 
-CConnector::CConnector(): m_bOpened(false) { }
+CConnector::CConnector(): m_dwResult(0), m_bOpened(false) { }
 
 CConnector::~CConnector() {
 	close();

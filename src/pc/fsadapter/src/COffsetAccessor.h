@@ -14,13 +14,11 @@
 #ifndef _COFFSETACCESSOR_H_
 #define _COFFSETACCESSOR_H_
 
-#include <iostream>
 #include <exception>
 
 #include <windows.h>
 
 #include "CConnector.h"
-
 #include "CAbstractOffsetData.h"
 
 template<typename T, DWORD dwOffset>
@@ -50,8 +48,8 @@ template<typename T, DWORD dwOffset>
 COffsetAccessor<T, dwOffset>::COffsetAccessor(CConnector& oConnector)
 : m_oConnector(oConnector) { 
 	if(!m_oConnector.isOpened()) {
-		throw std::exception("Error while instantiating offset accessor:"
-								 "connector not opened.");
+		throw std::exception("Error while instantiating offset accessor: "
+							 "connector not opened.");
 	}
 	m_lastFetchedData = getValue();
 }

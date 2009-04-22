@@ -14,7 +14,7 @@ class CAbstractOffsetFamily {
 	
 protected:
 
-	WORD m_dwCanId;
+	WORD m_wCanId;
 	CConnector m_oConnector;
 	std::list<CAbstractOffsetData*> m_lstData;
 

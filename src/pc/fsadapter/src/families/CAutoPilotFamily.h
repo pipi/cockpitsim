@@ -7,7 +7,7 @@ class CAutoPilotFamily: public CAbstractOffsetFamily {
 
 public:
 
-	CAutoPilotFamily(CConnector&, DWORD);
+	CAutoPilotFamily(CConnector&, WORD);
 
 	can_event_msg_t transformToCanMessage() const;
 	void setValueFromCanMessage(can_event_msg_t&);
