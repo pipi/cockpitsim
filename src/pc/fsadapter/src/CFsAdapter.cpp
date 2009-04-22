@@ -74,6 +74,12 @@ CFsAdapter::CFsAdapter(CCanNodeConfig& oNodeConfig,
 }
 
 CFsAdapter::~CFsAdapter() {
+	for(std::list<CAbstractOffsetFamily*>::iterator it =
+			m_lstFamilies.begin(); it != m_lstFamilies.end(); it++) {
+		if((*it) != NULL) {
+			delete (*it);
+		}
+	}
 	can_destroy();
 	m_oConnector.close();
 }
