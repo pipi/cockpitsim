@@ -29,10 +29,11 @@ template<typename T, DWORD dwOffset>
 class COffsetAccessor: public CAbstractOffsetData {
 
 	T m_lastFetchedData;
+	float m_fMultiple;
 
 public:
 
-	COffsetAccessor();
+	COffsetAccessor(float = 1.0f);
 
 	T getValue() const;
 	void setValue(const T&);
@@ -48,7 +49,8 @@ public:
 /* Offset accessor implementation. */
 
 template<typename T, DWORD dwOffset>
-COffsetAccessor<T, dwOffset>::COffsetAccessor() { 
+COffsetAccessor<T, dwOffset>::COffsetAccessor(float fMultiple)
+: m_fMultiple(fMultiple) { 
 	if(!CConnector::getInstance()->isOpened()) {
 		throw std::exception("Error while instantiating offset accessor: "
 							 "connector not opened.");
@@ -61,6 +63,7 @@ T COffsetAccessor<T, dwOffset>::getValue() const {
     T v;
 	CConnector::getInstance()->read<T>(dwOffset, &v);
 
+	v = static_cast<T>(v / m_fMultiple);
 #ifdef DEBUG
 	std::cout << "Value got from offset " << dwOffset << " : "
 		<< v << std::endl;
@@ -71,11 +74,12 @@ T COffsetAccessor<T, dwOffset>::getValue() const {
 
 template<typename T, DWORD dwOffset>
 void COffsetAccessor<T, dwOffset>::setValue(const T& newValue) {
-	CConnector::getInstance()->write<T>(dwOffset, &static_cast<T>(newValue));
+	T v = newValue * m_fMultiple;
+	CConnector::getInstance()->write<T>(dwOffset, &v);
 
 #ifdef DEBUG
 	std::cout << "Value set to offset " << dwOffset << " : "
-		<< newValue << std::endl;
+		<< v << std::endl;
 #endif
 
 	update();
@@ -106,6 +110,11 @@ DWORD COffsetAccessor<T, dwOffset>::fillAsRawData(BYTE* buffer) const {
 	T value = getValue();
 	DWORD length = sizeInBytes();
 
+#ifdef DEBUG
+	std::cout << "Fill buffer with value 0x" << std::hex
+		<< value << " for offset 0x" << std::hex << dwOffset << std::endl;
+#endif
+
 	memcpy(buffer, &value, length);
 	return length;
 }
@@ -114,6 +123,10 @@ template<typename T, DWORD dwOffset>
 void COffsetAccessor<T, dwOffset>::setValueFromRawData(const BYTE* buffer) {
 	T newValue;
 	memcpy(&newValue, buffer, sizeInBytes());
+#ifdef DEBUG
+	std::cout << "Set offset 0x" << std::hex << dwOffset 
+		<< " from raw data " << newValue << std::endl;
+#endif
 	setValue(newValue);
 }
 
