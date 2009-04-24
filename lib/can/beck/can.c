@@ -40,8 +40,8 @@ int can_init(WORD am, WORD ac, WORD baudrate){
 	int ret;
 
    can0Init.fDisable_Rx = 0; //FALSE /* We want to be able to receive data. */
-   can0Init.Rx_Q_Size = 100;
-   can0Init.Tx_Q_Size[0] = 100;
+   can0Init.Rx_Q_Size = 2;
+   can0Init.Tx_Q_Size[0] = 2;
    can0Init.Tx_Q_Size[1] = 0;
    can0Init.Tx_Q_Size[2] = 0;
 
