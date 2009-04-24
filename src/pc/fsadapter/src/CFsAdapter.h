@@ -14,7 +14,6 @@ struct CCanNodeConfig {
 
 class CFsAdapter {
 
-	CConnector m_oConnector;
 	std::list<CAbstractOffsetFamily*> m_lstFamilies;
 
 	void lookupForCanMessages();
@@ -22,7 +21,7 @@ class CFsAdapter {
 
 public:
 
-	CFsAdapter(CCanNodeConfig&, CConnector&);
+	CFsAdapter(CCanNodeConfig&);
 	~CFsAdapter();
 
 	void addFamily(CAbstractOffsetFamily*);

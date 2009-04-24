@@ -16,21 +16,20 @@ DWORD CAbstractOffsetFamily::totalSize() const {
 	return size;
 }
 
-CAbstractOffsetFamily::CAbstractOffsetFamily(CConnector& oConnector,
-											 WORD dwCanId)
-: m_dwCanId(dwCanId), m_oConnector(oConnector) { }
+CAbstractOffsetFamily::CAbstractOffsetFamily(WORD wCanId)
+: m_wCanId(wCanId) { }
 
 CAbstractOffsetFamily::~CAbstractOffsetFamily() {
-	for(std::list<CAbstractOffsetData*>::iterator it;
-			it != m_lstData.begin(); it++) {
-		if(*it != NULL) {
-			delete *it;
+	for(std::list<CAbstractOffsetData*>::iterator it =
+		m_lstData.begin(); it != m_lstData.end(); it++) {
+		if((*it) != NULL) {
+			delete (*it);
 		}
 	}
 }
 
-bool CAbstractOffsetFamily::matchesCanId(WORD someCanId) const {
-	return ((someCanId >> 8) == (m_dwCanId >> 8));
+bool CAbstractOffsetFamily::matchesCanId(WORD wCanId) const {
+	return ((wCanId >> 8) == (m_wCanId >> 8));
 }
 
 bool CAbstractOffsetFamily::dataHasChanged() const {

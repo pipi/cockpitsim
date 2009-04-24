@@ -1,6 +1,8 @@
 #include "CConnector.h"
 
-CConnector::CConnector(): m_bOpened(false) { }
+CConnector* CConnector::m_oInstance = NULL;
+
+CConnector::CConnector(): m_dwResult(0), m_bOpened(false) { }
 
 CConnector::~CConnector() {
 	close();
@@ -25,4 +27,17 @@ bool CConnector::isOpened() const {
 
 bool CConnector::process() const {
 	return FSUIPC_Process(&static_cast<DWORD>(m_dwResult));
+}
+
+CConnector* CConnector::getInstance() {
+	if(m_oInstance == NULL) {
+		m_oInstance = new CConnector();
+	}
+	return m_oInstance;
+}
+
+void CConnector::destroyInstance() {
+	if(m_oInstance != NULL) {
+		delete m_oInstance;
+	}
 }

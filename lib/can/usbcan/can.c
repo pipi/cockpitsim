@@ -54,8 +54,8 @@ int can_init(WORD am, WORD ac, WORD baudrate) {
   params.m_dwAMR = (am << 16) | 0x0000FFFF; /* Id is on 11 bits and is left aligned ! */
   params.m_dwACR = (ac << 16) | 0x0000FFFF;
   params.m_dwBaudrate = USBCAN_BAUDEX_USE_BTR01;
-  params.m_wNrOfRxBufferEntries = 100;
-  params.m_wNrOfTxBufferEntries = 100;
+  params.m_wNrOfRxBufferEntries = 2;
+  params.m_wNrOfTxBufferEntries = 2;
 
   ret = UcanInitCanEx2(canHandle, USBCAN_CHANNEL_CH0, &params);
   if(ret != 0) {
