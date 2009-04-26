@@ -9,4 +9,4 @@
 *.pds
 *.pm2
 *.ncb
-doc
+src/pc/*/Debug
