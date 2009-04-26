@@ -27,3 +27,21 @@ en place les points suivants :
   physique et l'émission d'un message vers ce dernier lors de la détection d'un 
   changement dans le modèle.
 \end{enumerate}
+
+\section{Définitions des besoins}
+\subsection{Contraintes contextuelles}
+Lors de l'étude initiale sur cette partie du projet, il avait été fait le choix de l'écrire
+en C++ du au fait que FSUIPC est fortement polymorphe \footnote{FSUIPC contient des données
+de types forts différents et par conséquent les données du modèle sont représentées de manières
+relativement hétérogènes sur l'ensemble du tableau.}. Par la suite, et sur les conseils de
+notre tuteur, nous sommes passé à une solution en C. Cependant, nous nous sommes rapidement aperçus
+que cette solution engendrerait beaucoup de possibilités d'erreurs et de bogues pour des
+raisons que nous n'aborderons pas ici. Il a donc été fait le choix de revenir à la solution initiale,
+à savoir écrire notre logiciel en C++.
+
+Pour cela, Julien Peeters a été affecté en renfort à l'équipe initiale, composée au départ d'Alexandra 
+Starynkevitch et de Zhibin Yin.
+
+En dehors du choix du langage de programmation qui allait déterminer l'orientation majeure ce cette
+partie du projet, une contrainte importante a été mise en évidence: le grand nombre des données
+du modèle accessibles au travers de FSUIPC.
