@@ -1,0 +1,40 @@
+%
+% Projet simulateur
+%
+% IFIPS 2008-2008
+% Rapport de projet
+% Manuel utilisateur
+%
+% Date de création: 26/04/2009
+%
+
+\input{settings}
+
+\begin{document}
+
+\renewcommand{\contentsname}{Sommaire}
+
+\input{titres}
+\thispagestyle{empty}
+\cleardoublepage
+
+\renewcommand{\thepage}{\roman{page}}
+\setcounter{page}{1}
+
+\tableofcontents
+\thispagestyle{plain}
+\cleardoublepage
+
+\renewcommand{\thepage}{\arabic{page}}
+\setcounter{page}{1}
+
+\include{intro}
+\thispagestyle{plain}
+\cleardoublepage
+
+\setlength{\parskip}{0.5cm plus2mm minus1.5mm}
+\include{fsadapter}
+\thispagestyle{plain}
+\cleardoublepage
+
+\end{document}
