@@ -1,0 +1,65 @@
+\documentclass[pdftex,a4paper,twoside,12pt]{report}
+
+\usepackage[latin1]{inputenc}
+\usepackage[francais]{babel}
+\usepackage{color}
+\usepackage{fullpage}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{tocvsec2}
+\usepackage{verbatim}
+
+\usepackage{graphicx}
+
+\usepackage{listings}
+
+\usepackage{amsmath,amsthm,amssymb}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\fancyhead[CE]{\bfseries\leftmark}
+\fancyhead[CO]{\bfseries\rightmark}
+\renewcommand{\chaptermark}[1]{\markboth{\uppercase{#1}}{}}
+\renewcommand{\sectionmark}[1]{\markright{\uppercase{#1}}}
+\fancyfoot[LE]{\thepage}
+\fancyfoot[RO]{\thepage}
+\fancyfoot[C]{}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[LE]{\thepage}
+  \fancyfoot[RO]{\thepage}
+  \fancyfoot[C]{}
+  \fancyhead{}
+  \renewcommand{\headrulewidth}{0pt}}
+
+\setlength{\headheight}{25pt}
+\setlength{\headsep}{10pt}
+
+\usepackage{url}
+%From http://www.kronto.org/thesis/tips/url-formatting.html
+%% Define a new 'leo' style for the package that will use a smaller font.
+\makeatletter
+\def\url@leostyle{%
+  \@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\small\ttfamily}}}
+\makeatother
+%% Now actually use the newly defined style.
+\urlstyle{leostyle}
+
+\newcommand{\authors}[1]{
+  \large{Auteurs:} \\
+  \vspace{-20pt} 
+  \begin{flushleft}  
+    \vspace{2pt}
+    #1
+    \vspace{5pt}
+  \end{flushleft}
+}
+
+\newcommand{\authorinfo}[2]{
+  \makeatletter
+  \small{#1 \textsc{#2} \textit{\texttt{<\lowercase{#1}.#2@u-psud.fr>}}}
+  \makeatother
+}

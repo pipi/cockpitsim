@@ -1,0 +1,29 @@
+\chapter{FSAdapter: Interface avec Microsoft Flight Simulator X (FSUIPC)}
+\authors{
+  \authorinfo{Julien}{Peeters} \\
+  \authorinfo{Alexandra}{Starynkevitch} \\
+  \authorinfo{Zhibin}{Yin}
+}
+
+\section{Description et contexte}
+L'objectif de cette partie du projet est de créer un lien entre le simulateur physique
+et le simulateur logiciel. Pour cela, nous disposions déjà d'un accès aux données
+du modèle aéronautique via FSUIPC \footnote{Logiciel développé par Peter Dowson
+(\url{http://www.schiratti.com/dowson.html}) permettant d'accéder aux données du
+modèle sous la forme d'un tableau indexé.}.
+
+Lors des débats technologiques initiaux, le choix s'est porté vers le protocole CAN
+\footnote{Acronyme de \textit{Controller Area Network}.} pour gérer l'échange de données
+entre la partie physique et la partie logicielle. Outre la gestion des données via FSUIPC,
+notre logiciel, FSAdapter, a également la charge de gérer les messages qui transitent sur
+le bus CAN, en réception ainsi qu'en émission.
+
+Sur base de cette architecture, illustrée en \ref{fig:archi_fsadapter}, nous devions mettre
+en place les points suivants :
+\begin{enumerate}
+  \item Offrir un accès facile et sûr aux données du modèle aéronautique via FSUIPC.
+  \item Ajouter une gestion des messages transitant sur le bus, ce qui inclu la mise
+  à jour des données du modèle lors de la réception d'un message depuis le simulateur
+  physique et l'émission d'un message vers ce dernier lors de la détection d'un 
+  changement dans le modèle.
+\end{enumerate}
