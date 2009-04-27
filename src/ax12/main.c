@@ -76,9 +76,10 @@ void main() {
 
     //----déclaration des buffers d'entrées et de sorties---
     //static BYTE* request_Angle_Buff;
-    static BYTE* read_Angle_Buff;
+    static BYTE* input_Buff;
     static BYTE* set_Angle_Buff;
-   static BYTE* answer_Angle_Buff;
+   static BYTE* output_Buff;
+   static BYTE* buff;
     
 
     //-----décl des var msg-------
@@ -155,6 +156,20 @@ void main() {
     fossil_purge_output( FOSSIL_COM);
     fossil_purge_input( FOSSIL_COM);
 
+    set_Angle(FOSSIL_COM, 13, 10, set_Angle_Buff, nByteToWrite_Set);
+    printf("data set : \n");
+    for(i=0;i<nByteToWrite_Set;i++)
+    		printf("%d ",set_Angle_Buff[i]);
+    printf("\n");
+    sleep(5);
+    fossil_readblock(FOSSIL_COM,buff,nByteToRead-2);
+    for(i=0;i<nByteToRead;i++)
+    {
+       	printf("%d ",buff[i]);
+    }
+    printf(" \n ");
+
+
 
    while(running) {
       //can_msg_lookup();
@@ -181,13 +196,13 @@ void main() {
                     //read_Angle(ID,read_Angle_Buff);
                     //end_sendIstru=read_Angle(ID,read_Angle_Buff);
                     //fossil_purge_output( FOSSIL_COM);
-                    if(read_Angle(FOSSIL_COM, ID,read_Angle_Buff, nByteToRead )==1)
+                    if(read_Angle(FOSSIL_COM, ID, output_Buff, nByteToRead )==1)
                     {
                         state=2;
                         printf("sending instructions succed \n");
                         for(i=0;i<nByteToRead;i++)
                         	{
-                           	printf("%d ",read_Angle_Buff[i]);
+                           	printf("%d ",output_Buff[i]);
                            }
                         printf(" \n ");
 
@@ -213,10 +228,12 @@ void main() {
                 sleep(1);
                 sleep(1);
 
-                printf("nb data received % d \n",fossil_readblock( FOSSIL_COM, answer_Angle_Buff,nByteToRead ));
+                printf("nb data received % d \n",fossil_readblock( FOSSIL_COM, input_Buff,nByteToRead ));
                 printf("bytes received \n");
                 for(i=0;i<nByteToRead;i++)
-                		printf("%d ", answer_Angle_Buff[i]);
+                		{
+                     	printf("%d ", input_Buff[i]);
+                     }
                 printf("\n");
 
                 state=3;
@@ -227,7 +244,7 @@ void main() {
             	printf("state 3 : fill position in data AX12 \n");
                 //fill_data_AX12(data_AX12, sizeDataAX12, answer_Angle_Buff);
                 //end_rcvAngle=fill_data_AX12(data_AX12, sizeDataAX12, answer_Angle_Buff);
-                if(fill_data_AX12(data_AX12, sizeDataAX12, answer_Angle_Buff)==1)
+                if(fill_data_AX12(data_AX12, sizeDataAX12, input_Buff)==1)
                 {
                     state=4;
                     printf("receiving informations succed \n");
