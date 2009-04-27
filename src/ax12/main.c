@@ -6,10 +6,7 @@
  *
  * Sub-project : Beck main program
  *
- * Authors : Julien Peeters <julien.peeters@u-psud.fr>
- *			    Fabien Provost <fabien.provost@u-psud.fr>
- *			    Feng Xiong <feng.xiong@u-psud.fr>
- *           Yongchao Xu <yongchao.xu@u-psud.fr>
+ * Authors :
  *
  * Creation date : 06/04/2009
  */
@@ -69,257 +66,270 @@ void can_msg_lookup(void) {
 // -------------------------- ENTRY POINT -------------------------
 void main() {
 
+     // Other treatments...
+
 
 
 	//---déclaration des tab de données AX12 et CAN---
-	sDataAX12* data_AX12[size_dataAX12];
-	sDataAX12* data_CAN[size_dataCAN];
-	
-	//-----décl des var msg-------
-	can_event_msg_t* ptrmsg;
-	can_event_msg_t msg;
-	
-	//------var d'états
-   int state;
+    sDataAX12* data_AX12[sizeDataAX12];
+    sDataAX12* data_CAN[sizeDataCAN];
+
+    //----déclaration des buffers d'entrées et de sorties---
+    //static BYTE* request_Angle_Buff;
+    static BYTE* read_Angle_Buff;
+    static BYTE* set_Angle_Buff;
+   static BYTE* answer_Angle_Buff;
+    
+
+    //-----décl des var msg-------
+    static can_event_msg_t* ptrmsg;
+    static can_event_msg_t msg;
+
+    //-----angle value
+    static int angle_Value;
+
+    //------var d'états
+
+    static int state;
 
 
-	//------var interne
-	unsigned char ID;
-   int PA;
+    //------indicateur de Pilote auto----
+    static int PA;
+    //------var interne
+    static BYTE ID;
+    int i;
 
-   //*********
+    //-------indicateurs
 
-   int i;
-   unsigned char dMSB, dLSB;
+    //-------manuel
+    /*int end_sendIstru; //fin de transmission d'instruction AX12
+    int end_rcvAngle; //fin de reception de trames de statut AX12
+    int end_traitement;//fin de traitement des données AX12 (concat, remplir tab ..)
+    int end_transfer;//fin de détection de mise à jour de la table, transfer des données vers CAN*/
 
-   //******
-   unsigned char* buff;
-   unsigned char* ReadBuff;
-   unsigned int nByteToWrite;
-   unsigned int nByteToRead;
+    //---------automatique
 
-	//-------indicateurs
-	
-	//-------manuel
-	int end_sendIstru; //fin de transmission d'instruction AX12
-	int end_rcvAngle; //fin de reception de trames de statut AX12
-	int end_traitement;//fin de traitement des données AX12 (concat, remplir tab ..)
-	int end_transfer;//fin de détection de mise à jour de la table, transfer des données vers CAN
-	
-	//---------automatique
-	
-	int no_msg;//présence d'un msg sur le port can déstiné aux AX12
-	int end_rcv_msg;//fin de réception de toute la trame
-	int end_decode_msg;//fin du décodage du msg, création de trames instru AX12
-	int end_sendAngle;//fin de l'envoi de trame AX12 pour lire l'angle
-	int end_treat;//timer pour laisser à l'AX12 le temps de prendre en compte les valeurs
+ /*   int no_msg;//présence d'un msg sur le port can déstiné aux AX12
+    int end_rcv_msg;//fin de réception de toute la trame
+    int end_decode_msg;//fin du décodage du msg, création de trames instru AX12
+    int end_sendAngle;//fin de l'envoi de trame AX12 pour lire l'angle
+    int end_treat;//timer pour laisser à l'AX12 le temps de prendre en compte les valeurs*/
+
+   //------initialisations--------
+   state=1;
+   ID=13;
+   PA=0;
+   running=1;
 
 
-   state=0;
-   ID=1; //static en C ??????????????
-   PA=1;
-   //i=0;
-  	buff[0]=START;
-   buff[1]=START;
-   buff[2]=13;
-   buff[3]=7;//long allume LED
-   buff[4]=INST_WRITE;
-   buff[5]=30;
-   buff[6]=8;
-   buff[7]=3;
-   buff[8]=30;
-   buff[9]=0;
-   buff[10]=(unsigned char)(~(13+7+INST_WRITE+30+8+3+30+0));
-
-	BIOS_Set_Focus (FOCUS_APPLICATION) ;  
-
-	 /* buff[0]=START;
-   buff[1]=START;
-   buff[2]=13;
-   buff[3]=4;//long allume LED
-   buff[4]=INST_WRITE;
-   buff[5]=25;
-   buff[6]=1;
-   buff[7]=(unsigned char)(~(13+4+INST_WRITE+25+1));
-   */
-   nByteToWrite=11;
-   nByteToRead=6;
-
-
-
-	//can_init(CAN_MASK, CAN_ID, CAN_BAUDRATE_1M);
-
-   running = 1;
-
-   if(fossil_init ( FOSSIL_COM )!=0x1954)
-   	printf("failed opem COM1");
-   else
-   	printf("open COM1 succeed \n");
-
-   if(fossil_setbaud(FOSSIL_COM,57600,0,8,1)==-1)
-   	printf("illegal parameter\n");
-   else
-   	printf("bit field error = %d \n",fossil_setbaud(FOSSIL_COM,57600,0,8,1));
-
-   fossil_set_flowcontrol(FOSSIL_COM, FOSSIL_FLOWCTRL_OFF);
-   fossil_set_rs485 ( FOSSIL_COM, FOSSIL_RS485_LOWACTIVE);
-   fossil_set_rs485_txenable ( FOSSIL_COM, -1 );
-
-   fossil_purge_output( FOSSIL_COM);
-   fossil_purge_input( FOSSIL_COM);
-
-  //fossil_enable_transmitter ( FOSSIL_COM, FOS_ENABLE);
-
-  //pfe_enable_pio ( RTS0, 4 );
-  //fossil_force_rts ( FOSSIL_COM, RTS_LOW);
-	//fossil_force_rts ( FOSSIL_COM, RTS_HIGH  );
-
-  //fossil_send_break ( FOSSIL_COM, FOS_LONG_BREAK );
-
-   //pfe_enable_external_dma ( 2 );
-   //pfe_enable_pio ( RTS1, 5);
-   // hal_write_pio ( RTS1, 0 );
-
-   if(fossil_writeblock(FOSSIL_COM, buff,nByteToWrite)== nByteToWrite)
-   	printf("writeblock succed \n ");
-   else
-   	printf(" writeblock failed");
-
-   	RTX_Sleep_Time (3);
-     	//hal_write_pio ( RTS1, 1);
-      RTX_Sleep_Time ( 2 );
-
-
-
-     //printf(" %d \n ",RTX_Sleep_Time ( 1 ));
-     //fossil_force_rts ( FOSSIL_EXT, RTS_HIGH  );
-
-   /*if*/
-   printf("%d\n",fossil_readblock(FOSSIL_COM, ReadBuff,nByteToRead)) ;
-   //printf("%d\n",fossil_status_request ( FOSSIL_COM )) ;
-
-
-      	for(i=0;i<nByteToRead;i++)
-      		printf(" %d ",ReadBuff[i]);
-      //}
-   /*else
-   printf("waiting for receive\n");
+   //------init buffers---------
+   /*read_Angle_Buff[0]=START;
+	read_Angle_Buff[1]=START;
+	read_Angle_Buff[2]=ID;
+	read_Angle_Buff[3]=4;//2 param(msb &lsb angle) + ID + instructions
+	read_Angle_Buff[4]=INST_READ;
+	read_Angle_Buff[5]=P_GOAL_POSITION_L;
+	read_Angle_Buff[6]=2;//2 bytes MSB & LSB
+	read_Angle_Buff[7]=~ (ID+4+INST_READ+P_GOAL_POSITION_L+2);//On peut caster en unsigned char, a verifier la necessite
      */
 
 
+    // ne contient pas encore la partie Beck-Can
+
+    BIOS_Set_Focus (FOCUS_APPLICATION) ;
+
+    if(fossil_init ( FOSSIL_COM )!=0x1954)
+        printf(" open COM1 failed \n ");
+    else
+        printf("open COM1 succeed \n");
+
+    if(fossil_setbaud(FOSSIL_COM,57600,0,8,1)==-1)
+        printf("illegal parameter\n");
+    else
+        printf("bit field error = %d \n",fossil_setbaud(FOSSIL_COM,57600,0,8,1));
+
+    fossil_set_flowcontrol(FOSSIL_COM, FOSSIL_FLOWCTRL_OFF);
+    fossil_set_rs485 ( FOSSIL_COM, FOSSIL_RS485_LOWACTIVE);
+    fossil_set_rs485_txenable ( FOSSIL_COM, -1 );//-1 to select RTS
+
+    fossil_purge_output( FOSSIL_COM);
+    fossil_purge_input( FOSSIL_COM);
 
 
-   /*while(running) {
-      can_msg_lookup();
+   while(running) {
+      //can_msg_lookup();
 
-      // Other treatments...
+         switch(state){
+        /*case 0 :
+        {
+            init_AX12();
+            state=1;
 
+        }break;*/
 
+        case 1 :
+            {   printf("state 1 : get angle \n");
+                //ID=0;
+                if(PA==1)
+                {
+                    state=6;
+                    printf("automatic pilot enabled \n");
 
-	switch(state)
-   {
-		case 0 :
-		{
-			init_AX12();
-			state=1;
+                }
+                else
+                {
+                    //read_Angle(ID,read_Angle_Buff);
+                    //end_sendIstru=read_Angle(ID,read_Angle_Buff);
+                    //fossil_purge_output( FOSSIL_COM);
+                    if(read_Angle(FOSSIL_COM, ID,read_Angle_Buff, nByteToRead )==1)
+                    {
+                        state=2;
+                        printf("sending instructions succed \n");
+                        for(i=0;i<nByteToRead;i++)
+                        	{
+                           	printf("%d ",read_Angle_Buff[i]);
+                           }
+                        printf(" \n ");
 
-		}break;
+                    }
+                    else
+                    {
+                        state=1;
+                        printf("sending instructions failed \n");
 
-		case 1 :
-			{
-				//ID=0;
-				if(PA==1)
-					state=7;
-				else
-				{
-					remplir_tab(data_AX12, ID);
-					end_traitement=remplir_tab(data_AX12, ID);
-					printf("last data AX 12 = %d  %d", data_AX12[dern_remplie(data_AX12,size_dataAX12)]->ID,data_AX12[dern_remplie(data_AX12,size_dataAX12)]->angle);
-					if(end_traitement==1)
-						{
-                  	state=2;
-                  }
-					else
-               {
-						state=1;
-               }
-				}
-			}break;
+                    }
+                }
+            }break;
 
-		case 2:
-			{
-				transfer_data(data_AX12, data_CAN);
-				end_transfer=transfer_data(data_AX12, data_CAN);
-            printf("last data CAN = %d  %d", data_CAN[dern_remplie(data_CAN,size_dataAX12)]->ID,data_AX12[dern_remplie(data_CAN,size_dataAX12)]->angle);
-				if(end_transfer==1)
-					state=3;
-				else
-					state=2;
-
-			}break;
-
-      case 3:
-      	{
-         	create_msg_CAN(data_CAN,ptrmsg);
-            state=4;
-
-         }break;
-
-      case 4:
-      	{
-         	can_send(*ptrmsg);
-            state=5;
-         }
-
-		case 5:
-			{
-				ID++;
-				state=6;
-
-			}break;
-
-		case 6:
-			{
-				if(ID==3)
-				{
-					ID=0;
-				}
-				state=1;
-			}break;
-
-		case 7:
-			{
-         	if(PA=0)
+        case 2:
             {
-            	state=1;
-            }
-            else
+            	printf("state 2 : wait for receiving position \n");
+                //sleep(3);
+                //fossil_purge_input( FOSSIL_COM);
+                sleep(1);
+                sleep(1);
+                sleep(1);
+                sleep(1);
+                sleep(1);
+                sleep(1);
+
+                printf("nb data received % d \n",fossil_readblock( FOSSIL_COM, answer_Angle_Buff,nByteToRead ));
+                printf("bytes received \n");
+                for(i=0;i<nByteToRead;i++)
+                		printf("%d ", answer_Angle_Buff[i]);
+                printf("\n");
+
+                state=3;
+            } break;
+
+        case 3:
             {
-					can_recv(1,ptrmsg);
-					state=8;
+            	printf("state 3 : fill position in data AX12 \n");
+                //fill_data_AX12(data_AX12, sizeDataAX12, answer_Angle_Buff);
+                //end_rcvAngle=fill_data_AX12(data_AX12, sizeDataAX12, answer_Angle_Buff);
+                if(fill_data_AX12(data_AX12, sizeDataAX12, answer_Angle_Buff)==1)
+                {
+                    state=4;
+                    printf("receiving informations succed \n");
+                    printf("last data  : %d %d \n",data_AX12[dern_remplie(data_AX12, sizeDataAX12)]->ID,data_AX12[dern_remplie(data_AX12, sizeDataAX12)]->angle);
+                }
+                else
+                {
+                    state=3;
+                    printf("receiving informations failed \n");
+                }
+
+
+
+
+            }break;
+
+        case 4:
+            {
+            	printf(" state 4 :  detect update and fill data_can \n ");
+                transfer_data(data_AX12, data_CAN, sizeDataAX12, sizeDataCAN);
+                printf("end transfer \n");
+                state=5;
+            }break;
+
+        case 5:
+            {
+            	printf(" state 5 : create and send can msg \n");
+                create_msg_CAN(data_CAN, sizeDataCAN, msg );
+                can_send(msg);
+                state=6;
+
+            }break;
+
+        case 6:
+            {
+            	printf("state 6 : ID ++ \n");
+                //ID++;
+                state=7;
+
+            }break;
+
+        case 7:
+            {
+            	printf("state 7 : test if ID = last ID_AX12 and initialize ID \n");
+                if(ID==3)
+                {
+                    ID=1;
+                }
+                state=1;
+            }break;
+
+        case 8:
+            {
+            	printf(" state 8 : automatic pilot enabled  receiving can msg \n ");
+                if(PA==0)
+                {
+                    state=1;
+                }
+                can_recv(1,ptrmsg);
+                state=9;
+            }break;
+
+        case 9://waiting for can message
+            {
+             printf(" state 9 : waiting for can msg \n");
+                //------
+                state=10;
+            } break;
+
+        case 10://receiving can message
+            {
+                //--can receive message function
+                printf(" state 10 : receiving can msg \n");
+                can_recv(1, ptrmsg);
+                state=11;
+            } break;
+
+        case 11:
+            {
+            	printf(" state 11 : decoding can msg and setting AX12 positions \n");
+                /*decode_Msg_CAN(ptrmsg,angle_Value, set_Angle_Buff);
+                end_decode_msg=	decode_Msg_CAN(ptrmsg,angle_Value, set_Angle_Buff);*/
+
+                if(decode_Msg_CAN(ptrmsg,angle_Value, set_Angle_Buff)==1)
+                    state=11;
+                else
+                    state=12;
+
+            }break;
+
+        case 12:
+            {
+            	printf(" state 12 : tempo \n");
+                sleep(3);
+                sleep(2);
+                //may not be sufficient
+                state=8;
             }
-			}break;
 
-		case 8:
-			{
-				decode_Msg_CAN(ptrmsg);
-				end_decode_msg = decode_Msg_CAN(ptrmsg);
+        default : state=0;
 
-				if(end_decode_msg==1)
-					state=8;
-				else
-					state=7;
-
-			}break;
-
-		default :
-      {
-      	state=0;
-      }
-
-
-	}
-
+        }
 
 
 
@@ -328,8 +338,8 @@ void main() {
 
 
 
-   can_destroy();
-   } */
+   //can_destroy();
+   }
 
 // ------------------------- END OF ENTRY POINT --------------------
 }

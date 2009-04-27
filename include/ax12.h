@@ -1,4 +1,5 @@
 #include <can.h>
+
 //------Control table-------
 #define P_ID 3
 #define P_BAUD_RATE 4
@@ -39,16 +40,21 @@
 #define INST_RESET 0x06
 #define INST_SINCWRITE 0x83
 
+//-----default value
+#define SPEED_VALUE_LSB 0;
+#define SPEED_VALUE_MSB 2;
+
+
 
 //--------comm------
 
 #define ID_BROADCAST 0xFE
 
 #define START 0xFF
-#define ID_MASK 0xFF000000
+//#define ID_MASK 0xFF000000
 #define POS_MSB_MASK 0xFF00
 #define POS_LSB_MASK 0x00FF
-#define TORQUE_MASK 0x000000FF
+//#define TORQUE_MASK 0x000000FF
 
 //---------data_length-----
 
@@ -57,8 +63,8 @@
 
 //---------taille data---
 
-#define size_dataAX12 12
-#define size_dataCAN 12 //à définir
+#define sizeDataAX12 12
+#define sizeDataCAN 12 //à définir
 
 //---------ID AX12------
 #define ID_AX1 0x01//GAZ1
@@ -72,7 +78,23 @@
 #define ID_GAZ2 0x0020
 #define ID_TRIM 0x0040
 
+//--------Data count--------
+#define nByteToWrite_Set 11
+//#define nByteToWrite_Read 8
+#define nByteToRead 8
+
+//-------fs_ax value---------
+
+#define power_min -4096
+#define power_max 16384
+#define angle_Max 300
+#define angle_max_bin 0x03FF
+#define angle_min_bin 0x0000
+#define MSB_MASK 0xFF00
+#define LSB_MASK 0x00FF
+
 //--------Structure de données---------
+typedef unsigned char BYTE;
 
 typedef struct 
 {
@@ -83,43 +105,31 @@ typedef struct
 
 //-------FONCTIONS-------
 
-void init_AX12();
+//void initAX12();
 
-int set_MSB_Angle(unsigned char ID, unsigned char MSB_Angle);
+int set_Angle(int port, BYTE ID, int angle, BYTE* set_Angle_Buff, int nb_byte); //angle from 0 to 1023, ID 1 to 3
 
-int set_LSB_Angle(unsigned char ID, unsigned char LSB_Angle);
+int read_Angle(int port, BYTE ID, BYTE* read_Angle_Buff, int nb_byte); // ID 1 to 3
 
-int read_MSB_Angle(unsigned char ID);
-
-int read_LSB_Angle(unsigned char ID);
-
-int init_couple_max_MSB(unsigned char ID, unsigned char couple_MSB);
-
-int init_couple_max_LSB(unsigned char ID, unsigned char couple_LSB);
-
-int enable_couple(unsigned char ID);
-
-int read_MSB_charge(unsigned char ID);
-
-int read_LSB_charge(unsigned char ID);
-
-unsigned char get_MSB_Angle(unsigned char ID);
-
-unsigned char get_LSB_Angle(unsigned char ID);
-
-unsigned int concat_Angle(unsigned char ID);
-
-int remplir_tab(sDataAX12* data_AX12[], unsigned char ID);
+int fill_data_AX12(sDataAX12* dAX12[], int size_dAX12, BYTE* answer_Angle_Buff);
 
 int dern_remplie(sDataAX12* data[], int taille);
 
-void manage_data(sDataAX12* data[], int taille );
+void manage_data(sDataAX12* data[], int size );
 
-int transfer_data(sDataAX12* dataAX12[], sDataAX12* dataCAN[]);
+int transfer_data(sDataAX12* dataAX12[], sDataAX12* dataCAN[], int size_dataAX12, int size_dataCAN);
 
-int decode_Msg_CAN(can_event_msg_t* ptr_msg);
+int decode_Msg_CAN(can_event_msg_t* ptr_msg, int angleValue, BYTE* set_Angle_Buff);
 
-int create_msg_CAN(sDataAX12* data_CAN[], can_event_msg_t* ptrmsg );
+int create_msg_CAN(sDataAX12* data_CAN[], int size_dataCAN, can_event_msg_t msg);
+
+
+
+
+
+
+
+
 
 
 
