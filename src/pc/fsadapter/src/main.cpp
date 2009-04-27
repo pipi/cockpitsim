@@ -15,6 +15,7 @@ int main() {
 		CFsAdapter oAdapter(oConfig);
 
 		oAdapter.addFamily(new CAutoPilotFamily(0x8000));
+		oAdapter.mainLoop();
 	} catch(std::exception& ex) {
 #ifdef DEBUG
 		std::cerr << ">>> Exception raised <<<" << std::endl << ex.what()

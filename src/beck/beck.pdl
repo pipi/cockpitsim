@@ -287,7 +287,7 @@
     { Property = TargetInfo
       { Target = ExeApplication }
       { Platform = ExtendedMode }
-      { Libs = NOEH | RTL }
+      { Libs = NOEH | RTL | Emulation }
       { Image = Large }
     }
     { Property = "PdkEmulator"
@@ -321,22 +321,6 @@
       }
     }
   }
-  { Node = "c0lx.obj"
-    { NodeType = ".obj" }
-    { Id = 4 }
-  }
-  { Node = "noehl.lib"
-    { NodeType = ".lib" }
-    { Id = 5 }
-  }
-  { Node = "clibl.lib"
-    { NodeType = ".lib" }
-    { Id = 6 }
-  }
-  { Node = "cl.lib"
-    { NodeType = ".lib" }
-    { Id = 7 }
-  }
   { Node = "main.c"
     { NodeType = ".c" }
     { Id = 9 }
@@ -353,6 +337,30 @@
     { NodeType = ".c" }
     { Id = 12 }
   }
+  { Node = "c0lx.obj"
+    { NodeType = ".obj" }
+    { Id = 5 }
+  }
+  { Node = "noehl.lib"
+    { NodeType = ".lib" }
+    { Id = 6 }
+  }
+  { Node = "emu.lib"
+    { NodeType = ".lib" }
+    { Id = 7 }
+  }
+  { Node = "mathl.lib"
+    { NodeType = ".lib" }
+    { Id = 3 }
+  }
+  { Node = "clibl.lib"
+    { NodeType = ".lib" }
+    { Id = 11 }
+  }
+  { Node = "cl.lib"
+    { NodeType = ".lib" }
+    { Id = 13 }
+  }
 }
 { SubSystem = Tree
     { Node = 1 ; beck.pdl [.pdl]
@@ -362,10 +370,13 @@
           { NodeFlag = BuildDepends | FatFile | UserGen }
           { Builder = "LinkTarget" }
           { Overrides = "ASFN:beck.exe0"
-            { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT; -I../../INCLUDE;$ENV(PCROOT)\INCLUDE;$ENV(PCROOT)\INCLUDE\BECK" }
-            { Link = "-Tee -L../../LIB;$ENV(PCROOT)\LIB;$ENV(PCROOT)\LIB\BECK" }
+            { CppCompile = "-I../../INCLUDE;$ENV(PCROOT)\INCLUDE;$ENV(PCROOT)\INCLUDE\BECK -ml -f -Y -x- -xd- -DSC123;$INHERIT;" }
+            { Link = "-L../../LIB;$ENV(PCROOT)\LIB;$ENV(PCROOT)\LIB\BECK -Tee" }
             { Assemble = "-dSC123;$INHERIT;" }
           }
+            { Node = 5 ; c0lx.obj [.obj]
+              { NodeFlag = BuildDepends | FatFile | Skeleton }
+            }
             { Node = 12 ; ..\..\lib\can-i2c.c [.c]
               { NodeFlag = BuildDepends | FatFile | UserGen }
               { Builder = "CCompile" }
@@ -382,16 +393,19 @@
               { NodeFlag = BuildDepends | FatFile | UserGen }
               { Builder = "CCompile" }
             }
-            { Node = 4 ; c0lx.obj [.obj]
+            { Node = 6 ; noehl.lib [.lib]
               { NodeFlag = BuildDepends | FatFile | Skeleton }
             }
-            { Node = 5 ; noehl.lib [.lib]
+            { Node = 7 ; emu.lib [.lib]
               { NodeFlag = BuildDepends | FatFile | Skeleton }
             }
-            { Node = 6 ; clibl.lib [.lib]
+            { Node = 3 ; mathl.lib [.lib]
               { NodeFlag = BuildDepends | FatFile | Skeleton }
             }
-            { Node = 7 ; cl.lib [.lib]
+            { Node = 11 ; clibl.lib [.lib]
+              { NodeFlag = BuildDepends | FatFile | Skeleton }
+            }
+            { Node = 13 ; cl.lib [.lib]
               { NodeFlag = BuildDepends | FatFile | Skeleton }
             }
         }

@@ -9,4 +9,8 @@
 *.pds
 *.pm2
 *.ncb
-doc
+src/pc/*/Debug
+doc/manual/*.aux
+doc/manual/*.log
+doc/manual/*.toc
+doc/manual/*.pdf

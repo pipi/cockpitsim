@@ -174,10 +174,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\Families.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\IPCuser.c"
 				>
 			</File>
@@ -221,6 +217,10 @@
 			</File>
 			<File
 				RelativePath=".\src\COffsetAccessor.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Families.h"
 				>
 			</File>
 			<File
