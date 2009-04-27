@@ -40,6 +40,8 @@ i2c_can_trans_t translations_fpga[] = {
    { 0x8020, { { 0xc8, 4 } }, 1, { 0x00, 0x00, 0x00, 0x00 }, 4 }
 };
 
+int TAB[16][16];
+
 static unsigned long ALTITUDE;
 // ---------------- END OF I2C NODES DATA TRANSLATIONS ------------
 
@@ -126,16 +128,28 @@ void can_msg_lookup(void) {
 //-------------------- END OF CAN MESSAGE HANDLERS ----------------
 
 // -------------------------- ENTRY POINT -------------------------
+char buffer[8] = {4,0,0,0,0,0,0,0};
 void main() {
    unsigned char scan, ret;
+
    char plop[8];
    char plop2[8];
    char plop3[8];
    char plop4[8];
    char pouet[2];
    char ffxx[2]={0xff,0xff};
-   int data0,data1,data;
+   int data0,data1,data,test;
    can_event_msg_t msg;
+   int i,j,k;
+   unsigned char buffer[5];
+
+   k=1;
+   for(i=0;i<16;i++){
+		for(j=0;j<16;j++){
+      	TAB[i][j]=k;
+         k++;
+      }
+   }
 
 	if(can_init(CAN_MASK, CAN_ID, CAN_BAUDRATE_1M) == 0) {
     	printf("CAN BUS init OK\n");
@@ -151,14 +165,63 @@ void main() {
       exit(1);
    }
 
-   running = 1;
+   running = 0;
 
    while(running){
 
+   	i2c_write(0xC8,buffer,1);
+      getchar();
+      test=i2c_read(0xC9,plop,4);
+		printf("0x%04lx \n",*(unsigned long*)plop);//, *(unsigned long*) (plop +2));
+      getchar();
 
 
 
+   }
 
+   while(1){
+
+  /* buffer[0]=0x00;
+   buffer[1]=0xFF;
+   buffer[2]=0xEF;
+   buffer[3]=0xFF;
+   buffer[4]=0xFF;
+   i2c_write(0xC8,buffer,5);
+   //buffer[0]=0x00;
+   test=i2c_write(0xC8, buffer,1);
+   getchar();
+   test=i2c_read(0xc9,buffer,2);
+   printf("  all 1---  ligne=  0x%04x",*(unsigned int*)buffer);
+
+   buffer[0]=0x02;
+   test=i2c_write(0xC8, buffer,1);
+   getchar();
+   test=i2c_read(0xc9,buffer,2);
+   printf("  all 1---  collone=  0x%04x\n\n\n",*(unsigned int*)buffer);
+       getchar();
+    buffer[0]=0x00;
+   buffer[1]=0x00;
+   buffer[2]=0x00;
+   buffer[3]=0x00;
+   buffer[4]=0x00;
+   i2c_write(0xC8,buffer,5);
+   //buffer[0]=0x00;
+   test=i2c_write(0xC8, buffer,1);
+       getchar() ;
+   test=i2c_read(0xc9,buffer,2);
+   printf(" all 0 ---  ligne=  0x%04x",*(unsigned int*)buffer);
+
+   buffer[0]=0x02;        
+   test=i2c_write(0xC8, buffer,1);
+   getchar();
+   test=i2c_read(0xc9,buffer,2);
+   getchar();
+   printf("  all 0---  collone=  0x%04x\n",*(unsigned int*)buffer); */
+
+       test=keyboard_decode(0xC9,TAB);
+    //   if(test!=0){
+        //	printf("\ntab=%d\n",test);
+      // }
    }
 
 }

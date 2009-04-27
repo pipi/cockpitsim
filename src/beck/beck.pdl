@@ -359,7 +359,7 @@
       { NodeFlag = BuildDepends }
       { StyleSheet = "Default Project Options" }
         { Node = 2 ; beck.exe [.exe]
-          { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
+          { NodeFlag = BuildDepends | FatFile | UserGen }
           { Builder = "LinkTarget" }
           { Overrides = "ASFN:beck.exe0"
             { CppCompile = "-ml -f- -Y -x- -xd- -DSC123;$INHERIT; -I../../INCLUDE;$ENV(PCROOT)\INCLUDE;$ENV(PCROOT)\INCLUDE\BECK" }
@@ -367,7 +367,7 @@
             { Assemble = "-dSC123;$INHERIT;" }
           }
             { Node = 12 ; ..\..\lib\can-i2c.c [.c]
-              { NodeFlag = BuildDepends | FatFile | OutOfDate | UserGen }
+              { NodeFlag = BuildDepends | FatFile | UserGen }
               { Builder = "CCompile" }
             }
             { Node = 10 ; ..\..\lib\i2c\i2c.c [.c]
