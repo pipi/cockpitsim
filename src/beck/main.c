@@ -44,7 +44,7 @@ i2c_can_trans_t translations_fpga[] = {
    { 0x8020, { { 0xc8, 2 } }, 1, { 0x00, 0x00}, 2 }
 };
 
-unsigned int TAB_Keyboard[8][9];
+int TAB[16][16];
 
 // ---------------- END OF I2C NODES DATA TRANSLATIONS ------------
 
@@ -197,26 +197,29 @@ void can_msg_lookup(void) {
 //-------------------- END OF CAN MESSAGE HANDLERS ----------------
 
 // -------------------------- ENTRY POINT -------------------------
-char far  plop[8]={0x02,0,0,0,0,0,0,0};
-char plop2[8];
 
-
+char buffer[8] = {4,0,0,0,0,0,0,0};
 void main() {
    unsigned char scan, ret;
-   int i;
-   int j;
-   int k;
-   int test;
+
+   char plop[8];
+   char plop2[8];
+   char plop3[8];
+   char plop4[8];
+   char pouet[2];
+   char ffxx[2]={0xff,0xff};
+   int data0,data1,data,test;
+   can_event_msg_t msg;
+   int i,j,k;
+   unsigned char buffer[5];
 
    k=1;
-
-   for(i=0;i<9;i++){
-   	for(j=0;j<8;j++){
-        	TAB_Keyboard[j][i]=k;
-         k=k+1;
+   for(i=0;i<16;i++){
+		for(j=0;j<16;j++){
+      	TAB[i][j]=k;
+         k++;
       }
    }
-
 
 	if(can_init(CAN_MASK, CAN_ID, CAN_BAUDRATE_1M) == 0) {
     	printf("CAN BUS init OK\n");
@@ -234,21 +237,49 @@ void main() {
    RTX_Install_Timer(&timer);
    RTX_Start_Timer(timerID);
 
-   running = 1;
+   while(1){
 
-   while(running){
+  /* buffer[0]=0x00;
+   buffer[1]=0xFF;
+   buffer[2]=0xEF;
+   buffer[3]=0xFF;
+   buffer[4]=0xFF;
+   i2c_write(0xC8,buffer,5);
+   //buffer[0]=0x00;
+   test=i2c_write(0xC8, buffer,1);
+   getchar();
+   test=i2c_read(0xc9,buffer,2);
+   printf("  all 1---  ligne=  0x%04x",*(unsigned int*)buffer);
 
-     //receive the can msg for updating the altitude value
-     can_msg_lookup();
+   buffer[0]=0x02;
+   test=i2c_write(0xC8, buffer,1);
+   getchar();
+   test=i2c_read(0xc9,buffer,2);
+   printf("  all 1---  collone=  0x%04x\n\n\n",*(unsigned int*)buffer);
+       getchar();
+    buffer[0]=0x00;
+   buffer[1]=0x00;
+   buffer[2]=0x00;
+   buffer[3]=0x00;
+   buffer[4]=0x00;
+   i2c_write(0xC8,buffer,5);
+   //buffer[0]=0x00;
+   test=i2c_write(0xC8, buffer,1);
+       getchar() ;
+   test=i2c_read(0xc9,buffer,2);
+   printf(" all 0 ---  ligne=  0x%04x",*(unsigned int*)buffer);
 
-     //send the can msg if there are changes of device
+   buffer[0]=0x02;        
+   test=i2c_write(0xC8, buffer,1);
+   getchar();
+   test=i2c_read(0xc9,buffer,2);
+   getchar();
+   printf("  all 0---  collone=  0x%04x\n",*(unsigned int*)buffer); */
 
-     if(flag_timer_50ms==1){
-     		flag_timer_50ms=0;
-         //printf("temps");
-     	 	altitude_send_changes(&translations_fpga[0], &ALTITUDE);
-
-     }
+       test=keyboard_decode(0xC9,TAB);
+    //   if(test!=0){
+        //	printf("\ntab=%d\n",test);
+      // }
    }
 
 

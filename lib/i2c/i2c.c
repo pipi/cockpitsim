@@ -21,6 +21,7 @@ int i2c_write(unsigned char slave, const char far *buffer, int length)
 	return (ret < 0 ? -1 : 0);
 }
 
+
 int i2c_read(unsigned char slave, char far *buffer, int length)
 {
    int ret;

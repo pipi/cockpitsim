@@ -170,7 +170,7 @@ int update_values(can_event_msg_t msg,
    return ret;
 }
 
-/*int keyboard_decode(unsigned char slave,unsigned short tab[8][9]){
+int keyboard_decode(unsigned char slave,int tab[16][16]){
 
    unsigned char replig[2];
    unsigned char repcol[2];
@@ -180,59 +180,73 @@ int update_values(can_event_msg_t msg,
    unsigned int X;
    unsigned int Y;
    unsigned int cmpt;
-   int i;
+   int i,j;
 
-   regX=0;
-   regY=0x80FF;
+   regX=0x0000;
+   regY=0xFFFF;
+	printf("\n\n\n-------------------------\n");
 
    //column test XY=2 ==> 9bit
    keyboard_detection(slave,regX,regY,repcol,2);
 
-   if (repcol[0]==0xFF && (repcol[1]&0x80)==0x80){
+   if ((repcol[0]==0xFF) && (repcol[1]==0xFF)){
       return 0;
    }
 
+
+
    else{
-      printf("Touch detection");
+      //printf("Touch detection\n");
+      printf("column = 0x%04x\n",*(unsigned int*)repcol);
       regX=0xFFFF;
-      regY=((unsigned int)repcol[1]<<8)&0xFF00;
+      regY=((((unsigned int)repcol[1]))&0x00FF)<<8;
       regY=(unsigned int)repcol[0]|regY;
+
+       //printf("regY = 0x%04x\n",regY);
 
       //lines test XY=1 ==> 8bit
       keyboard_detection(slave,regX,regY,replig,1);
    }
+    printf("line = 0x%04x\n",*(unsigned int*)replig);
 
    cmpt=0;
    //for matrice 9x8
-   for(i=0;i<8;i++){
-      if(((repcol[0]>>i)&0x01==0)){
-         Y=i;
-         cmpt=cmpt+1;
+   Y=0;
+   X=0;
+   for(j=0;j<2;j++){
+      for(i=0;i<8;i++){
+         if(((repcol[j])&(0x01<<i)==0)){
+
+            Y=i;
+            cmpt=cmpt+1;
+         }
       }
    }
-   if((repcol[1]>>7)&0x01==0){
-      Y=8;
-      cmpt=cmpt+1;
-   }
-   if(cmpt>1){
-      printf("Matrice detection error\n");
+
+   if(cmpt!=1){
+      printf("Matrice detection error COLONNE cmpt=%d\n",cmpt);
       return -1;
    }
 
 
    cmpt=0;
    //for matrice 9x8
-   for(i=0;i<8;i++){
-      if(((replig[0]>>i)&0x01==0)){
-         X=i;
-         cmpt=cmpt+1;
+   for(j=0;j<2;j++){
+      for(i=0;i<8;i++){
+         if(((replig[j])&(0x01<<i)==0)){
+            X=i;
+            cmpt=cmpt+1;
+         }
       }
    }
-   if(cmpt>1){
-      printf("Matrice detection error\n");
+   if(cmpt!=1){
+      printf("Matrice detection error LIGNE   cmpt=%d\n",cmpt);
       return -1;
    }
 
+   printf("value=%d\nX=%d Y=%d\n",tab[X][Y],X,Y);//sgy
+
+   printf("-------------------------\n\n\n");
 	return tab[X][Y];
 }
 
@@ -298,44 +312,43 @@ int keyboard_decode(unsigned char slave, unsigned int tab[8][9])
    unsigned int cmpt=0;
    int i;
 
-   keyboard_detection(slave, &regX, &regY);
-   if(regX&0xFF00==0xFF00){
-   	return 0;
-   }
+   unsigned char buffer[5];
+   int test;
+
+   buffer[0]= 0x00;
+   buffer[1]= (char)(regx)&0xFF;
+   buffer[2]=(char)(regx>>8)&0xFF;
+   buffer[3]=(char)(regy)&0xFF;
+   buffer[4]=(char)(regy>>8)&0xFF;
 
 
-   printf("column value : 0x%04x\n",regY);
-   printf("line value : 0x%04x\n",regX);
+   printf("question =  0x%04x 0x%04x\n",*(unsigned int*)(buffer+1),*(unsigned int*)(buffer+3));
+   test = i2c_write(slave & 0xFE,buffer,5);
+  // scanf("%d",&test);
+   //if(XY==1){
+   	buffer[0]=0x00;
+      test=i2c_write(slave & 0xFE, buffer,1);
 
+  // }
+   /*else{
+   	buffer[0]=0x00;
+      test=i2c_write(slave & 0xFE, buffer,1);
+   }*/
+   //scanf("%d",&test);
+   //getchar();
+   test=i2c_read(slave | 0x01,buffer,4);
+   printf("reponse =  0x%04x 0x%04x\n",*(unsigned int*)(buffer),*(unsigned int*)(buffer+2));
 
-   for(i=0;i<9;i++){
-      if(((regY)&(0x01<<i)==0)){
-         Y=i;
-         cmpt=cmpt+1;
-      }
+   if(XY==1){
+   	rep[0]=buffer[0];
+      rep[1]=buffer[1];
    }
-   if(cmpt>1){
-      printf("Matrice detection error\n");
-      return -1;
+   else{
+   	rep[0]=buffer[2];
+      rep[1]=buffer[3];
+
    }
-   printf("Y=%d ",Y);
-   cmpt=0;
-   //for matrice 9x8
-   for(i=0;i<8;i++){
-      if(((regX)&(0x01<<i)==0)){
-         X=i;
-         cmpt=cmpt+1;
-      }
-   }
-   if(cmpt>1){
-      printf("Matrice detection error\n");
-      return -1;
-   }
-   printf("X=%d\n",X);
-	return tab[X][Y];
+
+   return 0;
+
 }
-
-
-
-
-
