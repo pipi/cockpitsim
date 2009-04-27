@@ -18,7 +18,16 @@ entre la partie physique et la partie logicielle. Outre la gestion des données v
 notre logiciel, FSAdapter, a également la charge de gérer les messages qui transitent sur
 le bus CAN, en réception ainsi qu'en émission.
 
-Sur base de cette architecture, illustre en \ref{fig:archi_fsadapter}, nous devions mettre
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/archi_fsadapter}
+  }
+  \caption{Architecture de FSAdapter}
+  \label{fig:archi_fsadapter}
+\end{figure}
+
+Sur base de cette architecture, illustrée en figure \ref{fig:archi_fsadapter}, nous devions mettre
 en place les points suivants :
 \begin{enumerate}
   \item Offrir un accès facile et sûr aux données du modèle aronautique via FSUIPC.
