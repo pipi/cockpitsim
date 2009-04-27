@@ -46,7 +46,7 @@ relativement hétérognes sur l'ensemble du tableau.}. Par la suite, et sur les co
 notre tuteur, nous sommes passés à une solution en C. Cependant, nous nous sommes rapidement aperçus
 que cette solution engendrerait beaucoup de possibilités d'erreurs et de bogues pour des
 raisons que nous n'aborderons pas ici. Il a donc été fait le choix de revenir à la solution initiale,
- savoir écrire notre logiciel en C++.
+à savoir écrire notre logiciel en C++.
 
 Pour cela, Julien Peeters a été affecté en renfort à l'équipe initiale, composée au départ d'Alexandra 
 Starynkevitch et de Zhibin Yin.
@@ -54,3 +54,6 @@ Starynkevitch et de Zhibin Yin.
 En dehors du choix du langage de programmation qui allait déterminer l'orientation majeure de cette
 partie du projet, une contrainte importante a été mise en évidence: le grand nombre des données
 du modèle accessibles au travers de FSUIPC.
+
+\subsection{cahier des charges du logiciel}
+Comme nous l'avons précisé précédemment, l'objectif de cette partie est de relier Flight Simulator X à notre simulateur. Plus précisément, nous voulions créer une variable pour chaque boutons du cockpit (par exemple, une variable pour un switch), celle-ci sera relié aux données disponible sur FSadapter par l'intermédiaire du logiciel. Une fois toutes les variables créer, il fallait définir les trames à envoyer à travers le bus CAN. L'idée est de déterminer précisément .
