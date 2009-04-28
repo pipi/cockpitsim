@@ -32,9 +32,11 @@ disponibles pour connaitre le nombre de boutons, diodes, commutateurs position e
 interfacer. Pour faciliter les choses, nous avons choisi de regrouper sur les circuits PCF les boutons poussoirs
 entre eux, les diodes également et de la même manière les commutateurs positions. De cette manière nous utilisons
 actuellement 6 circuits PCF pour l'ensemble de ce bloc. Ce dernier est composcomme ceci :
--	32 diodes implantées sur 2 PCF8575
--	25 boutons poussoirs pour 2 PCF8575
--	Nyanya commutateurs positions pour les deux derniers PCF8575 utilisés.
+\begin{itemize}
+  \item 32 diodes implantées sur 2 PCF8575
+  \item 25 boutons poussoirs pour 2 PCF8575
+  \item Nyanya commutateurs positions pour les deux derniers PCF8575 utilisés.
+\end{itemize}
 Cette disposition a étdécidée avec le groupe BECK afin de faciliter la lecture et l'écriture sur les PCF. 
 En effet, de cette manière les PCF sont soit en lecture (boutons poussoirs et commutateurs positions) ou bien en écriture (diodes). Nous avons également décidde ne brancher que 32 diodes sur les 33 pour des facilités de 
 routage et éviter d'utiliser un circuit supplémentaire pour une seule sortie sur les seize disponibles. De plus 
@@ -48,35 +50,36 @@ ces derniers n'ont que 3 bits modifiables dans leur adresse ce qui limite le nom
 Néanmoins même dans ces conditions, le front panel et la console centrale peuvent voir leurs boutons, 
 commutateurs et diodes interfacées sur les PCF8575.
 
-Au niveau du fonctionnement des PCF, il a étdécidde brancher les diodes en pull-up. De cette manière, 
-il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côt pour les boutons 
-poussoirs et les commutateurs positions, l'appui sur une touche ou le contact effectupour les commutateurs
-correspondra un niveau logique 0. Nous relierons donc l'ensemble des commutateurs et boutons poussoirs ¨¤ la masse.
+Au niveau du fonctionnement des PCF, il a été décidé brancher les diodes en pull-up. De cette manière, 
+il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côté, les boutons 
+poussoirs et commutateurs positions seront fermés pour un niveau 0 dominant constaté sur les PCF.Nous relierons
+donc l'ensemble des commutateurs et boutons poussoirs à la masse.
 
-Au niveau des afficheurs,  c'est l'afficheur de 7 segments qui est adopt¨¦. Comme tous les affichages des param¨¨tres
-d'avion ont les m¨ºmes fonctionnements. Donc ?a suffit de tester l'affichage pour un param¨¨tre. En prenant en compte 
-qu'on a r¨¦ussi une cha?ne compl¨¨te pour l'altitude en cas d'autopilote. On a test¨¦ l'affichage d'altitude.
+Au niveau des afficheurs,  nous avons adopté l'afficheur de 7 segments. Afin de valider ce bloc fonctionnel,
+nous n'avons eu à afficher une seule valeur car tous les afficheurs du cockpit fonctionnent de la même manière.
+Donc ?a suffit de tester l'affichage pour un paramètre. En prenant en compte 
+qu'on a réussi une chaine complète pour l'altitude en cas d'autopilote. On a testé l'affichage d'altitude.
 
-Une carte avec interface I2C ayant 4 afficheurs de 7 segments  est ¨¤ notre disposition. C'est SAA1064 qui est int¨¦gr¨¦ 
-dans cette carte. SAA1064 a 2 bits modifiables dans leurs adresses ce qui limite le nombre des cartes ¨¤ 4 sur chaque 
-bus I2C. ?a pose des  probl¨¨mes si on veut afficher tous les param¨¨tres. Mais comme il n y a pas d'autres afficheurs 
-qui sont ¨¤ la disposition et pour simplifier le test. On n'a pas d'autres choix.  Mais l'avantage de SAA1064 est la 
-possibilit¨¦ de changer l'intensit¨¦ d'affichage.
+Une carte avec interface I2C ayant 4 afficheurs de 7 segments  est à notre disposition. C'est SAA1064 qui est intégré
+dans cette carte. SAA1064 a 2 bits modifiables dans leurs adresses ce qui limite le nombre des cartes à 4 sur chaque 
+bus I2C. Cela pose des  problèmes si on veut afficher tous les paramètres. Mais comme il n y a pas d'autres afficheurs 
+qui sont à la disposition et pour simplifier le test. On n'a pas d'autres choix.  Mais l'avantage de SAA1064 est la 
+possibilité de changer l'intensité d'affichage.
 
-On a programm¨¦ un compteur de 0 ¨¤ 9999 pour tester l'affichage d'altitude. Elle a fonctionn¨¦ correctement.
+On a programmé un compteur de 0 à 9999 pour tester l'affichage d'altitude. Elle a fonctionné correctement.
 
-Du cot¨¦ de BECK, il a ¨¦t¨¦ demand¨¦ de r¨¦aliser la d¨¦tection d'appui sur une touche ou du  changement de position de 
-commutateurs ¨¤ position et aussi la actualisation d'affichage. Pour la premi¨¨re partie, c'est-¨¤-dire la d¨¦tection de 
-changement des donn¨¦es de PCF. Il suffit de lire les donn¨¦es de PCF via bus I2C et les compar¨¦ avec les donn¨¦es 
-anciennes. Si un changement est d¨¦tect¨¦, les donn¨¦es de PCF seront remplac¨¦es par ces nouveaux. Le BECK va envoyer un 
-message CAN correspondant comportant  les nouveaux ¨¦tats de touche et les positions actuelles de commutateurs ¨¤ PC. 
-Au niveau d'actualisation d'affichage. Chaque fois un message CAN visant ¨¤ modifier l'affichage arrive, le BECK le 
-traiter et envoyer les donn¨¦es contenues dans le message CAN ¨¤ afficheur correspondant.
+Du coté du BECK, il a été demandé de réaliser la détection d'appui sur une touche ou du  changement de position de 
+commutateurs à position et aussi la actualisation d'affichage. Pour la première partie, c'est à dire la détection de 
+changement des données de PCF. Il suffit de lire les données de PCF via bus I2C et les comparer avec les données 
+anciennes. Si un changement est détecté, les données de PCF seront remplacées par ces nouveaux. Le BECK va envoyer un 
+message CAN correspondant comportant  les nouveaux états de touche et les positions actuelles de commutateurs au PC. 
+Au niveau d'actualisation d'affichage. Chaque fois un message CAN visant a modifier l'affichage arrive, le BECK le 
+traite et envoie les données contenues dans le message CAN à l'afficheur correspondant.
 
-Etant donn¨¦ que la d¨¦tection d'appui sur une touche et changement de position de commutateurs dure beaucoup plus long 
-que  actualisation d'affichage, un TIMER est utilis¨¦ pour que le message CAN re?u ne soit pas perdu en sachant que le 
-pile de BECK ¨¤ enregistrer le message est limit¨¦. De plus, on peut s'assurer que l'actualisation d'affichage soit 
-trait¨¦e ¨¤ temps. L'automate se repr¨¦sente en figure \ref{fig:Automate_PCF}
+Etant donné que la détection d'appui sur une touche et changement de position de commutateurs dure beaucoup plus long 
+que  actualisation d'affichage, un TIMER est utilisé pour que le message CAN reçu ne soit pas perdu en sachant que le 
+pile de BECK a enregistré le message est limité. De plus, on peut s'assurer que l'actualisation d'affichage soit 
+traitée à temps. L'automate se représente en figure \ref{fig:Automate_PCF}
 
 \begin{figure}[htpb]
   \centering
@@ -87,17 +90,17 @@ trait¨¦e ¨¤ temps. L'automate se repr¨¦sente en figure \ref{fig:Automate_PCF}
   \label{fig:Automate_PCF}
 \end{figure}
 
-Comme un appui sur une touche dure quelque 100 ms, donc un TIMER de 50 ms est raisonnable. Tout l'appui peut ¨ºtre 
-d¨¦tect¨¦.  Pendant le test, on a utilis¨¦ un PCF dont 16 pattes sont connect¨¦ ¨¤ 1 r¨¦cessif. Puis on a connect¨¦ une 
-patte ¨¤ la masse, c'est la m¨ºme que un appui sur une touche. Le PcCANView ¨¤ bien re?u un message CAN envoy¨¦ par le 
-BECK. Pour tester l'actualisation d'affichage, on a utilis¨¦ le PcCANView pour envoyer un message CAN ¨¤ BECK, et puis 
-on a constat¨¦ l'affichage de valeur contenue dans le message CAN envoy¨¦.
+Comme un appui sur une touche dure quelque 100 ms, donc un TIMER de 50 ms est raisonnable. Tout l'appui peut être 
+détecté.  Pendant le test, on a utilisé un PCF dont 16 pattes sont connectées à 1 récessif. Puis on a connecté une 
+patte à la masse, c'est la même que pour un appui sur une touche. Le PcCANView à bien reçu un message CAN envoyé par le 
+BECK. Pour tester l'actualisation d'affichage, on a utilisé le PcCANView pour envoyer un message CAN au BECK, et puis 
+on a constaté l'affichage de valeur contenue dans le message CAN envoyé.
 
-Au d¨¦but du test, on s'est tromp¨¦ de niveaux dominant. On a pens¨¦ ¨¤ 1 dominant dans le circuit. Mais il a apparu que 
-c'est toujours 0 dominant. Donc il faut connecter le bouton ¨¤ la masse. L'autre probl¨¨me rencontr¨¦ est pour lire les 
-pattes de PCF, il faut s'assurer que le registre de mode ¨¦criture est 0Xffff avant lecture. Pendant la programmation, 
-on a eu un probl¨¨me d'utilisation de pointeur. Au d¨¦but, on n'a pas utilis¨¦ le pointeur comme param¨¨tre de fonction. 
-Donc la nouvelle valeur ne remplace pas celle ancienne. Il a toujours indiqu¨¦ un changement.
+Au début du test, nous nous sommes trompé de niveaux dominant. Nous avons pensé à mettre un niveau 1 dominant dans le circuit. Mais il a apparu que 
+c'est toujours 0 dominant. Donc il faut connecter le bouton à la masse. L'autre problème rencontré est pour lire les 
+pattes de PCF, il faut s'assurer que le registre de mode écriture est 0Xffff avant lecture. Pendant la programmation, 
+on a eu un problème d'utilisation de pointeur. Au début, on n'a pas utilisé le pointeur comme paramètre de fonction. 
+Donc la nouvelle valeur ne remplace pas celle ancienne. Il a toujours indiqué un changement.
 
 \section{Encodeur incrémental}
 
