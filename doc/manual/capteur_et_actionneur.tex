@@ -2,15 +2,8 @@
 \authors{
   \authorinfo{Romain}{Marchaudon} \\
   \authorinfo{Johnny}{Phor}\\
-
-
-  \authorinfo{Salwa}{Bahji}\\
-  \authorinfo{Alexandre}{Ouasin} \\
-
-  \authorinfo{Alexandre}{Ouazan} \\
-
-  \authorinfo{Alexandre}{Ouasin} \\
-
+	 \authorinfo{Salwa}{Bahji}\\
+   \authorinfo{Alexandre}{Ouazan} \\
   \authorinfo{Chunlin}{Zhu}
 
 }
@@ -255,7 +248,7 @@ Pour l'alimentation de la carte, nous avons utilisé un régulateur 7805T, capable
   \label{fig:schema_clavier_matriciel}
 \end{figure}
 
->>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
+
 
 
 \subsection{Solutions envisagées : les limites}
@@ -280,23 +273,14 @@ Dans un premier temps, nous avons envisagé que le FPGA traite les informations l
 Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, elle demande un algorithme trop important à mettre en place au sein du FPGA 
 \subsection{Solution retenue : ses forces et avantages}
 
-<<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
+
 Avec cette structure de clavier, nous sommes obligés de réaliser une lecture de la touche enfoncée en détectant d’abord la colonne, puis la ligne (ou inversement). En considérant l'existence de Pull-up, si nous voulons détecter la colonne, il faut fixer les lignes au niveau 0, c'est-à-dire écrire tous 0 sur les registres 1 et 2(ligne), 1 sur les registres 3 et 4(colonne), donc les colonnes présentent alors un niveau 1. En cas d'un appui de la touche, une colonne va passer au niveau 0, on obtient un code brut des colonnes. De la même façon, on procède au retournement du sens en fixant les lignes au niveau 1 et nous écrivons sur les colonnes les niveaux logiques qu'on vient d'obtenir. Dans ce cas, on peut obtenir un code brut des lignes. Niveau 0 présenté dans les codes correspond un appui, on peut donc décoder cet appui par localisation des 0.
->>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
-=======
+
 La solution retenue au sein du FPGA est d'autoriser en lecture et en écriture les lignes et les colonnes de notre matrice. Le traitement direct de détection de touche se fait alors sur le maître du bus I2C. Nous avons gardé les tailles génériques des registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de même pour les colonnes. Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés physiquement, toutefois, cela n'affecte en rien le traitement de l'information.
->>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
+
 
 	Les registres de lecture et d'écriture sont illustrés sur la figureXXX. Un registre d'écriture (à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
 
 
-<<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
-<<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
-
-
-=======
 Par les tests effectués, nous avons réussit à détecter s'il y a un appui sur les touches, par contre, quand nous écrivons tous 1 sur les registres, nous avons lu un 0 sur un bit que nous n'avons pas affecté sur le FPGA, donc n'avons pas bien décodé cet appui. Le problème est venu probablement des pins que nous n'avons pas affectées sur le FPGA, il a fallu ajouter des résistance de Pull-up sur la définition même des pins c'est-à-dire à l'intérieur du FPGA. 
-=======
->>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
-\section{Commande des gaz}
->>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
+
