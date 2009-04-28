@@ -1,0 +1,50 @@
+\chapter{commutateurs et afficheurs}
+\authors{
+  \authorinfo{Romain}{Marchaudon}
+}
+
+\section{Description et contexte}
+
+Bloc Front Panel
+Utilisation de circuits directement ineffaçables I2C : PCF 8575
+Dans le cadre du projet il a été demandé de réaliser plusieurs parties distinctes du cockpit. Une de ces parties
+correspond au front panel, et plus précisément à la partie MCP ajouté au contrôle des trains d'atterrissages de
+l'avion. Il existait deux solutions que nous avons prises en compte pour gérer les actions provenant de l'appui
+sur ces boutons :
+\begin{itemize}
+  \item L'utilisation du FPGA
+  \item L'utilisation du PCF8575.
+\end{itemize}
+C'est cette dernière solution qui a été retenue. En effet elle présentait l'avantage d'être à la fois rapide 
+à mettre en oeuvre et de plus les circuits PCF8575 sont directement compatible I2C. De plus la solution FPGA,
+même si elle permettait de limiter le nombre de circuits à utiliser dans le cockpit, augmentait la charge
+du FPGA et aller certainement faire perdre du temps dans sa mise en place en raisons des tests que nous
+aurions du effectuer dessus.
+
+Pour finir, lors du développement du code I2C sur les contrôleurs BECK, les circuits PCF8575 que nous avions à notre disposition ont servit à éprouver le fonctionnement du code implanté sur les BECK. De cette manière il était déjà sur que ces circuits fonctionneraient parfaitement avec l'ensemble de la chaine de traitement implantée dans le cockpit.
+
+Le MCP du cockpit n'ayant jamais été en notre possession à temps, nous avons du faire avec les informations
+disponibles pour connaitre le nombre de boutons, diodes, commutateurs à position et encodeurs incrémentaux à
+interfacer. Pour faciliter les choses, nous avons choisi de regrouper sur les circuits PCF les boutons poussoirs
+entre eux, les diodes également et de la même manière les commutateurs à positions. De cette manière nous utilisons
+actuellement 6 circuits PCF pour l'ensemble de ce bloc. Ce dernier est composé comme ceci :
+-	32 diodes implantées sur 2 PCF8575
+-	25 boutons poussoirs pour 2 PCF8575
+-	Nyanya commutateurs à positions pour les deux derniers PCF8575 utilisés.
+Cette disposition a été décidée avec le groupe BECK afin de faciliter la lecture et l'écriture sur les PCF. 
+En effet, de cette manière les PCF sont soit en lecture (boutons poussoirs et commutateurs à positions) ou bien en écriture (diodes). Nous avons également décidé de ne brancher que 32 diodes sur les 33 pour des facilités de 
+routage et éviter d'utiliser un circuit supplémentaire pour une seule sortie sur les seize disponibles. De plus 
+la présence de cette 33 ème diode n'a pu être éprouvée du fait que nous ne disposons pas des blocs sous les yeux.
+en effet un doute persiste sur la présence ou non de cette diode qui aurait alors une lumière blanche 
+(et non jaune) et dont l'utilité n'a pas été vraiment prouvée. De plus comme nous l'avons vu avec monsieur 
+Bouaziz, l'interfaçage des boutons, diodes et commutateurs sur le FPGA serait une solution plus stable dans le
+temps, et sera donc a priori la futur solution dans le cockpit. En effet, de cette manière,  tous les composants
+seraient alors interrogés de la même manière, et plus besoin d'utiliser un nombre d'adresses limités avec les PCF,
+ces derniers n'ont que 3 bits modifiables dans leur adresse ce qui limite le nombre de PCF à 8 sur chaque bus I2C.
+Néanmoins même dans ces conditions, le front panel et la console centrale peuvent voir leurs boutons, 
+commutateurs et diodes interfacées sur les PCF8575.
+
+Au niveau du fonctionnement des PCF, il a été décidé de brancher les diodes en pull-up. De cette manière, 
+il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côté, pour les boutons 
+poussoirs et les commutateurs à positions, l'appui sur une touche ou le contact effectué pour les commutateurs
+correspondra à un niveau logique 1. Nous relierons donc l'ensemble des commutateurs et boutons poussoirs au 5V.
