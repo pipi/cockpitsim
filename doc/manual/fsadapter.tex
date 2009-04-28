@@ -46,7 +46,7 @@ relativement hétérognes sur l'ensemble du tableau.}. Par la suite, et sur les co
 notre tuteur, nous sommes passés à une solution en C. Cependant, nous nous sommes rapidement aperçus
 que cette solution engendrerait beaucoup de possibilités d'erreurs et de bogues pour des
 raisons que nous n'aborderons pas ici. Il a donc été fait le choix de revenir à la solution initiale,
- savoir écrire notre logiciel en C++.
+à savoir écrire notre logiciel en C++.
 
 Pour cela, Julien Peeters a été affecté en renfort à l'équipe initiale, composée au départ d'Alexandra 
 Starynkevitch et de Zhibin Yin.
@@ -54,3 +54,37 @@ Starynkevitch et de Zhibin Yin.
 En dehors du choix du langage de programmation qui allait déterminer l'orientation majeure de cette
 partie du projet, une contrainte importante a été mise en évidence: le grand nombre des données
 du modèle accessibles au travers de FSUIPC.
+
+
+\subsection{cahier des charges du logiciel}
+Comme nous l'avons précisé précédemment, l'objectif de cette partie est de relier Flight Simulator X à notre 
+simulateur. Plus précisément, nous voulions créer une variable pour chaque boutons du cockpit (par exemple, 
+une variable pour un switch), celle-ci sera relié aux données disponible sur FSadapter par l'intermédiaire du logiciel. 
+Une fois toutes les variables créées, il fallait définir les trames à envoyer à travers le bus CAN. Pour simplifier l'utilisation 
+du bus CAN et donc des messages qui y sont envoyés, les trames doivent être préalablement définies. Autrement dit, 
+les variables à créer pour l'utilisation du cockpit vont être classé par famille et de manière à créer des trames de 8 octets 
+maximales. Pour différentier les trames, on y associe un identifiant sur 11 bits qui est défini de la manière suivante. 
+Lorsque le message va vers le simulateur (FS -> CAN) les trois derniers bits de l'identifiant sont à 0. Dans le sens inverse,
+(CAN -> FS) les trois dernier bits permettent de déterminer quel paramètre de la trame à été modifié. Les autres bits de 
+l'identifiant permettent de différentier les différentes familles de trames et les trames dans une même famille (par exemple,
+famille A, on aura les identifiants 100,108,110, pour la famille B, on aura 200,208). Unefamille est le regroupement de plusieurs 
+fonctionnalitées fesant appel à un même type de materiel (moteur, front de panel, manettes des gas...).
+
+\subsection{description du logiciel}
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.4]{images/write}
+  }
+  \caption{modèle d'écriture vers le bus CAN}
+  \label{fig:write}
+\end{figure}
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.4]{images/Read}
+  }
+  \caption{modèle de lecture du bus CAN}
+  \label{fig:Read}
+\end{figure}
