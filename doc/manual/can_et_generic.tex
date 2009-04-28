@@ -1,24 +1,135 @@
 \chapter{Module CAN et généricité}
 \authors{
+  \authorinfo{Alexandre}{Ouazan}  \\
   \authorinfo{Julien}{Peeters} \\
+  \authorinfo{Johnny}{Phor}  \\
   \authorinfo{Fabien}{Provost} \\
   \authorinfo{Feng}{Xiong} \\
-  \authorinfo{Yongchao}{Xu}\\
+  \authorinfo{Yongchao}{Xu} \\
   \authorinfo{Chunlin}{Zhu}
   
 }
 
 \section{I2C Slave}
+\subsection{Objectif}
+Afin d'interfacer les différents éléments du FCU (Flight Control Unit) tels que les commutateurs de position, les encodeurs numériques et les switchs, au contrôleur central du noeud (contrôleur BECK), il est nécessaire de définir un protocole de communication. 
 
+Le protocole de communication choisi, il était nécessaire de déterminer par quel biais les éléments du FCU allait communiquer. En effet, ces derniers ne sont pas des composants I$^2$C et par conséquent ne peuvent être directement connecté sur les lignes de communication. Un module doit donc être greffé servant d'interface entre les lignes I$^2$C et les différents encodeurs incrémentaux, bouton poussoir etc... 
+
+Deux choix possibles existent, la première, utiliser un microcontrôleur. Ces avantages ne sont pas négligeables et la principale étant son langage de programmation. En effet, le langage C suffisait et était de plus connu des membres de l'équipe. Par ailleurs, ils sont pré équipé d'un module I$^2$C 'hardware' qui permettrait de simplifier sa mise en oeuvre. 
+Mise à part cela, ils peuvent être limités en termes de puissance de calcul ainsi qu'en nombre de port IO disponible, nécessitant donc en plus l'implantation d'autres composants (multiplexeur, registre,...) surchargeant la carte.
+ 
+La deuxième possibilité, celle qui a été retenu, est d'utiliser un circuit programmable type FPGA et d'y utiliser le langage VHDL. La difficulté se situe donc au niveau de l'apprentissage de ce nouveau langage de description, de son comportement et de ses subtilités. Le FPGA ne possède pas d'interface I$^2$C pré implanter ce qui obligeait à la concevoir en VHDL. Cependant, ce circuit programmable présente d'énormes qualités dans le cadre du projet. Il possède un nombre d'entrées/sorties supérieur à 60, et il a de bonnes capacités de calcul. De plus, utiliser un composant tel que celui-ci en plus du VHDL est une très bonne expérience pour nous apprentis ingénieurs.
+
+Le langage VHDL donne, par ailleurs, la possibilité de réaliser des blocs fonctionnels indépendants et de les assembler schématiquement. Ainsi, la gestion des éléments du FCU peut être indépendante du bloc de gestion I2C et la conception grandement simplifié. 
+
+Par soucis de réalisation, la conception du module sur circuit logique programmable FPGA à été préféré à celle sur microcontrôleur, puisse qu'il offrait des possibilités plus importantes.
+
+\subsection{Solution envisagée}
+La création de ce module interfaçant I$^2$C et les éléments du FCU devait répondre à un cahier des charges fixés décrivant les protocoles de communication entre 'maître' et 'esclave' I$^2$C. Il a été choisi par soucis de simplification qu'il n'existerait qu'un unique 'maître' sur la ligne de communication. Celui-ci  ne pourra donc jamais rendre la main et donc sera le seul à avoir le contrôle du bus. Cela implique qu'il ne peut obtenir d'informations que par requête auprès des différents éléments du FCU.  
+De plus, plusieurs éléments du FCU étant reliés au FPGA, il a été décidé en accord avec l'équipe BECK d'associer à chacun, un identifiant I$^2$C unique. Ainsi, le FPGA serait non pas un esclave I$^2$C étant que tel mais plutôt une réelle interface. Il émule donc autant de noeud esclave qu'il existe d'élément relié.  Ces derniers seront donc considérés comme esclave I$^2$C. 
+Schématiquement, les communications entre 'maître' et 'esclave' I$^2$C se déroulent principalement de la manière suivante :
 
 \begin{figure}[htpb]
   \centering
   \fbox{
-    \includegraphics[scale=0.9]{images/diagramme_slave_i2c}
+    \includegraphics[scale=0.5]{images/SI2C_com1}
   }
-  \caption{Automate de PCF}
-  \label{fig:Automate_PCF}
+  \caption{Communication I2C avec bloc non générique}
+  \label{fig:SI2C_c1}
 \end{figure}
+
+En résumé, le 'maître' envoie une trame aux 'esclaves' contenant l'identifiant de l'élément souhaité.  Si l'esclave à bien acquitté à la demande du maître, son unique réponse ne peut être que de renvoyer sa valeur.
+L'avantage est que cet échange ne demande donc que d'établir une unique trame de trois octets (un octet issue du maître et deux octets de  l'esclave). 
+
+Remarque : l'identifiant est, d'après la définition générale du protocole I$^2$C, sur 7 bits et un bit de lecture/écriture (R/W) vient compléter la l'octet à envoyer. 
+
+Cependant, un bloc esclave I$^2$C créé de cette façon présente un énorme inconvénient à savoir sa généricité. En effet, tel quel, le bloc ne peut être utilisé que dans un type de configuration I$^2$C, c'est-à-dire " le maître demande, un esclave répond par sa valeur ". Aucune information ne peut donc être envoyée à l'esclave pour qu'elle soit éventuellement traitée par celui-ci. De plus, un nombre croissant d'esclave I$^2$C deviendrait rapidement contraignant à implanter au niveau du FPGA étant donné que pour chaque noeud, un bloc esclave I$^2$C devra être émulé.
+Cette solution à donc été abandonnée étant donné le fait que le bloc doit pouvoir être réutilisable dans d'autres modules du projet.
+
+Une refonte du cahier des charges à due être faite tenant compte des différentes et nouvelles contraintes imposées. A savoir que le bloc I$^2$C devait être réutilisable donc générique. De cela découlent d'autre contrainte, c'est-à-dire la possibilité de récupérer des données provenant du maître. Cette récupération de données devra se faire tant que le maître n'aura pas imposé de condition de stop. 
+
+Par ailleurs, le maître décidera du nombre d'octet que l'esclave devra lui envoyer dans une procédure de lecture du maître et ne pourra être interrompu que par une condition de stop. Cela permettra donc de connecter au FPGA des éléments fournissant une donnée dont la taille est supérieure à deux octets (cas précédent). Cela demande donc au préalable que le maître connaisse la taille de la valeur renvoyé par l'esclave I$^2$C.  
+De plus, pour palier au problème d'excès d'esclave I$^2$C et donc de bloc I$^2$C associé. Il a été décidé de ne considérer qu'un bloc I$^2$C. Ainsi, c'est maintenant le FPGA qui est l'esclave I$^2$C. Cela impose une nouvelle définition des trames de requête.
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/SI2C_com2}
+  }
+  \caption{Communication I2C avec bloc générique}
+  \label{fig:SI2C_c2}
+\end{figure}
+En récapitulatif, les nouveaux éléments à apporter : 
+
+\begin{itemize}
+\item Généricité du bloc
+\item Possibilité de récupération de donnée
+\item Nombre d'octet à renvoyer déterminé par le maître
+\item Le FPGA est l'unique esclave I$^2$C
+\end{itemize}
+
+Les éléments du FCU n'étant plus identifié par leur identifiant I$^2$C, ils le seront à présent par une adresse unique que le maître devra fournir après avoir établie la communication avec le FPGA. Cette adresse permettra au FPGA de pointer à tout instant sur un registre correspondant. 
+
+
+Dans le cas où le maître n'aurait pas généré de condition de stop pour arrêter l'envoie de données par l'esclave, il est prévu d'auto incrémenté l'adresse à laquelle le pointeur de registre doit pointer. De cette façon, il est possible de lire deux registres successifs pouvant représenter une valeur d'un même élément sur 16 bits. 
+
+Schématiquement, les communications entre 'maître' et 'esclave' se déroulent comme en figure \ref{fig:SI2C_autom}
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/SI2C_automate}
+  }
+  \caption{Automate de l'esclave I2C}
+  \label{fig:SI2C_autom}
+\end{figure}
+
+En résumé et toujours en partant du principe que le FPGA ne peut prendre contrôle du bus I$^2$C, l'interrogation du FPGA doit se faire par une demande d'écriture du maître donnant l'adresse du registre puis une demande de lecture. L'esclave répond par un envoi de données lu dans le registre pointé.
+
+\subsection{Réalisation et description de l'automate I$^2$C esclave}
+
+En tenant compte du nouveau cahier des charges, on est en mesure de réaliser l'automate de base de l'esclave I$^2$C.
+
+Le premier état 'idle' correspond à l'état de repos du bus I$^2$C c'est-à-dire lorsque les lignes SDA et SCL sont au niveau logique '1' récessif. L'automate restera donc toujours dans cet état à moins d'une détection de condition de 'start' qui a été découpé en deux phases (la première phase étant détectée dans 'Idle') afin d'éviter les erreurs. 
+
+L'état 'clockTime' permet la détection de la seconde phase de condition de 'start'.
+Une fois la détection faite, il s'agit de lire l'identifiant et le bit de lecture/écriture envoyé par le maître dans l'état 'readAdd'.  Ceci fait, on regarde si l'identifiant est bon. Si tel est le cas, il s'agit alors de déterminer si le maître à envoyé une requête de lecture ou d'écriture (état 'bitRW').
+ 
+Dans le cas d'une demande d'écriture, on lit l'adresse du registre à pointé.  Si aucune condition de 'stop' n'est détectée, c'est que le maître désire maintenant écrire des données dans le registre pointé. 
+
+Dans le cas d'une demande de lecture, on envoie la valeur du registre que le pointeur pointe (l'adresse du registre étant fixée précédemment). Si aucune condition de 'stop' n'est détectée, c'est que le maître désire maintenant lire les données dans le registre de l'adresse suivante. 
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/SI2C_bloclink}
+  }
+  \caption{Architecture du bloc esclave I2C}
+  \label{fig:SI2C_blink}
+\end{figure}
+
+Au premier abord, cet automate fonctionne en simulation. Cependant, ainsi fait, il n'est pas certain que celui-ci fonctionne en condition de test sur maquette. En effet, cette automate à été créé sans tenir compte des erreurs pouvant se produire en condition réelle. Une condition de 'start' ou 'stop' généré par le mettre pendant l'envoie d'une trame, par exemple, signifiant que le maître a annulé son premier envoie de trame, etc...
+Ainsi, il est nécessaire entre chaque étape de l'automate de détecter la présence ou non d'une condition de 'start' et 'stop'.
+
+\subsection{Résultat et problèmes rencontrés}
+
+La difficulté ici résidait dans le test du module. En effet, ne disposant que de très peu de matériel, il était difficile de générer des trames I$^2$C pour savoir si le bloc I$^2$C répondait correctement. Le test a tout de même été réalisé en connectant un microcontrôleur BECK au FPGA équipé d'encodeur numérique pour faire varier les valeurs des registres. 
+La procédure était donc de faire envoyer une trame de demande d'écriture par le BECK, puis une trame de demande de lecture. Alors, le microcontrôleur BECK devait lire cette valeur de retour et l'afficher à l'écran. En faisait varier la valeur des registres pointées, la valeur affichée à l'écran devait à son tour changer. 
+
+L'identifiant 7 bits I$^2$C du module esclave était '1100 100'. L'envoie d'une demande d'écriture signifiait l'envoie du premier octet '1100 1000' avec pour bit de poids le plus faible le bit d'écriture. Suivait ensuite l'adresse sur laquelle le pointeur de registre devait pointer, ici l'adresse '0000 0000'. Une demande de lecture est envoyé avec l'identifiant '1100 1001'. L'esclave répond par un envoi de données.
+
+La description de la procédure de test est la suivante :
+
+\begin{enumerate}
+\item Le BECK envoi une trame de 2 octets : '1100 1000' '0000 0000'
+\item Le BECK envoi une trame de 1 octet : '1100 1001'
+\item Le FPGA répond sur la même trame : 'xxxx xxxx' 'xxxx xxxx' (valeur registre)
+\end{enumerate}
+	
+Afin de se rendre compte du fonctionnement de l'auto incrémentation du registre, il suffisait de demander une donnée de retour sur 4 octets et non plus sur 2. Ainsi on lit les registres suivants successivement : '0000 0000', '0000 0001', '0000 0010', '0000 0011'.
+Les tests ont été passé avec succès.
+
 
 \section{Description et contexte}
 L'objecif de cette partie est de créer des outils permettant de simplifier l'utilisation des différents bus de manière générique de façon à pouvoir être réutilisé à plusieurs endroits du projet.
