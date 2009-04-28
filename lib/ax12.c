@@ -93,13 +93,13 @@ int fill_data_AX12(sDataAX12* dAX12[], int size_dAX12, BYTE* answer_Angle_Buff)
 		if(dern_index!=(size_dAX12-1))
 			{
 				dAX12[dern_remplie(dAX12,size_dAX12)+1]->ID=answer_Angle_Buff[2];
-				dAX12[dern_remplie(dAX12,size_dAX12)+1]->angle=((angle_received<<8)||(answer_Angle_Buff[5]));
+				dAX12[dern_remplie(dAX12,size_dAX12)+1]->angle=((angle_received<<8)|(answer_Angle_Buff[5]));
 			}
 		else
 			{
 				manage_data(dAX12,size_dAX12);//on peut s'en passer si on appelle à chaque remplissage manage_data systématiquement
 				dAX12[dern_remplie(dAX12,size_dAX12)+1]->ID=answer_Angle_Buff[2];
-				dAX12[dern_remplie(dAX12,size_dAX12)+1]->angle=((angle_received<<8)||(answer_Angle_Buff[5]));
+				dAX12[dern_remplie(dAX12,size_dAX12)+1]->angle=((angle_received<<8)|(answer_Angle_Buff[5]));
 		
 			}
 
@@ -140,7 +140,7 @@ int transfer_data(sDataAX12* dataAX12[], sDataAX12* dataCAN[], int size_dataAX12
 
 int decode_Msg_CAN(can_event_msg_t* ptr_msg, int angleValue, BYTE* set_Angle_Buff)
 {
-	angleValue=(int)((ptr_msg->data[0]<<8)||(ptr_msg->data[1]));
+	angleValue=(int)((ptr_msg->data[0]<<8)|(ptr_msg->data[1]));
 	switch(ptr_msg->id)
 	{
 	case ID_GAZ1:
@@ -180,19 +180,19 @@ int create_msg_CAN(sDataAX12* data_CAN[], int size_dataCAN, can_event_msg_t msg 
 		{
 			msg.id=ID_GAZ1;
 			msg.length=2;
-			msg.data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_MSB_MASK)<<8);//après conversion
-			msg.data[1]=(unsigned char)((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_LSB_MASK);//après conversion
-			
+			msg.data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_MSB_MASK)<<8);
+			msg.data[1]=(unsigned char)((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_LSB_MASK);
+
 			return 1;
-			
+
 		}break;
-		
+
 	case ID_AX2:
 		{
 			msg.id=ID_GAZ2;
 			msg.length=2;
-			msg.data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_MSB_MASK)<<8);//après conversion
-			msg.data[1]=(unsigned char)((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_LSB_MASK);//après conversion
+			msg.data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_MSB_MASK)<<8);
+			msg.data[1]=(unsigned char)((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_LSB_MASK);
 			
 			return 1;
 		}break;
@@ -201,8 +201,8 @@ int create_msg_CAN(sDataAX12* data_CAN[], int size_dataCAN, can_event_msg_t msg 
 		{
 			msg.id=ID_TRIM;
 			msg.length=2;
-			msg.data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_MSB_MASK)<<8);//après conversion
-			msg.data[1]=(unsigned char)((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_LSB_MASK);//après conversion
+			msg.data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_MSB_MASK)<<8);
+			msg.data[1]=(unsigned char)((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_LSB_MASK);
 			
 			return 1;
 		}break;

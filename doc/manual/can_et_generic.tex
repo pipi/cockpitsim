@@ -1,24 +1,12 @@
 \chapter{Module CAN et généricité}
 \authors{
-  \authorinfo{Julien}{Peeters} \\
-  \authorinfo{Fabien}{Provost} \\
-  \authorinfo{Feng}{Xiong} \\
-  \authorinfo{Yongchao}{Xu}\\
+  \authorinfo{Julien}{Peeters}
+  \authorinfo{Fabien}{Provost}
+  \authorinfo{Feng}{Xiong} 
+  \authorinfo{Yongchao}{Xu}
   \authorinfo{Chunlin}{Zhu}
   
 }
-
-\section{I2C Slave}
-
-
-\begin{figure}[htpb]
-  \centering
-  \fbox{
-    \includegraphics[scale=0.8]{images/diagramme_slave_i2c}
-  }
-  \caption{diagramme esclave du bus i2c}
-  \label{fig:diagramme_slave_i2c}
-\end{figure}
 
 \section{Description et contexte}
 L'objecif de cette partie est de créer des outils permettant de simplifier l'utilisation des différents bus de manière générique de façon à pouvoir être réutilisé à plusieurs endroits du projet.
@@ -29,9 +17,26 @@ exemple) et inversement (envoie de message CAN après utilisation d'un actionneur
 l'utilisation d'un FPGA comme interface au bus I$^2$C, c'est à dire que le bloc qui permet de connecter 
 des DEL, des boutons poussoirs ou autre composants plus complexes à un bus I$^2$C. 
 
-\section{Noeud USB/CAN}
+\section{Esclave I$^2$C}
 
-\section{Noeud CAN/I$^2$C}
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+
+    \includegraphics[scale=0.8]{images/diagramme_slave_i2c}
+
+  }
+  \caption{diagramme esclave du bus i2c}
+  \label{fig:diagramme_slave_i2c}
+\end{figure}
+
+
+
+\section{Interface USB/CAN}
+
+
+\section{Interface CAN/I$^2$C}
 \subsection{Objectifs}
 L'objectif de ce module est donc double:
 \begin{itemize}
@@ -40,5 +45,53 @@ L'objectif de ce module est donc double:
 \end{itemize}
 
 \subsection{Conception}
-Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, on a dû utiliser les fonctions des librairies du BECK pour initialiser, envoyer et recevoir des messages dans chacun des bus. Néanmoins, de manière à avoir la même syntaxe que pour la partie 
+Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, on a dû utiliser les fonctions des librairies du BECK pour initialiser, envoyer et recevoir des messages dans chacun des bus. Néanmoins, de manière à avoir la même syntaxe que pour la partie USB/CAN et à avoir des fonctions plus simple à utiliser, nous avons construit des bibliothèques à partir des bibliothèques BECK.
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/bibliotheques}
+  }
+  \caption{arborescence des bibliothèques}
+  \label{fig:bibliotheques}
+\end{figure}
+
+Il y a donc dans les bibliothèques can.h et i2c.h les fonctions d'initialisation, d'envoie de messages ,ansi que la réception (au format approprié).Dans la bibliothèque can-i2c.h nous trouvons la strucure ( et les fonctions permettant de remplir les objectifs de ce block. 
+
+la structure (i2c-can-trans-t) a une rôle primordial ici, car c'est elle qui regroupera pour chaque identifiant CAN, les indentifiant I$^2$C correspondants, la dernière valeur lue sur cet esclave, et la taille des données. 
+Nous avons donc créer un tableau de cette structure pour reggrouper chaque identifiant CAN qui intéresse le noeud CAN, ainsi nous avons pu aisément faire correspondre les messages CAN et les messages I$^2$C.
+Pour utiliser ce tableau nous avons donc trois fonctions particulières:
+
+\begin{itemize}
+\item i2c-changes-lookup qui détecte les changements sur les esclaves I$^2$C et met à jour la valeur dans le tableau
+\item i2c-send-changes qui appel i2c changes lookup et qui envoie un message CAN s'il y a eu un changement (ces deux fonctions sont synthétisées sous forme de de diagramme d'état en figure \ref{fig:bibliotheques}).
+\item update-values qui à la réception d'un message CAN, va envoyer un message I$^2$C aux esclaves correspondant afin de mettre à jour leur valeur.
+\end{itemize}
+
+
+\subsection{Développement}
+
+La fonction i2c-changes-lookup prend en paramètre un élément de type i2c-can-trans-t et interroge l'esclave I$^2$C, compare la valeur obtenue à l'ancienne valeur lue, si il y a une différence on met à jour et on retourne 0, sinon on retourne -1.
+
+%IMAGE
+
+La fonction i2c-send-changes prend en paramètre le tableau de i2c-can-trans-t, le parcourt et applique i2c-changes-lookup pour chaque élément. Après un test de la valeur de retour, si on a 0 on envoie un message CAN avec en identifiant l'identifiant CAN stocké dans le i2c-can-trans-t, et en data la valeur stocké dans le i2c-can-trans-t.
+
+
+%IMAGE
+La fonction update-values va prendre en paramètre le tableau de i2c-can-trans-t, sa taille et le message CAN a traité. En parourant le tableau, on compare l'identifiant du message aux identifiants CAN du tableau, lorqu'on a trouvé l'élément de i2c-can-trans-t qui a le bon identifiant, on va envoyé un message I$^2$C avec pour identifiant l'identifaint stocké dans le i2c-can-tran-t, et pour data, la même data que le message CAN reçu, enfin cette fonction met à jour la valeur de old-data qui est égale à la valeur de data du message CAN reçu.
+
+%IMAGE
+
+
+\subsection{Tests et résultats}
+
+Les tests ont été faits rapidement sur des afficheurs 7 segments. Pour cela on utilisait un logiciel PCcanView pour envoyer un message CAN qui devait écrire sur un afficheur 7 segments branché en I$^2$C. Cette expérience permettait de valider la fonction update-values.
+Les résultas furent concluant après quelques essais.
+
+Pour les deux autres fonctions, il a fallut utiliser des PCF interfacés en I$^2$C. Il a fallut beaucoup de temps pour
+que le message CAN envoyé par le BECK après changement soit correcet (notamment la DATA). Ce délai est dû à l'ordre ou était envoyé les octets des DATA.
+
+Maintenant ce block est fonctionnel.
+
 
