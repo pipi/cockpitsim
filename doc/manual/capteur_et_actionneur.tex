@@ -2,7 +2,7 @@
 \authors{
   \authorinfo{Romain}{Marchaudon} \\
   \authorinfo{Johnny}{Phor}\\
-  \authorinfo{Alexandre}{Ouazan} \\
+  \authorinfo{Alexandre}{Ouasin} \\
   \authorinfo{Chunlin}{Zhu}
 }
 
@@ -109,6 +109,7 @@ Donc la nouvelle valeur ne remplace pas celle ancienne. Il a toujours indiqué un
 
 \section{Encodeur incrémental}
 
+
 \subsection{Contexte et objectif}
 
 Les différents encodeurs numériques du cockpit ont diverses utilités comme la variation de la vitesse, la variation 
@@ -119,41 +120,30 @@ L'objectif de ce bloc est d'interfacer ces séquences pour que le message envoyé 
 
 Les encodeurs étant reliés au FPGA, ils envoient leur trame aux FPGA, et celui-ci les analyse de la façon suivante :
 
-
 \begin{figure}[htpb]
   \centering
   \fbox{
-    \includegraphics[scale=0.4]{images/automate_codeur}
+    \includegraphics[scale=0.5]{images/automate_codeur}
   }
-  \caption{diagramme d'état de l'automate codeur}
+  \caption{Diagramme d'état de l'automate codeur }
   \label{fig:automate_codeur}
 \end{figure}
+
 
 Le schéma ci-dessus représente un bloc codé du FPGA : Le bloc automate codeur. Il a fallu prévoir un autre bloc 
 comprenant un registre à implémenter en fonction du sens de rotation pour avoir une réelle appréciation de 
 l'incrémentation ou de la décrémentation: Le bloc lpm_counter16. Chaque changement d'état de l'automate codeur 
 fournit une impulsion au compteur qui lui indique qu'il doit incrémenter ou décrémenter selon le sens de rotation.
 
-
-Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le 
-maître du bus I$^2$C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de 
-lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela 
-implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il 
-est une interface adéquate à clavier (9+8=17 entrées/sorties).
-
-La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque 
-ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
-
-
-
 \begin{figure}[htpb]
   \centering
   \fbox{
-    \includegraphics[scale=0.4]{images/bloc_codeur_compteur}
+    \includegraphics[scale=0.5]{images/bloc_codeur_compteur}
   }
-  \caption{bloc codeur & compteur }
+  \caption{Bloc codeur compteur }
   \label{fig:bloc_codeur_compteur}
 \end{figure}
+
 
 Le principe est alors que l'on envoi l'image de ce registre au beck quand il en fait la demande par le biais du bus 
 I$^2$C.
@@ -177,10 +167,7 @@ autant de registres qu'il ya d'encodeurs, le FPGA envoi les valeurs sur le bus I
 
 \subsection{Développement}
 
-
-Le développement s'est effectué sans problème avec l'aide précieuse de monsieur Bouaziz.
-
-
+	
 Le protocole pour tester les encodeurs incrémentaux a été facilité de par le fait que nos cartes FPGA sont dotées 
 d'un registre de LED et de quatre boutons poussoirs. Nous avons affecté deux boutons pour simuler l’encodeur et le 
 registre sortant du compteur(lpm_counter16) a été affecté au LED. Dans un deuxième temps, nous avons utilisé un 
@@ -199,8 +186,8 @@ Les erreurs résiduelles concernaient notre automate I$^2$C slave.
 \subsection{Résultat}
 
 Le résultat obtenu est des registres pour chaque valeurs significatives, que nous sommes capables d'envoyer par le 
-biais du bus I$^2$C au beck, afin qu'ils soient traités. Sur le BECK, nous sommes capables de détecter le changement de 
-l'encodeur, et d'envoyer ce changement par bus CAN vers le PC.
+biais du bus I$^2$C au beck, afin qu'ils soient traités. Sur le BECK, nous sommes capables de détecter le changement 
+de l'encodeur, et d'envoyer ce changement par bus CAN vers le PC.
 
 \section{Clavier matriciel}
 
@@ -241,14 +228,14 @@ Cette solution implique une certaine simplicité du traitement sur le reste de la
 elle demande un algorithme trop important à mettre en place au sein du FPGA. 
 	 
 La solution retenue au sein du FPGA est d'autoriser en lecture et en écriture les lignes et les colonnes de notre 
-matrice. Le traitement direct de détection de touche se fait alors sur le maître du bus I$^2$C, c'est-à-dire le BECK. Il 
-présente l'avantage d'être plus efficace, et il simplifie le fonctionnement du FPGA. Nous avons gardé les tailles 
+matrice. Le traitement direct de détection de touche se fait alors sur le maître du bus I$^2$C, c'est-à-dire le BECK. 
+Il présente l'avantage d'être plus efficace, et il simplifie le fonctionnement du FPGA. Nous avons gardé les tailles 
 génériques des registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de 
 même pour les colonnes. Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés 
 physiquement, toutefois, cela n'affecte en rien le traitement de l'information.
 
-Les registres de lecture et d'écriture sont illustrés sur la figure( I$^2$C slave à rajouter). Un registre d'écriture (à 
-droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
+Les registres de lecture et d'écriture sont illustrés sur la figure( I$^2$C slave à rajouter). Un registre d'écriture 
+(à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
 
 \subsection{Développement}
 
@@ -299,12 +286,10 @@ sens en fixant les lignes au niveau 1 et nous écrivons sur les colonnes les nive
 Dans ce cas, on peut obtenir un code brut des lignes. Niveau 0 présenté dans les codes correspond un appui, on peut 
 donc décoder cet appui par localisation des 0.
 
-\subsection{Résultat}
-
-
 Par les tests effectués, nous avons réussit à détecter s'il y a un appui sur les touches, par contre, quand nous 
 écrivons tous 1 sur les registres, nous avons lu un 0 sur un bit que nous n'avons pas affecté sur le FPGA, donc 
 n'avons pas bien décodé cet appui. Le problème est venu probablement des pins que nous n'avons pas affectées sur le 
 FPGA, il a fallu ajouter des résistance de Pull-up sur la définition même des pins c'est-à-dire à l'intérieur du 
 FPGA. 
+
 \section{Commande des gaz}
