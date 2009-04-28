@@ -56,31 +56,36 @@ il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur cô
 poussoirs et commutateurs positions seront fermés pour un niveau 0 dominant constaté sur les PCF.Nous relierons
 donc l'ensemble des commutateurs et boutons poussoirs à la masse.
 
-Au niveau des afficheurs,  nous avons adopté l'afficheur de 7 segments. Afin de valider ce bloc fonctionnel,
-nous n'avons eu à afficher une seule valeur car tous les afficheurs du cockpit fonctionnent de la même manière.
-Donc ?a suffit de tester l'affichage pour un paramètre. En prenant en compte 
-qu'on a réussi une chaine complète pour l'altitude en cas d'autopilote. On a testé l'affichage d'altitude.
+Au niveau des afficheurs,  nous avons choisi d'adopter l'afficheur 7 segments plutôt que des écrans LCD.
+Ceci colle plus au matériel qui se trouve dans les cockpits réel. Afin de valider ce bloc fonctionnel,
+nous n'avons décidé d'afficher une seule valeur car tous les afficheurs du cockpit fonctionnent de la même manière.
+Comme nous disposons d'une chaine complète et fonctionnel pour l'altitude (de l'encodeur incrémental
+jusque FSX) nous avons décider de tester l'affichage de ce paramètre sur le MCP.
 
-Une carte avec interface I2C ayant 4 afficheurs de 7 segments  est à notre disposition. C'est SAA1064 qui est intégré
-dans cette carte. SAA1064 a 2 bits modifiables dans leurs adresses ce qui limite le nombre des cartes à 4 sur chaque 
-bus I2C. Cela pose des  problèmes si on veut afficher tous les paramètres. Mais comme il n y a pas d'autres afficheurs 
-qui sont à la disposition et pour simplifier le test. On n'a pas d'autres choix.  Mais l'avantage de SAA1064 est la 
-possibilité de changer l'intensité d'affichage.
+Une carte avec interface I2C disposant de 4 afficheurs 7 segments est à notre disposition.
+C'est le circuit intégré SAA1064 qui est implanté sur la carte et permet de faire le multiplexage entre
+les différents afficheurs. Chaque SAA1064 dipose de 2 bits modifiables dans leurs adresses ce qui limite
+le nombre des cartes à 4 sur chaque bus I2C.
+Cela pose des  problèmes si on veut afficher tous les paramètres sur le même bus I$^2$C, par contre l'avantage du
+SAA1064 est la possibilité de changer l'intensité d'affichage pour les segments.
 
-On a programmé un compteur de 0 à 9999 pour tester l'affichage d'altitude. Elle a fonctionné correctement.
+Nous avons programmé un compteur de 0 à 9999 pour tester l'affichage d'altitude.
 
-Du coté du BECK, il a été demandé de réaliser la détection d'appui sur une touche ou du  changement de position de 
-commutateurs à position et aussi la actualisation d'affichage. Pour la première partie, c'est à dire la détection de 
-changement des données de PCF. Il suffit de lire les données de PCF via bus I2C et les comparer avec les données 
-anciennes. Si un changement est détecté, les données de PCF seront remplacées par ces nouveaux. Le BECK va envoyer un 
-message CAN correspondant comportant  les nouveaux états de touche et les positions actuelles de commutateurs au PC. 
-Au niveau d'actualisation d'affichage. Chaque fois un message CAN visant a modifier l'affichage arrive, le BECK le 
-traite et envoie les données contenues dans le message CAN à l'afficheur correspondant.
+Du coté du BECK, il a été demandé de réaliser la détection d'appui sur une touche ou du  changement de position des 
+commutateurs à positions et aussi de réaliser l'actualisation de l'affichage.
 
-Etant donné que la détection d'appui sur une touche et changement de position de commutateurs dure beaucoup plus long 
-que  actualisation d'affichage, un TIMER est utilisé pour que le message CAN reçu ne soit pas perdu en sachant que le 
-pile de BECK a enregistré le message est limité. De plus, on peut s'assurer que l'actualisation d'affichage soit 
-traitée à temps. L'automate se représente en figure \ref{fig:Automate_PCF}
+Pour la première partie, c'est à dire la détection de 
+changement des données de PCF. Il suffit de lire les données de PCF via bus I$^2$C et de comparer avec les anciènes valeurs stockées préalablement dans le BECK.
+Si un changement est détecté, les données de PCF seront remplacées par les nouvelles. Le BECK va envoyer le 
+message CAN correspondant comportant les nouveaux états des touches et les positions des commutateurs au PC. 
+Pour actualiser l'affichage, chaque fois qu'un message CAN visant à modifier l'affichage arrive, le BECK le 
+traite et envoie les données reçues à l'afficheur correspondant.
+
+Etant donné que la détection d'appui sur une touche et le changement de position d'un commutateurs dure
+beaucoup plus longtemps que l'actualisation de l'affichage, un TIMER est utilisé pour que le message CAN reçu
+ne soit pas perdu, tout en sachant que la pile du BECK enregistrant le message dispose d'une taille limité.
+De plus, il est possible de s'assurer que l'actualisation d'affichage soit traitée à temps.
+L'automate est représenté en figure \ref{fig:Automate_PCF}
 
 \begin{figure}[htpb]
   \centering
@@ -91,21 +96,32 @@ traitée à temps. L'automate se représente en figure \ref{fig:Automate_PCF}
   \label{fig:Automate_PCF}
 \end{figure}
 
-Comme un appui sur une touche dure quelque 100 ms, donc un TIMER de 50 ms est raisonnable. Tout l'appui peut être 
-détecté.  Pendant le test, on a utilisé un PCF dont 16 pattes sont connectées à 1 récessif. Puis on a connecté une 
-patte à la masse, c'est la même que pour un appui sur une touche. Le PcCANView à bien reçu un message CAN envoyé par le 
-BECK. Pour tester l'actualisation d'affichage, on a utilisé le PcCANView pour envoyer un message CAN au BECK, et puis 
-on a constaté l'affichage de valeur contenue dans le message CAN envoyé.
+Comme un appui sur une touche dure environ 100 ms, le choix d'un TIMER de 50 ms est raisonnable.
+De cette manière tout appui peut être détecté à coup sur. Pendant le test, nous avons utilisé un PCF dont les
+16 pattes ont été connectées à un niveau 1 récessif. une des pattes à ensuite été connectée à la masse,
+de la même manière que pour l'appui sur une touche. Le PcCANView a bien reçu le message CAN envoyé par le 
+BECK. Pour tester l'actualisation d'affichage, nous avons utilisé le PcCANView qui permet d'envoyer un message
+CAN au BECK. Nous avons alors pu visualiser l'affichage de valeur envoyée au travers du message CAN.
 
-Au début du test, nous nous sommes trompé de niveaux dominant. Nous avons pensé à mettre un niveau 1 dominant dans le circuit. Mais il a apparu que 
-c'est toujours 0 dominant. Donc il faut connecter le bouton à la masse. L'autre problème rencontré est pour lire les 
-pattes de PCF, il faut s'assurer que le registre de mode écriture est 0Xffff avant lecture. Pendant la programmation, 
-on a eu un problème d'utilisation de pointeur. Au début, on n'a pas utilisé le pointeur comme paramètre de fonction. 
-Donc la nouvelle valeur ne remplace pas celle ancienne. Il a toujours indiqué un changement.
+Au début du test, nous nous sommes trompé de niveau dominant. Nous avions pensé à mettre un niveau 1 dominant
+dans le circuit. Mais nous avons constaté que c'était toujours un niveau 0 dominant.
+Il a donc fallu connecter les boutons à la masse. L'autre problème rencontré est pour lire les 
+pattes de PCF. En effet il faut s'assurer que le registre d'écriture est à 0Xffff avant d'effectuer une lecture.
+Pendant la programmation, nous avons également rencontrer des problèmes de pointeurs de fonctions. 
+La nouvelle valeur ne remplaçait alors pas l'ancienne.
 
 \section{Encodeur incrémental}
+\subsection{Contexte et objetctif}
+\subsection{Conception et choix technique}
+\subsection{Développement}
+\subsection{Résultat}
+
 
 \section{Clavier matriciel}
+\subsection{Contexte et objetctif}
+\subsection{Conception et choix technique}
+\subsection{Développement}
+\subsection{Résultat}
 
 \subsection{Objectifs du bloc}
 
