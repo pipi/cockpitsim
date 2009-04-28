@@ -7,6 +7,18 @@
   
 }
 
+\section{I2C Slave}
+
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.9]{images/diagramme_slave_i2c}
+  }
+  \caption{Automate de PCF}
+  \label{fig:Automate_PCF}
+\end{figure}
+
 \section{Description et contexte}
 L'objecif de cette partie est de créer des outils permettant de simplifier l'utilisation des différents bus de manière générique de façon à pouvoir être réutilisé à plusieurs endroits du projet.
 
@@ -16,14 +28,16 @@ exemple) et inversement (envoie de message CAN après utilisation d'un actionneur
 l'utilisation d'un FPGA comme interface au bus I$^2$C, c'est à dire que le bloc qui permet de connecter 
 des DEL, des boutons poussoirs ou autre composants plus complexes à un bus I$^2$C. 
 
+\section{Noeud USB/CAN}
+
 \section{Noeud CAN/I$^2$C}
 \subsection{Objectifs}
-L'objectif de ce module est donc double
+L'objectif de ce module est donc double:
 \begin{itemize}
 \item la recherche de modifications sur le bus I$^2$C, puis envoie des changements par messages CAN
 \item traiter les messages CAN reçus et envoie de messages I$^2$C aux esclaves concernés 
-
 \end{itemize}
 
-
+\subsection{Conception}
+Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, on a dû utiliser les fonctions des librairies du BECK pour initialiser, envoyer et recevoir des messages dans chacun des bus. Néanmoins, de manière à avoir la même syntaxe que pour la partie 
 
