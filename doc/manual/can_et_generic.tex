@@ -39,5 +39,13 @@ L'objectif de ce module est donc double:
 \end{itemize}
 
 \subsection{Conception}
-Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, on a dû utiliser les fonctions des librairies du BECK pour initialiser, envoyer et recevoir des messages dans chacun des bus. Néanmoins, de manière à avoir la même syntaxe que pour la partie 
+Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, on a dû utiliser les fonctions des librairies du BECK pour initialiser, envoyer et recevoir des messages dans chacun des bus. Néanmoins, de manière à avoir la même syntaxe que pour la partie USB/CAN et à avoir des fonctions plus simple à utiliser, nous avons construit des bibliothèques à partir des bibliothèques BECK.
 
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.9]{images/bibliothèques}
+  }
+  \caption{arborescence des bibliothèques}
+  \label{fig:bibliothèques}
+\end{figure}
