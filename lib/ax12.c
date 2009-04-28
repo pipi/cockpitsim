@@ -6,30 +6,8 @@
 #include <ax12.h>
 #include <can.h>
 
- can_event_msg_t* ptrmsg;                                         
+can_event_msg_t* ptrmsg;
 
-/*void init_AX12() //à faire------------
-{
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID_BROADCAST);
-	fossil_putbyte_wait(FOSSIL_COM, 0x0A);//L à définir
-	fossil_putbyte_wait(FOSSIL_COM, INST_SINCWRITE);
-	fossil_putbyte_wait(FOSSIL_COM, P_ID );
-
-	fossil_putbyte_wait(FOSSIL_COM, 0x01);
-	fossil_putbyte_wait(FOSSIL_COM, ID_AX1);
-
-	fossil_putbyte_wait(FOSSIL_COM, 0x01);
-	fossil_putbyte_wait(FOSSIL_COM, ID_AX2);
-
-	fossil_putbyte_wait(FOSSIL_COM, 0x01);
-	fossil_putbyte_wait(FOSSIL_COM, ID_AX3);
-
-
-	//fossil_putbyte_wait(FOSSIL_COM, (ID_BROADCAST+0x04+INST_SINCWRITE+P_ID+ID));
-
-} */
 
 //------instruction function-----------
 
@@ -66,7 +44,6 @@ int read_Angle(int port, BYTE ID, BYTE* read_Angle_Buff, int nb_byte) // ID 1 to
 	read_Angle_Buff[5]=P_PRESENT_POSITION_L;
 	read_Angle_Buff[6]=2;//2 bytes MSB & LSB
 	read_Angle_Buff[7]=~ (ID+4+INST_READ+P_PRESENT_POSITION_L+2);//On peut caster en unsigned char, a verifier la necessite
-	//fossil_writeblock ( FOSSIL_COM, read_Angle_Buff,nByteToWrite_Read);
 
 	if(fossil_writeblock(port, read_Angle_Buff,nb_byte)==nb_byte)
 		return 1;
@@ -108,9 +85,7 @@ void manage_data(sDataAX12* data[], int taille)
 
 int fill_data_AX12(sDataAX12* dAX12[], int size_dAX12, BYTE* answer_Angle_Buff)
 {
-	 //fossil_readblock(FOSSIL_COM,answer_Angle_Buff,nByteToRead); //8 bytes = 2start+ID+length+error+LSB+MSB+CheckSum
-
-		int dern_index, angle_received;
+	 	int dern_index, angle_received;
 		dern_index=dern_remplie(dAX12,size_dAX12);
 
 		angle_received=answer_Angle_Buff[6];// angle
@@ -130,23 +105,12 @@ int fill_data_AX12(sDataAX12* dAX12[], int size_dAX12, BYTE* answer_Angle_Buff)
 
     	return 1;
 
-
-    /*else
-    		printf("fill data failed");
-
-    return 0;*/
-
-
-
 }
 
 //---------detect update in dataAX12 and send changes to dataCAN--------
 
 int transfer_data(sDataAX12* dataAX12[], sDataAX12* dataCAN[], int size_dataAX12, int size_dataCAN)
 {
-	
-/*if(dataAX12[dern_remplie(dataAX12,size_dataAX12)]!=dataAX12[dern_remplie(dataAX12,size_dataAX12)-1])
-	dataCAN[dern_remplie(dataCAN,size_dataCAN)+1]=dataAX12[dern_remplie(dataAX12,size_dataAX12)];*/
 	int i;
    unsigned char ID_dernRemplie;
 	i=dern_remplie(dataAX12,size_dataAX12);
@@ -181,7 +145,6 @@ int decode_Msg_CAN(can_event_msg_t* ptr_msg, int angleValue, BYTE* set_Angle_Buf
 	{
 	case ID_GAZ1:
 		{
-			//set_Angle(ID_AX1, angleValue, set_Angle_Buff);//en supposant que l'angle déjà converti
          set_Angle(FOSSIL_COM, ID_AX1, angleValue, set_Angle_Buff, 11);
 			return 1;
 			
@@ -189,7 +152,6 @@ int decode_Msg_CAN(can_event_msg_t* ptr_msg, int angleValue, BYTE* set_Angle_Buf
 		
 	case ID_GAZ2:
 		{
-			//set_Angle(ID_AX2, angleValue, set_Angle_Buff);//en supposant que l'angle déjà converti
          set_Angle(FOSSIL_COM, ID_AX2, angleValue, set_Angle_Buff, 11);
 			return 1;
 			
@@ -197,7 +159,6 @@ int decode_Msg_CAN(can_event_msg_t* ptr_msg, int angleValue, BYTE* set_Angle_Buf
 		
 	case ID_TRIM:
 		{
-			//set_Angle(ID_AX3, angleValue, set_Angle_Buff);//en supposant que l'angle déjà converti
          set_Angle(FOSSIL_COM, ID_AX3, angleValue, set_Angle_Buff, 11);
 			return 1;
 			

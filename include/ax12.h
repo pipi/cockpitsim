@@ -51,10 +51,10 @@
 #define ID_BROADCAST 0xFE
 
 #define START 0xFF
-//#define ID_MASK 0xFF000000
+
 #define POS_MSB_MASK 0xFF00
 #define POS_LSB_MASK 0x00FF
-//#define TORQUE_MASK 0x000000FF
+
 
 //---------data_length-----
 
@@ -80,7 +80,7 @@
 
 //--------Data count--------
 #define nByteToWrite_Set 11
-//#define nByteToWrite_Read 8
+
 #define nByteToRead 8
 
 //-------fs_ax value---------
