@@ -3,10 +3,13 @@
   \authorinfo{Romain}{Marchaudon} \\
   \authorinfo{Johnny}{Phor}\\
 
+
   \authorinfo{Salwa}{Bahji}\\
   \authorinfo{Alexandre}{Ouasin} \\
 
   \authorinfo{Alexandre}{Ouazan} \\
+
+  \authorinfo{Alexandre}{Ouasin} \\
 
   \authorinfo{Chunlin}{Zhu}
 
@@ -111,18 +114,15 @@ Donc la nouvelle valeur ne remplace pas celle ancienne. Il a toujours indiqué un
 
 \section{Encodeur incrémental}
 
-\subsection{Contexte et objectif}
+\section{Clavier matriciel}
 
-Les différents encodeurs numériques du cockpit ont diverses utilités comme la variation de la vitesse, la variation de l'altitude etc… Les valeurs récupérées de ces encodeurs sont différentes séquences de deux bits, ces séquences mises dans un certain ordre nous permettent d'identifier le sens de rotation des encodeurs.
-
-L'objectif de ce bloc est d'interfacer ces séquences pour que le message envoyé au BECK soit compréhensible.
-
-Les encodeurs étant reliés au FPGA, ils envoient leur trame aux FPGA, et celui-ci les analyse de la façon suivante :
+\subsection{Objectifs du bloc}
 
 <<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
 Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier pour en déduire l’information utile (appui ou non d’un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d’un nombre d’entrée/sorties important, il est une interface adéquate à clavier (9+8=17 entrées/sorties).
 =======
 
+<<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
 <<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
 Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il est une interface adéquate à clavier (9+8=17 entrées/sorties).
 >>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
@@ -137,15 +137,16 @@ La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-di
   \caption{diagramme d'état de l'automate codeur}
   \label{fig:automate_codeur}
 \end{figure}
+=======
+>>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
 
-Le schéma ci-dessus représente un bloc codé du FPGA : Le bloc automate codeur. Il a fallu prévoir un autre bloc comprenant un registre à implémenter en fonction du sens de rotation pour avoir une réelle appréciation de l'incrémentation ou de la décrémentation: Le bloc lpm_counter16. Chaque changement d'état de l'automate codeur fournit une impulsion au compteur qui lui indique qu'il doit incrémenter ou décrémenter selon le sens de rotation.
-\ref{}
 
 Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il est une interface adéquate à clavier (9+8=17 entrées/sorties).
 
 La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
 
 
+<<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
 >>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
 
 \begin{figure}[htpb]
@@ -248,99 +249,58 @@ Pour l'alimentation de la carte, nous avons utilisé un régulateur 7805T, capable
 =======
 
 \subsection{Développement}
-
-
-Le développement s'est effectué sans problème avec l'aide précieuse de monsieur Bouaziz.
-
-
-Le protocole pour tester les encodeurs incrémentaux a été facilité de par le fait que nos cartes FPGA sont dotées d'un registre de LED et de quatre boutons poussoirs. Nous avons affecté deux boutons pour simuler l’encodeur et le registre sortant du compteur(lpm_counter16) a été affecté au LED. Dans un deuxième temps, nous avons utilisé un encodeur incrémental mis à notre disposition. Ces deux manipulations ont été probantes du  bon fonctionnement automate-codeur associé au lpm_counter16. 
-
-
-De la part du BECK, Nous avons seulement lu les registres pour obtenir les valeurs actuelles de l'encodeur. A chaque fois, il enregistre la valeur obtenue. Une fois la valeur suivante lu, il calcul la différence entre les deux et obtient une valeur incrémentée/décrémentée qui signifie le changement de l'encodeur. On l'a testé avec les fonctions créées, quand on a incrémenté/décrémenté l'encodeur, nous avons réussi à afficher les valeurs correspondantes.
-
-Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, 
-elle demande un algorithme trop important à mettre en place au sein du FPGA 
-
-
-
-Les erreurs résiduelles concernaient notre automate I2C_slave.  
-
-
-\subsection{Résultat}
-
-Le résultat obtenu est des registres pour chaque valeurs significatives, que nous sommes capables d'envoyer par le biais du bus I2C au beck, afin qu'ils soient traités. Sur le BECK, nous sommes capables de détecter le changement de l'encodeur, et d'envoyer ce changement par bus CAN vers le PC.
-
-\section{Clavier matriciel}
-
-\subsection{Contexte et objectif}
-
-Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d’entrée/sorties important, il est une interface adéquate à clavier (9+8=17 entrées/sorties). Du côté de BECK, il a été demandé de réaliser la détection de touche, et également le décodage de cet appui.
-
-La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
-
-
+=======
 \begin{figure}[htpb]
   \centering
   \fbox{
-    \includegraphics[scale=0.5]{images/matrice_clavier}
+    \includegraphics[scale=0.4]{images/schema_clavier_matriciel}
   }
-  \caption{représentation du clavier matriciel}
-  \label{fig:matrice_clavier}
+  \caption{schema du clavier matriciel}
+  \label{fig:schema_clavier_matriciel}
 \end{figure}
 
-
-
-\subsection{Conception et choix techniques}
-
-
-Dans un premier temps, nous avons envisagé que le FPGA traite les informations lui-même en mettant en place le
-protocole de détection de touche. Une requête de lecture du clavier étant détectée, le FPGA renvoie la valeur associée de la dernière touche appuyée (de 1 à 72). Si cette valeur a déjà été envoyée et que l'on détecte une nouvelle requête de lecture de la part du beck, le FPGA renvoie la valeur 0. Dans ce cas, toutes les informations sont traitées sur le BECK au lieu de FPGA. 
-
-Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, elle demande un algorithme trop important à mettre en place au sein du FPGA. 
-	 
-La solution retenue au sein du FPGA est d'autoriser en lecture et en écriture les lignes et les colonnes de notre matrice. Le traitement direct de détection de touche se fait alors sur le maître du bus I2C, c'est-à-dire le BECK. Il présente l'avantage d'être plus efficace, et il simplifie le fonctionnement du FPGA. Nous avons gardé les tailles génériques des registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de même pour les colonnes. Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés physiquement, toutefois, cela n'affecte en rien le traitement de l'information.
-
-Les registres de lecture et d'écriture sont illustrés sur la figure( i2c slave à rajouter). Un registre d'écriture (à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
-
-\subsection{Développement}
-
-Pour y arriver, au sein du BECK, nous avons créé les fonctions de façon à détecter s'il y a une touche ou pas, et ensuite en cas d'un appui, le décoder. Donc notre automate se présente sous forme suivante :
-
-\begin{figure}[htpb]
-  \centering
-  \fbox{
-    \includegraphics[scale=0.5]{images/diagramme_etat_clavier}
-  }
-  \caption{diagramme d'état du protocole de détection de touche }
-  \label{fig:diagramme_etat_clavier}
-\end{figure}
-
-Pour réaliser la détection, sachant que les lignes et les colonnes sont codés sur 4 octets c'est-à-dire sur 4 registres,  donc chaque écriture et lecture sont fait sur les 4 octets. Dans notre cas, les registres 1 et 2 de FPGA correspondent aux lignes, les registres 3 et 4 correspondent aux colonnes. Pour lire les données des registres du FPGA et également écrire sur les registres, on doit tout d'abord envoyer une trame contenant l'adresse de ces registres. En lisant les registres, on peut savoir s'il y a un appui effectué et obtenir un code brut. En cas de deux appuis détectés, nous considérons que c'est une erreur.
-
-On distingue la différence entre le code touche (code brut) et la valeur de la touche qui représente la signification qu'on donne à la touche. Par la suite,nous avons besoin de décoder cette touche pour obtenir un code significatif.
-
-
-A partir des principes ci-dessus, nous avons créé des fonctions pour détecter et décoder le clavier. Afin de les tester, nous avons réalisé un clavier matriciel de 3 colonnes et 3 lignes, illustré sur la figure \ref{fig:maquette_clavier}. A chacune des 9 touches correspond un bouton qui réalise un contact entre une ligne et une colonne. Les lignes et les colonnes sont polarisées à Vcc via des résistances de Pull-up, et sont connectées aux ports de FPGA.
-
-\begin{figure}[htpb]
-  \centering
-  \fbox{
-    \includegraphics[scale=0.5]{images/maquette_clavier}
-  }
-  \caption{maquette de test du clavier matriciel}
-  \label{fig:maquette_clavier}
-\end{figure}
-
-Avec cette structure de clavier, nous sommes obligés de réaliser une lecture de la touche enfoncée en détectant d’abord la colonne, puis la ligne (ou inversement). En considérant l'existence de Pull-up, si nous voulons détecter la colonne, il faut fixer les lignes au niveau 0, c'est-à-dire écrire tous 0 sur les registres 1 et 2(ligne), 1 sur les registres 3 et 4(colonne), donc les colonnes présentent alors un niveau 1. En cas d'un appui de la touche, une colonne va passer au niveau 0, on obtient un code brut des colonnes. De la même façon, on procède au retournement du sens en fixant les lignes au niveau 1 et nous écrivons sur les colonnes les niveaux logiques qu'on vient d'obtenir. Dans ce cas, on peut obtenir un code brut des lignes. Niveau 0 présenté dans les codes correspond un appui, on peut donc décoder cet appui par localisation des 0.
 >>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
 
-\subsection{Résultat}
+
+\subsection{Solutions envisagées : les limites}
+
+	Dans un premier temps, nous avons envisagé que le FPGA traite les informations lui-même en en mettant en place 
+le protocole de détection de touche. Une requête de lecture du clavier étant détectée, le FPGA renvoie la valeur associée 
+de la dernière touche appuyée (de 1 à 72). Si cette valeur a déjà été envoyée et que l'on détecte une nouvelle requête de 
+lecture de la part du beck, le FPGA renvoie la valeur 0.
+
+	Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, 
+elle demande un algorithme trop important à mettre en place au sein du FPGA 
+\subsection{ Solution retenue \& ses forces et avantages}
+
+	La solution retenue au sein du FPGA est d'autoriser en lecture et en écriture les lignes et les colonnes de notre matrice. 
+Le traitement direct de détection de touche se fait alors sur le maître du bus I2C. Nous avons gardé les tailles génériques des 
+registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de même pour les colonnes. 
+Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés physiquement, toutefois, cela n'affecte 
+en rien le traitement de l'information.
+
+Dans un premier temps, nous avons envisagé que le FPGA traite les informations lui-même en en mettant en place le protocole de détection de touche. Une requête de lecture du clavier étant détectée, le FPGA renvoie la valeur associée de la dernière touche appuyée (de 1 à 72). Si cette valeur a déjà été envoyée et que l'on détecte une nouvelle requête de lecture de la part du beck, le FPGA renvoie la valeur 0.
+
+Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, elle demande un algorithme trop important à mettre en place au sein du FPGA 
+\subsection{Solution retenue : ses forces et avantages}
+
+<<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
+Avec cette structure de clavier, nous sommes obligés de réaliser une lecture de la touche enfoncée en détectant d’abord la colonne, puis la ligne (ou inversement). En considérant l'existence de Pull-up, si nous voulons détecter la colonne, il faut fixer les lignes au niveau 0, c'est-à-dire écrire tous 0 sur les registres 1 et 2(ligne), 1 sur les registres 3 et 4(colonne), donc les colonnes présentent alors un niveau 1. En cas d'un appui de la touche, une colonne va passer au niveau 0, on obtient un code brut des colonnes. De la même façon, on procède au retournement du sens en fixant les lignes au niveau 1 et nous écrivons sur les colonnes les niveaux logiques qu'on vient d'obtenir. Dans ce cas, on peut obtenir un code brut des lignes. Niveau 0 présenté dans les codes correspond un appui, on peut donc décoder cet appui par localisation des 0.
+>>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
+=======
+La solution retenue au sein du FPGA est d'autoriser en lecture et en écriture les lignes et les colonnes de notre matrice. Le traitement direct de détection de touche se fait alors sur le maître du bus I2C. Nous avons gardé les tailles génériques des registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de même pour les colonnes. Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés physiquement, toutefois, cela n'affecte en rien le traitement de l'information.
+>>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
+
+	Les registres de lecture et d'écriture sont illustrés sur la figureXXX. Un registre d'écriture (à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
 
 
+<<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
 <<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
 
 
 =======
 Par les tests effectués, nous avons réussit à détecter s'il y a un appui sur les touches, par contre, quand nous écrivons tous 1 sur les registres, nous avons lu un 0 sur un bit que nous n'avons pas affecté sur le FPGA, donc n'avons pas bien décodé cet appui. Le problème est venu probablement des pins que nous n'avons pas affectées sur le FPGA, il a fallu ajouter des résistance de Pull-up sur la définition même des pins c'est-à-dire à l'intérieur du FPGA. 
+=======
+>>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
 \section{Commande des gaz}
 >>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
