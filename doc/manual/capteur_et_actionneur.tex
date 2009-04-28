@@ -114,7 +114,7 @@ Donc la nouvelle valeur ne remplace pas celle ancienne. Il a toujours indiqué un
 \subsection{Contexte et objectif}
 
 Les différents encodeurs numériques du cockpit ont diverses utilités comme la variation de la vitesse, la variation 
-de l'altitude etc… Les valeurs récupérées de ces encodeurs sont différentes séquences de deux bits, ces séquences 
+de l'altitude etc. Les valeurs récupérées de ces encodeurs sont différentes séquences de deux bits, ces séquences 
 mises dans un certain ordre nous permettent d'identifier le sens de rotation des encodeurs.
 
 L'objectif de ce bloc est d'interfacer ces séquences pour que le message envoyé au BECK soit compréhensible.
@@ -133,7 +133,7 @@ Les encodeurs étant reliés au FPGA, ils envoient leur trame aux FPGA, et celui-c
 
 Le schéma ci-dessus représente un bloc codé du FPGA : Le bloc automate codeur. Il a fallu prévoir un autre bloc 
 comprenant un registre à implémenter en fonction du sens de rotation pour avoir une réelle appréciation de 
-l'incrémentation ou de la décrémentation: Le bloc lpm_counter16. Chaque changement d'état de l'automate codeur 
+l'incrémentation ou de la décrémentation: Le bloc lpm-counter16. Chaque changement d'état de l'automate codeur 
 fournit une impulsion au compteur qui lui indique qu'il doit incrémenter ou décrémenter selon le sens de rotation.
 
 \begin{figure}[htpb]
@@ -152,7 +152,7 @@ I$^2$C.
 \subsection{Conception et choix techniques}
 
 La première solution envisagée était d'avoir des registres qui reflétaient exactement la valeur concerné (altitude, 
-vitesse …). Le beck  initialisait les registres au démarrage du cockpit puis la valeur était incrémentée ou 
+vitesse, etc.). Le beck  initialisait les registres au démarrage du cockpit puis la valeur était incrémentée ou 
 décrémentée dans le FPGA de façon à correspondre à la valeur significative c'est-à-dire avec des coefficients 
 multiplicateur associé à l'incrémentation/décrémentation. De cette façon, il n'y a aucun traitement à faire par les 
 autres composantes de la chaines de commande : du FPGA jusqu'à FSUIPC.
@@ -170,10 +170,10 @@ autant de registres qu'il ya d'encodeurs, le FPGA envoi les valeurs sur le bus I
 
 	
 Le protocole pour tester les encodeurs incrémentaux a été facilité de par le fait que nos cartes FPGA sont dotées 
-d'un registre de LED et de quatre boutons poussoirs. Nous avons affecté deux boutons pour simuler l’encodeur et le 
-registre sortant du compteur(lpm_counter16) a été affecté au LED. Dans un deuxième temps, nous avons utilisé un 
+d'un registre de LED et de quatre boutons poussoirs. Nous avons affecté deux boutons pour simuler l'encodeur et le 
+registre sortant du compteur(lpm-counter16) a été affecté au LED. Dans un deuxième temps, nous avons utilisé un 
 encodeur incrémental mis à notre disposition. Ces deux manipulations ont été probantes du  bon fonctionnement 
-automate-codeur associé au lpm_counter16. 
+automate-codeur associé au lpm-counter16. 
 
 
 De la part du BECK, Nous avons seulement lu les registres pour obtenir les valeurs actuelles de l'encodeur. A chaque
@@ -197,7 +197,7 @@ de l'encodeur, et d'envoyer ce changement par bus CAN vers le PC.
 Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le 
 maître du bus I$^2$C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de 
 lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela 
-implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d’entrée/sorties important, il 
+implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il 
 est une interface adéquate à clavier (9+8=17 entrées/sorties). Du côté de BECK, il a été demandé de réaliser la 
 détection de touche, et également le décodage de cet appui.
 
@@ -279,7 +279,7 @@ ports de FPGA.
 \end{figure}
 
 Avec cette structure de clavier, nous sommes obligés de réaliser une lecture de la touche enfoncée en détectant 
-d’abord la colonne, puis la ligne (ou inversement). En considérant l'existence de Pull-up, si nous voulons détecter 
+d'abord la colonne, puis la ligne (ou inversement). En considérant l'existence de Pull-up, si nous voulons détecter 
 la colonne, il faut fixer les lignes au niveau 0, c'est-à-dire écrire tous 0 sur les registres 1 et 2(ligne), 1 sur 
 les registres 3 et 4(colonne), donc les colonnes présentent alors un niveau 1. En cas d'un appui de la touche, une 
 colonne va passer au niveau 0, on obtient un code brut des colonnes. De la même façon, on procède au retournement du 
@@ -314,7 +314,7 @@ Le CM-5 possède un circuit interne qui permet de convertir les signaux en half-d
   \fbox{
     \includegraphics[scale=0.5]{images/half_duplex}
   }
-  \caption{half_duplex}
+  \caption{half-duplex}
   \label{fig:half_duplex}
 \end{figure}
 
