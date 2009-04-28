@@ -111,28 +111,41 @@ Donc la nouvelle valeur ne remplace pas celle ancienne. Il a toujours indiqué un
 
 
 
-Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il est une interface adéquate à clavier (9+8=17 entrées/sorties).
+	Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître 
+du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier 
+pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 
+9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il est une interface adéquate 
+à clavier (9+8=17 entrées/sorties).
 
-La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
+	La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque ligne 
+et chaque colonne sont reliées bidirectionnellement au FPGA.
 
 \begin{figure}[htpb]
   \centering
   \fbox{
-    \includegraphics[scale=0.5]{images/schema_clavier_matriciel}
+    \includegraphics[scale=0.4]{images/schema_clavier_matriciel}
   }
-  \caption{Automate de PCF}
-  \label{fig:Automate_PCF}
+  \caption{schema du clavier matriciel}
+  \label{fig:schema_clavier_matriciel}
 \end{figure}
 
 
 \subsection{ Solutions envisagées & limites }
 
-	Dans un premier temps, nous avons envisagé que le FPGA traite les informations lui-même en en mettant en place le protocole de détection de touche. Une requête de lecture du clavier étant détectée, le FPGA renvoie la valeur associée de la dernière touche appuyée (de 1 à 72). Si cette valeur a déjà été envoyée et que l'on détecte une nouvelle requête de lecture de la part du beck, le FPGA renvoie la valeur 0.
+	Dans un premier temps, nous avons envisagé que le FPGA traite les informations lui-même en en mettant en place 
+le protocole de détection de touche. Une requête de lecture du clavier étant détectée, le FPGA renvoie la valeur associée 
+de la dernière touche appuyée (de 1 à 72). Si cette valeur a déjà été envoyée et que l'on détecte une nouvelle requête de 
+lecture de la part du beck, le FPGA renvoie la valeur 0.
 
-	Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, elle demande un algorithme trop important à mettre en place au sein du FPGA 
+	Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, 
+elle demande un algorithme trop important à mettre en place au sein du FPGA 
 \subsection{ Solution retenue & ses forces et avantages}
 
-	La solution retenue au sein du FPGA est d’autoriser en lecture et en écriture les lignes et les colonnes de notre matrice. Le traitement direct de détection de touche se fait alors sur le maître du bus I2C. Nous avons gardé les tailles génériques des registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de même pour les colonnes. Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés physiquement, toutefois, cela n'affecte en rien le traitement de l’information.
+	La solution retenue au sein du FPGA est d’autoriser en lecture et en écriture les lignes et les colonnes de notre matrice. 
+Le traitement direct de détection de touche se fait alors sur le maître du bus I2C. Nous avons gardé les tailles génériques des 
+registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de même pour les colonnes. 
+Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés physiquement, toutefois, cela n'affecte 
+en rien le traitement de l'information.
 
 	Les registres de lecture et d'écriture sont illustrés sur la figureXXX. Un registre d'écriture (à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
 
