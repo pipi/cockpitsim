@@ -194,21 +194,21 @@ de l'encodeur, et d'envoyer ce changement par bus CAN vers le PC.
 
 \subsection{Contexte et objectif}
 
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.3]{images/matrice_clavier}
+  }
+  \caption{représentation du clavier matriciel}
+  \label{fig:matrice_clavier}
+\end{figure}
+
 Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le 
 maître du bus I$^2$C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de 
 lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela 
 implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il 
 est une interface adéquate à clavier (9+8=17 entrées/sorties). Du côté de BECK, il a été demandé de réaliser la 
 détection de touche, et également le décodage de cet appui.
-
-\begin{figure}[htpb]
-  \centering
-  \fbox{
-    \includegraphics[scale=0.5]{images/matrice_clavier}
-  }
-  \caption{représentation du clavier matriciel}
-  \label{fig:matrice_clavier}
-\end{figure}
 
 La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque 
 ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
