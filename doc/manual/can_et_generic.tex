@@ -1,4 +1,25 @@
 \chapter{Module CAN et généricité}
 \authors{
-  \authorinfo{prénom}{nom} \\
+  \authorinfo{Julien}{Peeters} \\
+  \authorinfo{Fabien}{Provost} \\
+  \authorinfo{Feng}{Xiong} \\
+  \authorinfo{Yongchao}{Xu} \\
+  
 }
+
+\section{Description et contexte}
+L'objecif de cette partie est de créer des outils permettant de simplifier l'utilisation des différents bus de manière générique de façon à pouvoir être réutilisé à plusieurs endroits du projet.
+
+Seront vu dans cette partie, la conception et le développement des noeuds CAN qui permettent de recevoir des messages CAN et de les interprêter afin de générer les actions adéquates (envoie de messages I²C par exemple) et inversement (envoie de message CAN après utilisation d'un actionneur), aussi nous verrons l'utilisation d'un FPGA comme interface au bus I²C, c'est à dire que le bloc qui permet de connecter des DEL, des boutons poussoirs ou autre composants plus complexes à un bus I²C. 
+
+\section{Noeud CAN/I²C}
+\subsection{Objectifs}
+L'objectif de ce module est donc double
+\begin{itemize}
+\item la recherche de modifications sur le bus I²C, puis envoie des changements par messages CAN
+\item traiter les messages CAN reçus et envoie de messages I²C aux esclaves concernés 
+
+\end{itemize}
+
+
+
