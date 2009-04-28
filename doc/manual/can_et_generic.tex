@@ -182,17 +182,42 @@ Pour utiliser ce tableau nous avons donc trois fonctions particulières:
 
 \subsection{Développement}
 
-La fonction i2c-changes-lookup prend en paramètre un élément de type i2c-can-trans-t et interroge l'esclave I$^2$C, compare la valeur obtenue à l'ancienne valeur lue, si il y a une différence on met à jour et on retourne 0, sinon on retourne -1.
+La fonction i2c-changes-lookup prend en paramètre un élément de type i2c-can-trans-t et interroge l'esclave I$^2$C, compare la valeur obtenue à l'ancienne valeur lue, si il y a une différence on met à jour et on retourne 0, sinon on retourne -1(voir figure \ref{fig:automate_i2c_lookup}).
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/diagramme_i2c_changes_lookup}
+  }
+  \caption{Automate i2c-changes-lookup}
+  \label{fig:automate_i2c_lookup}
+\end{figure}
 
 %IMAGE
 
-La fonction i2c-send-changes prend en paramètre le tableau de i2c-can-trans-t, le parcourt et applique i2c-changes-lookup pour chaque élément. Après un test de la valeur de retour, si on a 0 on envoie un message CAN avec en identifiant l'identifiant CAN stocké dans le i2c-can-trans-t, et en data la valeur stocké dans le i2c-can-trans-t.
+La fonction i2c-send-changes prend en paramètre le tableau de i2c-can-trans-t, le parcourt et applique i2c-changes-lookup pour chaque élément. Après un test de la valeur de retour, si on a 0 on envoie un message CAN avec en identifiant l'identifiant CAN stocké dans le i2c-can-trans-t, et en data la valeur stocké dans le i2c-can-trans-t(voir figure \ref{fig:automate_send_changes}).
 
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/diagramme_i2c_send_changes}
+  }
+  \caption{Automate i2c-send-changes}
+  \label{fig:automate_send_changes}
+\end{figure}
 
 %IMAGE
-La fonction update-values va prendre en paramètre le tableau de i2c-can-trans-t, sa taille et le message CAN a traité. En parourant le tableau, on compare l'identifiant du message aux identifiants CAN du tableau, lorqu'on a trouvé l'élément de i2c-can-trans-t qui a le bon identifiant, on va envoyé un message I$^2$C avec pour identifiant l'identifaint stocké dans le i2c-can-tran-t, et pour data, la même data que le message CAN reçu, enfin cette fonction met à jour la valeur de old-data qui est égale à la valeur de data du message CAN reçu.
+La fonction update-values va prendre en paramètre le tableau de i2c-can-trans-t, sa taille et le message CAN a traité. En parourant le tableau, on compare l'identifiant du message aux identifiants CAN du tableau, lorqu'on a trouvé l'élément de i2c-can-trans-t qui a le bon identifiant, on va envoyé un message I$^2$C avec pour identifiant l'identifaint stocké dans le i2c-can-tran-t, et pour data, la même data que le message CAN reçu, enfin cette fonction met à jour la valeur de old-data qui est égale à la valeur de data du message CAN reçu (voir figure \ref{fig:automateCAN-I2C}).
 
-%IMAGE
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/automate-CAN-I2C-G}
+  }
+  \caption{Automate général}
+  \label{fig:automateCAN-I2C}
+\end{figure}
 
 
 \subsection{Tests et résultats}
