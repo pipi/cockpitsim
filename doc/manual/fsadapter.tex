@@ -55,24 +55,31 @@ En dehors du choix du langage de programmation qui allait déterminer l'orientati
 partie du projet, une contrainte importante a été mise en évidence: le grand nombre des données
 du modèle accessibles au travers de FSUIPC.
 
+\section{histoire d'évolution} 
+Tout d'abord, étant donné que nous ne connaissions pas toutes les variables que nous seront amenés à utiliser, nous avons décidé de créer un logiciel pouvant ajouter n'iporte quelle valeur provenant de FSUIPC, sans modifier directement le programme. Les données provenant de FSUIPC étaient sauvgardées dans un fichier texte pouvant être lu par le programme.
 
-\subsection{cahier des charges du logiciel}
+ Toutes les données sont fournit par le FSUIPC et comme ils sont tous dans le tableau,nous pouvons donc modifier le donné que nous avons besoin sans accÈder directement dans le FSUIPC. Et nous avons pensÈ que mÍme si nous ne pouvons pas utiliser le fichier cette fois, cela sera peut Ítre utile pour les gens suivant.
+Lors de l'étude initiale sur cette partie du projet, on a fait le choix d'écrire le code en C++. Par la suite, et sur les conseils de notre tuteur, nous sommes passé à une solution en C. Cependant, nous nous sommes rapidement aperçus que cette solution engendrerait beaucoup de possibilités d'erreurs et de bogues pour des raisons que nous n'aborderons pas ici et le programme devient aussi très compliqué. Il a donc été fait le choix de revenir à la solution initiale, à savoir écrire notre logiciel en C++.
+
+\section{Cahier des charges du logiciel}
 Comme nous l'avons précisé précédemment, l'objectif de cette partie est de relier Flight Simulator X à notre 
-simulateur. Plus précisément, nous voulions créer une variable pour chaque boutons du cockpit (par exemple, 
-une variable pour un switch), celle-ci sera relié aux données disponible sur FSadapter par l'intermédiaire du logiciel. 
+cockpit. Plus précisément, nous voulions créer une variable pour chaque boutons du cockpit (par exemple, 
+une variable pour un switch), celle-ci sera reliée aux données disponibles sur FSadapter par l'intermédiaire du logiciel. 
 Une fois toutes les variables créées, il fallait définir les trames à envoyer à travers le bus CAN. Pour simplifier l'utilisation 
 du bus CAN et donc des messages qui y sont envoyés, les trames doivent être préalablement définies. Autrement dit, 
 les variables à créer pour l'utilisation du cockpit vont être classé par famille et de manière à créer des trames de 8 octets 
 maximales. Pour différencier les trames, on y associe un identifiant sur 11 bits qui est défini de la manière suivante. 
-Lorsque le message va vers le simulateur (FS -> CAN) les trois derniers bits de l'identifiant sont à 0. Dans le sens inverse,
-(CAN -> FS) les trois derniers bits permettent de déterminer quel paramètre de la trame à été modifié. Les autres bits de 
+Lorsque le message va vers le simulateur (de FS vers CAN) les trois derniers bits de l'identifiant sont à 0. Dans le sens inverse,
+(de CAN vers FS) les trois derniers bits permettent de déterminer quel paramètre de la trame à été modifiée. Les autres bits de 
 l'identifiant permettent de différencier les différentes familles de trames et les trames dans une même famille (par exemple,
-famille A, on aura les identifiants 100,108,110, pour la famille B, on aura 200,208). Une famille est le regroupement de plusieurs 
-fonctionnalités faisant appel à un même type de materiel (moteur, front de panel, manettes des gas...).
+module A, on aura les identifiants 100,108,110, pour la module B, on aura 200,208). Une famille est le regroupement de plusieurs 
+fonctionnalités faisant appel à un même type de matériel (par exemple, les commandes de l'autopilote situées sur le front de panel constitueront une seule famille).
 
-\subsection{description du logiciel}
+\section{Description du logiciel}
 Afin que le logiciel puisse complètement interagir avec FSUIPC, il a fallu écrire le programme de manière à pouvoir écrire et lire les données 
-provenant de FSUIPC. 
+provenant de FSUIPC. Le logiciel se découpe alors en 2 parties, le mode lecture et le mode écriture vers FSUIPC.
+
+\subsection{Mode écriture}
 
 \begin{figure}[htpb]
   \centering
@@ -83,7 +90,16 @@ provenant de FSUIPC.
   \label{fig:write}
 \end{figure}
 
+Cette partie du programme lit les messages provenant du bus CAN et après traitement de celles-ci, elle met à jour les données sur FSUIPC.
+Une structure \textit{from-can} construite sous forme d'un tableau à double entrée contenant des fonctions de traitement des données reçues et 
+rassemblant toutes les trames circulant à travers le bus CAN. Chaque ligne de ce tableau est exactement une trame dont l'indice est les 8 bits de 
+poids fort de l'identifiant. Les 3 bits de poids faibles permettent de connaître la variable dans une trame donnée qui a été modifiée. Le logiciel 
+récupère les données provenant du bus CAN et commence par lire l'identifiant ce qui permet de retrouver l'emplacement de la donnée dans la 
+structure \textit{from-can}. Cela fait ainsi appel à une fonction de traitement. Ces fonctions de traitement ne sont pas unique pour chaque 
+donnée reçue. Elles sont écrites pour une famille de donnée. Ces fonctions prennent les données reçues par le bus CAN en paramètre et donnent 
+en sortie les valeurs à écrire sur FSUIPC.
 
+\subsection{Mode lecture}
 
 \begin{figure}[htpb]
   \centering
@@ -94,5 +110,10 @@ provenant de FSUIPC.
   \label{fig:Read}
 \end{figure}
 
+Le mode lecture est l'inverse du mode écriture. Le programme lit les données provenant des FSUIPC et après traitement des données, il envoie les 
+valeurs modifiées à travers le bus CAN. Les données provenant de FSUIPC sont stockées dans une structure \textit{to-can} de même type que la 
+structure \textit{from-can}. La table \textit{to-can} est mise à jour tout les 50ms. Lorsqu'une valeur est modifiée, une fonction de traitement est 
+appelée. Cette fonction prend la valeur provenant de FSUIPC et calcule la donnée à envoyer à tracers le bus CAN. Dès qu'une donnée a été 
+modifiée, la trame correspondante est envoyée à travers le bus CAN.
 
 
