@@ -62,7 +62,7 @@ donc l'ensemble des commutateurs et boutons poussoirs à la masse.
 
 Au niveau des afficheurs,  nous avons adopté l'afficheur de 7 segments. Afin de valider ce bloc fonctionnel,
 nous n'avons eu à afficher une seule valeur car tous les afficheurs du cockpit fonctionnent de la même manière.
-Donc ?a suffit de tester l'affichage pour un paramètre. En prenant en compte 
+Donc ça suffit de tester l'affichage pour un paramètre. En prenant en compte 
 qu'on a réussi une chaine complète pour l'altitude en cas d'autopilote. On a testé l'affichage d'altitude.
 
 Une carte avec interface I$^2$C ayant 4 afficheurs de 7 segments  est à notre disposition. C'est SAA1064 qui est 
@@ -75,16 +75,20 @@ On a programmé un compteur de 0 à 9999 pour tester l'affichage d'altitude. Elle 
 
 Du coté du BECK, il a été demandé de réaliser la détection d'appui sur une touche ou du  changement de position de 
 commutateurs à position et aussi la actualisation d'affichage. Pour la première partie, c'est à dire la détection de 
+
 changement des données de PCF. Il suffit de lire les données de PCF via bus I$^2$C et les comparer avec les données 
 anciennes. Si un changement est détecté, les données de PCF seront remplacées par ces nouveaux. Le BECK va envoyer un 
 message CAN correspondant comportant  les nouveaux états de touche et les positions actuelles de commutateurs au PC. 
 Au niveau d'actualisation d'affichage. Chaque fois un message CAN visant a modifier l'affichage arrive, le BECK le 
 traite et envoie les données contenues dans le message CAN à l'afficheur correspondant.
 
-Etant donné que la détection d'appui sur une touche et changement de position de commutateurs dure beaucoup plus long 
-que  actualisation d'affichage, un TIMER est utilisé pour que le message CAN reçu ne soit pas perdu en sachant que le 
-pile de BECK a enregistré le message est limité. De plus, on peut s'assurer que l'actualisation d'affichage soit 
-traitée à temps. L'automate se représente en figure \ref{fig:Automate_PCF}
+Pour s'assurer que le bus ne soit pas surchargé. Un TIMER de 50 ms est utilisé. Dans ce cas-là, on met à jour le 
+tableau toujours s'il y a un changement de données. Mais le BECK n'envoie le message CAN que quand le TIMER-FLAG est 
+mis à 1 et le changement est détecté. L'automate se représente en figure \ref{fig:Automate_PCF}. Au départ, le Beck 
+cherche s'il y a un message CAN reçu. si c'est vrai, il met à jour l'affichage. Ensuite, il décide s'il faut mettre à 
+jour le tableau. Quand le TIMER-FLAG est mis à 1, le BECK va prendre en comptre s'il faut envoyer un message CAN et 
+remettre TIMER-FLAG à 0. Si un changement est détecté, le BECK envoie un message CAN et remet haschanged (1 s'il y a 
+un changement de données) à 0.  
 
 \begin{figure}[htpb]
   \centering
