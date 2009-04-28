@@ -74,15 +74,20 @@ Mais le SAA1064 présence l'avantage de disposer d'un réglage de l'intensité d'af
 Du coté du BECK, il a été demandé de réaliser la détection d'appui sur une touche ou du  changement de position de 
 commutateurs à position et aussi la actualisation d'affichage. Pour la première partie, c'est à dire la détection de 
 changement des données de PCF. Il suffit de lire les données de PCF via bus I$^2$C et les comparer avec les données 
-anciennes. Si un changement est détecté, les données de PCF seront remplacées par ces nouveaux. Le BECK va envoyer un 
+anciennes qui sont enregistré dans un tableau. Si un changement est détecté, le tableau sera actualisé. Le BECK va 
+envoyer un 
 message CAN correspondant comportant  les nouveaux états de touche et les positions actuelles de commutateurs au PC. 
 Au niveau d'actualisation d'affichage. Chaque fois un message CAN visant a modifier l'affichage arrive, le BECK le 
 traite et envoie les données contenues dans le message CAN à l'afficheur correspondant.
 
-Etant donné que la détection d'appui sur une touche et changement de position de commutateurs dure beaucoup plus long 
-que  actualisation d'affichage, un TIMER est utilisé pour que le message CAN reçu ne soit pas perdu en sachant que le 
-pile de BECK a enregistré le message est limité. De plus, on peut s'assurer que l'actualisation d'affichage soit 
-traitée à temps. L'automate se représente en figure \ref{fig:Automate_PCF}
+Pour s'assurer que le bus CAN ne soit pas surchargé, un TIMER de 50 ms est utilisé. Seulement quand le TIMER-FLAG 
+est mis à 1, le BECK envoie un message CAN si le changment de données est détecté.  Mais le BECK met à jour toujours 
+l'affichage si un message CAN est reçu. Puisque la détection d'appui est fait toujours, donc tout appui peut être 
+détecté. L'automate se représente en figure \ref{fig:Automate_PCF}. Au départ, le BECK cherche le message CAN dans 
+la pile. Si un message est reçu, il fait mis à jour l'affichage. Par la suite, il décide s'il faut mettre à jour le 
+tableau. Quand le TIMER-FLAG est mis à 1. Le BECK vérifie s'il y a un changement de données et remet TIMER-FLAG à 0.  
+Si un changement de données est détecté, le BECK envoie un message CAN à PC et remet DataHasChanged (1 s'il y a un 
+changement de données) à 0.
 
 \begin{figure}[htpb]
   \centering
@@ -93,8 +98,6 @@ traitée à temps. L'automate se représente en figure \ref{fig:Automate_PCF}
   \label{fig:Automate_PCF}
 \end{figure}
 
-Comme un appui sur une touche dure environ 100 ms, nous avons choisi un TIMER de 50 ms ce qui est raisonnable, tou
-appui peut être détecté dans le temps impartit.
 Pendant le test, nous avons utilisé un PCF dont 16 pattes sont connectées à un niveau 1 récessif. Nous avons connecté une patte à la masse, de la même manière que pour un appui sur une touche. Le PcCANView à bien reçu un message
 CAN envoyé par le BECK. Pour tester l'actualisation de l'affichage, nous avons utilisé le PcCANView pour envoyer
 un message CAN au BECK, la valeur affichée correspondant alors bien à la valeur contenue dans le message CAN.
