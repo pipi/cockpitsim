@@ -55,7 +55,11 @@ Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, on a dû util
 
 Il y a donc dans les bibliothèques can.h et i2c.h les fonctions d'initialisation, d'envoie de messages ,ansi que la réception (au format approprié).Dans la bibliothèque can-i2c.h nous trouvons la strucure ( et les fonctions permettant de remplir les objectifs de ce block. 
 
-la structure (i2c-can-trans-t) a une rôle primordial ici, car c'est elle qui regroupera pour chaque identifiant CAN, les indentifiant I$^2$C correspondants, la dernière valeur lue sur cet esclave, et la taille des données. Nous avons donc créer un tableau de cette structure pour reggrouper chaque identifiant CAN qui intéresse le noeud CAN, ainsi nous avons pu aisément faire correspondre les messages CAN et les messages I$^2$C.
+la structure (i2c-can-trans-t) a une rôle primordial ici, car c'est elle qui regroupera pour chaque identifiant CAN, les indentifiant I$^2$C correspondants, la dernière valeur lue sur cet esclave, et la taille des données. 
+
+
+
+Nous avons donc créer un tableau de cette structure pour reggrouper chaque identifiant CAN qui intéresse le noeud CAN, ainsi nous avons pu aisément faire correspondre les messages CAN et les messages I$^2$C.
 Pour utiliser ce tableau nous avons donc trois fonctions particulières:
 
 \begin{itemize}
@@ -66,4 +70,6 @@ Pour utiliser ce tableau nous avons donc trois fonctions particulières:
 
 La fonction i2c-changes-lookup prend en paramètre un élément de type i2c-can-trans-t et interroge l'esclave i2c, compare la valeur obtenue à l'ancienne valeur lue, si il y a une différence on met à jour et on retourne 0, sinon on retourne -1.
 
-La fonction i2c-send-changes prend en paramètre le tableau de i2c-can-trans-t, le parcourt et applique i2c-changes-lookup pour chaque élément. Après un test de la valeur de retour, si on a 0 on envoie un message CAN avec en identifiant 
+La fonction i2c-send-changes prend en paramètre le tableau de i2c-can-trans-t, le parcourt et applique i2c-changes-lookup pour chaque élément. Après un test de la valeur de retour, si on a 0 on envoie un message CAN avec en identifiant l'identifiant CAN stocké dans le i2c-can-trans-t, et en data la valeur stocké dans le i2c-can-trans-t.
+
+La fonction update-values va prendre en paramètre le tableau de i2c-can-trans-t, sa taille et le message CAN a traité. En parourant le tableau, on compare l'identifiant du message aux identifiants CAN du tableau, lorqu'on a trouvé l'élément de i2c-can-trans-t qui a le bon identifiant, on va envoyé un message I$^2$C avec pour identifiant l'identifaint stocké dans le i2c-can-tran-t, et pour data, la même data que le message CAN reçu, enfin cette fonction met à jour la valeur de old_data qui est égale à la valeur de data du message CAN reçu.
