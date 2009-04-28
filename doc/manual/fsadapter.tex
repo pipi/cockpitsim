@@ -15,7 +15,7 @@ modèle sous la forme d'un tableau index.}.
 Lors des débats technologiques initiaux, le choix s'est porté vers le protocole CAN
 \footnote{Acronyme de \textit{Controller Area Network}.} pour gérer l'échange de données
 entre la partie physique et la partie logicielle. Outre la gestion des données via FSUIPC,
-notre logiciel, FSAdapter, a également la charge de gérer les messages qui transitent sur
+notre logiciel, FSAdapter, a également la fonction de gérer les messages qui transitent sur
 le bus CAN, en réception ainsi qu'en émission.
 
 \begin{figure}[htpb]
@@ -27,7 +27,7 @@ le bus CAN, en réception ainsi qu'en émission.
   \label{fig:archi_fsadapter}
 \end{figure}
 
-Sur base de cette architecture, illustrée en figure \ref{fig:archi_fsadapter}, nous devions mettre
+Sur base de cette architecture, illustrée en figure \ref{fig:archi_fsadapter}, nous avons du mettre
 en place les points suivants :
 \begin{enumerate}
   \item Offrir un accès facile et sûr aux données du modèle aronautique via FSUIPC.
@@ -46,7 +46,7 @@ relativement hétérognes sur l'ensemble du tableau.}. Par la suite, et sur les co
 notre tuteur, nous sommes passés à une solution en C. Cependant, nous nous sommes rapidement aperçus
 que cette solution engendrerait beaucoup de possibilités d'erreurs et de bogues pour des
 raisons que nous n'aborderons pas ici. Il a donc été fait le choix de revenir à la solution initiale,
- savoir écrire notre logiciel en C++.
+à savoir écrire notre logiciel en C++.
 
 Pour cela, Julien Peeters a été affecté en renfort à l'équipe initiale, composée au départ d'Alexandra 
 Starynkevitch et de Zhibin Yin.
@@ -54,3 +54,65 @@ Starynkevitch et de Zhibin Yin.
 En dehors du choix du langage de programmation qui allait déterminer l'orientation majeure de cette
 partie du projet, une contrainte importante a été mise en évidence: le grand nombre des données
 du modèle accessibles au travers de FSUIPC.
+
+\section{Évolution du programme} 
+Tout d'abord, étant donné que nous ne connaissions pas toutes les variables que nous seront amenés à utiliser, nous avons décidé de créer un logiciel pouvant ajouter n'importe quelle valeur provenant de FSUIPC, sans modifier directement le programme. Les données provenant de FSUIPC et les informations les concernant étaient sauvegardées dans un fichier texte pouvant être lu par le programme. Les données qui étaient utilisées par le simulateur étaient intégrées dans une structure de type table de Hash. De ce fait, lorsqu'une nouvelle valeur de FSUIPC était utilisée, elle s'intégrait automatiquement dans la table. Celle-ci devait être mise à jour à une certaine période et envoyer vers le simuateur. La complexité de ce programme résidait dans le fait que toutes les données devaient être reliées à un point précis du cockpit. Cela impliquait de connaître le détail de toutes les valeurs provenant de FSUIPC, et le détail de toutes les fonctionnalités des commandes du cockpit. 
+Étant donné que cette partie du programme demandait un temps considérable, notre tuteur nous a alors conseillé de changer notre approche face au logiciel.
+ 
+\section{Cahier des charges du logiciel}
+Comme nous l'avons précisé précédemment, l'objectif de cette partie est de relier Flight Simulator X à notre 
+cockpit. Plus précisément, nous voulions créer une variable pour chaque boutons du cockpit (par exemple, 
+une variable pour un switch), celle-ci sera reliée aux données disponibles sur FSadapter par l'intermédiaire du logiciel. 
+Une fois toutes les variables créées, il fallait définir les trames à envoyer à travers le bus CAN. Pour simplifier l'utilisation 
+du bus CAN et donc des messages qui y sont envoyés, les trames doivent être préalablement définies. Autrement dit, 
+les variables à créer pour l'utilisation du cockpit vont être classé par famille et de manière à créer des trames de 8 octets 
+maximales. Pour différencier les trames, on y associe un identifiant sur 11 bits qui est défini de la manière suivante. 
+Lorsque le message va vers le simulateur (de FS vers CAN) les trois derniers bits de l'identifiant sont à 0. Dans le sens inverse,
+(de CAN vers FS) les trois derniers bits permettent de déterminer quel paramètre de la trame à été modifiée. Les autres bits de 
+l'identifiant permettent de différencier les différentes familles de trames et les trames dans une même famille (par exemple,
+module A, on aura les identifiants 100,108,110, pour la module B, on aura 200,208). Une famille est le regroupement de plusieurs 
+fonctionnalités faisant appel à un même type de matériel (par exemple, les commandes de l'autopilote situées sur le front de panel constitueront une seule famille).
+
+\section{Description du logiciel}
+Afin que le logiciel puisse complètement interagir avec FSUIPC, il a fallu écrire le programme de manière à pouvoir écrire et lire les données 
+provenant de FSUIPC. Le logiciel se découpe alors en 2 parties, le mode lecture et le mode écriture vers FSUIPC.
+
+\subsection{Mode écriture}
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.4]{images/write}
+  }
+  \caption{Écriture des messages vers FSUIPC}
+  \label{fig:write}
+\end{figure}
+
+Cette partie du programme lit les messages provenant du bus CAN et après traitement de celles-ci, elle met à jour les données sur FSUIPC.
+Une structure \textit{from-can} construite sous forme d'un tableau à double entrée contenant des fonctions de traitement des données reçues et 
+rassemblant toutes les trames circulant à travers le bus CAN. Chaque ligne de ce tableau est exactement une trame dont l'indice est les 8 bits de 
+poids fort de l'identifiant. Les 3 bits de poids faibles permettent de connaître la variable dans une trame donnée qui a été modifiée. Le logiciel 
+récupère les données provenant du bus CAN et commence par lire l'identifiant ce qui permet de retrouver l'emplacement de la donnée dans la 
+structure \textit{from-can}. Cela fait ainsi appel à une fonction de traitement. Ces fonctions de traitement ne sont pas unique pour chaque 
+donnée reçue. Elles sont écrites pour une famille de donnée. Ces fonctions prennent les données reçues par le bus CAN en paramètre et donnent 
+en sortie les valeurs à écrire sur FSUIPC.
+
+\subsection{Mode lecture}
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.4]{images/Read}
+  }
+  \caption{Lecture des messages depuis FSUIPC}
+  \label{fig:Read}
+\end{figure}
+
+Le mode lecture est l'inverse du mode écriture. Le programme lit les données provenant des FSUIPC et après traitement des données, il envoie les 
+valeurs modifiées à travers le bus CAN. Les données provenant de FSUIPC sont stockées dans une structure \textit{to-can} de même type que la 
+structure \textit{from-can}. La table \textit{to-can} est mise à jour tout les 50ms. Lorsqu'une valeur est modifiée, une fonction de traitement est 
+appelée. Cette fonction prend la valeur provenant de FSUIPC et calcule la donnée à envoyer à tracers le bus CAN. Dès qu'une donnée a été 
+modifiée, la trame correspondante est envoyée à travers le bus CAN.
+
+\section{Les améliorations à réaliser}
+Étant donné que tout le materiel nécessaire n'était pas disponible, nous avons décidé de prouver le concept de la réalisation du cockpit, en interfaçant un bouton permettant d'incrémenter la valeur de l'altitude. Les fonctions permettant d'utiliser cette valeur ont donc été écrites. Par contre, les autres fonctionnalitées n'ont pas été ajoutées au simulateur. Autrement dit, pour chaque réalisation matérielle faite sur le cockpit, des adaptations doivent être réalisées dans le programme. Les trames doivent ainsi être réalisées pour toutes les données qui sont ajoutées au simulateur, et les fonctions de traitement (dans le sens CAN vers FS et FS vers CAN) doivent être écrites pour chaque famille de données, et (le plus important) les données obtenues par le bus CAN doivent être reliées aux valeurs fournies par FSUIPC.
