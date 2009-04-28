@@ -154,7 +154,7 @@ La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-di
 Pour cela on doit interfacer les servomoteurs avec le bus CAN. On doit donc adapter les formats de trames, venant des servomoteurs ou venant du bus CAN, afin que ces deux entités puissent communiquer entre elles.
 
 Pour la réalisation des commandes de gaz nous utiliserons des Servomoteur Dynamixel AX12. Les AX12 sont pilotés par une liaison série et peuvent être reliés l'un à l'autre pour créer une chaîne de servomoteurs .Nos 3 servomoteurs peuvent donc cohabiter sur un même bus.
-Ces moteurs ont une résolution de 1024 pas et une vitesse réglable également sur 1024 pas. En lecture, il est possible de connaître, entre autres, leur position courante et leur couple ce qui correspond bien à nos besoins.
+Ces moteurs ont une résolution de 1024 pas en position et une vitesse de rotation réglable également sur 1024 pas. En lecture, il est possible de connaître, entre autres, leur position courante et leur couple ce qui correspond bien à nos besoins.
 
 \subsection{Conception fonctionnelle}
 
@@ -176,15 +176,15 @@ On constate donc qu'on peut s'affranchir du CM5, d'une part à cause de son coût 
 
 Pour cela on pourra utiliser un GALisp22V10, qu'on implémentera via Abel.
 D'autre part le GAL fonctionne avec des niveaux TTL alors que le port série fonctionne avec des niveaux logiques 1 et 0, notre carte d'interface devra également générer des niveaux TTL. Pour cela on pourra utiliser un MAX232, qui amplifie et met en forme deux entrées et deux sorties TTL/MOS vers deux entrées et deux sorties RS232. 
-Cette carte nous permettra également d'obtenir le signal data nécessaire pour le servomoteur AX12, via le GALisp, qui est également à un niveau TTL.
+Cette carte nous permettra également d'obtenir le signal data nécessaire pour le servomoteur AX12 en sortie du circuit GALisp22V10, qui est également à un niveau TTL.
 
 \subsection{Developpement et problèmes rencontrés}
-La programmation du GALisp22v10, a était faite via Abel, cf.ANNEXE Abel GAL, afin de réaliser la fonction half_duplex, expliquée dans la partie précèdente.
+La programmation du circuit GALisp22v10, a était faite en langage Abel à l'aide du logiciel Lattice IspDesignExpert, cf.ANNEXE Abel GAL, afin de réaliser la fonction half_duplex, expliquée dans la partie précèdente.
 Les chronogrammes, en l'ANNEXE Chronogrammes GAL, montre bien que la fonction réalise bien son rôle.
 
 Pour la réalisation de la carte qui fait office d'interface entre le port rs232 et le servomoteur, nous avons opté pour un MAX233, car ce dernier éxige moins de condensateurs, ce qui facilite le routage du MAX232, qui lui possède 5 condensateurs, et ceci tout en gardant les mêmes propriétés.
 
-Pour l'alimentation de la carte, nous avons utilisé un régulateur 7805T, capable de fournir une tension de 5v (output) en sortie afin d'alimenter le GAL et le MAX233 et d'avoir une tension de l'ordre de 9.6v (input) pour l'alimentation des AX12 \ref{fig:7805}:
+Pour l'alimentation de la carte, nous avons utilisé un régulateur 7805T, capable de fournir une tension stable de 5v (output) en sortie afin d'alimenter le circuit GAL et le MAX233 et d'avoir une tension de l'ordre de 9.6v (input) pour l'alimentation des AX12 \ref{fig:7805}:
 
 \begin{figure}[htpb]
   \centering

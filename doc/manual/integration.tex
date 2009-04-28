@@ -71,3 +71,64 @@ Voici la succession des étapes:
 Le lecteur notera que nous avons fait le choix de créer une famille relativement simple pour cette première tentative d'intégration.
 Elle est composée de l'altitude du pilote automatique ainsi que du bouton poussoir de validation de ce dernier paramètre. La famille
 est donc composée de deux index dans le tableau de FSUIPC, tous deux rendus accessibles et sûrs d'accès via FSAdapter.
+
+\subsection{Ressources mises en place}
+Pour effectué
+
+\section{Tests et résultats}
+Avant tout, nous tenons à mettre en évidence que les tests préliminaires sur les différentes briques ont permis de réduire le temps 
+d'intégration. En effet, ces tests préliminaires ont élagués bon nombres de bogues et d'erreurs intrinsèques aux briques 
+indépendemment du contexte.
+
+\subsection{Intégration des capteurs et actionneurs}
+Les capteurs et actionneurs n'ont pas posé d'énormes problèmes lors de l'intégration car ils avaient déjà été validés lors des tests 
+préliminaires. Il nous a fallu néanmoins faire quelques adaptations sur le format des données qui transitent sur le bus I$^2$C afin
+qu'elles soient facilement et simplement exploitable par le module CAN.
+
+De plus, concernant ces formats de données, nous avons dû nous mettre d'accord sur l'ensemble du projet pour que tout les
+différents éléments du simulateur utilisent la même représentation de données, en l'occurrence un format \emph{Little-Endian} 
+\footnote{La représentation des données était une question déjà fort présente à l'esprit des pionniers de l'informatique. 
+Deux voies se sont tracées suivant le constructeur: la représentation Big-Endian et la représentation Little-Endian, 
+respectivement commencant par les bits de poids fort ou les bits de poids faible. L'alignement des données est également 
+important car il détermine la taille d'un bloc de donnée unitaire. Un PC est aligné sur des mots de 32 bits par exemple.}.
+
+Dès lors que les composants étaient prêt et une fois connecté, nous avons vu constater avec plaisir et satisfaction qu'ils envoyaient
+les bonnes données et sous la forme escomptée.
+
+Cette étape de l'intégration est certes courte mais néanmoins cruciale car les élements formant les actionneurs et les capteurs forme
+le point d'entrée pour l'utilisateur lors de son utilisation du simulateur.
+
+\subsection{Intégration des modules CAN}
+Contrairement à l'intégration des capteurs et des actionneurs, celle du module CAN ne s'est pas faite aussi simplement.
+Il a fallut effectuer beaucoup de modification dans le code. En particulier, il était nécessaire de nettoyer le code qui portait
+encore les traces des nombreux essais de résolutions d'erreurs des phases préliminaires. L'objectif de ce nettoyage était axé sur
+le minimalisme et l'efficacité: ne proposer une solution que pour le cas d'application qui concerne l'intégration en minimisant la
+prise en compte des évolutions futures - sans pour autant les ignorées. Il fallait avant tout offrir une solution qui fonctionne,
+quitte à la faire évoluer par la suite.
+
+Une fois nettoyé, le code était enfin prêt pour l'intégration. Cependant, un temps non négligeable a été passé sur ce nettoyage et
+sur l'implantation d'une nouvelle solution plus propre et plus pragmatique que la précédente.
+
+Néanmoins, ces efforts nous ont permis d'aboutir à une solution fonctionnelle qui permet de récupérer les valeurs émises par
+les capteurs et d'avoir l'impact attendu sur les actionneurs lors de l'envoie de messages.
+
+\subsection{Intégration de FSAdapter}
+Bien que cette partie ait subi de nombreux changements, la dernière solution envisagée et implantée nous laisse espérer de bon résultats futures, pour la suite du projet, aux vues des résultats de l'intégration.
+
+Comme nous l'avons déjà souligné ci-dessus, notre objectif premier est avant tout d'offrir une solution fonctionnelle pour effectuer, avant toute autre chose, la preuve de notre concept. De ce fait, les choix d'implatation de la solution seront amenés à changer
+fortement par la suite. En particulier la gestion des données reçues via le bus CAN.
+
+Maintenant que nous avons posé le contexte de l'intégration de cette partie du projet, nous pouvons maintenant passé aux commentaires
+sur les résultats de cette dernière.
+
+En premier lieu, nous avons été rapidement confronté à des problèmes de représentation de données. Bien qu'une convention avait été
+fixée au préalable par les membres du projet, des erreurs d'interprétation des composants utilisés nous ont conduit à transmettre des
+données incohérentes. Ce point était bloquant et devait être résolu en priorité pour continuer l'intégration.
+
+En dehors de ce problème, les tests préliminaires sur FSAdapter avaient permis également d'élaguer les bogues de nature intrinsèques.
+
+La suite de l'intégration nous a pourtant demander de revoir notre modèle de messages transitant sur le bus CAN. En effet, il fallait
+trouver une représentation des données transmises demandant le moins de traitement par les différents modules/noeuds du simulateur.
+N'oubliant pas, par ailleurs, que nous voulons avant tout faire la preuve de notre concept, nous avons décider de faire un choix
+de représentation que nous savions exclusif pour l'application voulue. Néanmoins, nous la savions également facilement modifiable
+pour la faire correspondre à de nouveaux besoins, plus complets, plus larges et plus réalistes.
