@@ -15,7 +15,7 @@ modèle sous la forme d'un tableau index.}.
 Lors des débats technologiques initiaux, le choix s'est porté vers le protocole CAN
 \footnote{Acronyme de \textit{Controller Area Network}.} pour gérer l'échange de données
 entre la partie physique et la partie logicielle. Outre la gestion des données via FSUIPC,
-notre logiciel, FSAdapter, a également la charge de gérer les messages qui transitent sur
+notre logiciel, FSAdapter, a également la fonction de gérer les messages qui transitent sur
 le bus CAN, en réception ainsi qu'en émission.
 
 \begin{figure}[htpb]
@@ -27,7 +27,7 @@ le bus CAN, en réception ainsi qu'en émission.
   \label{fig:archi_fsadapter}
 \end{figure}
 
-Sur base de cette architecture, illustrée en figure \ref{fig:archi_fsadapter}, nous devions mettre
+Sur base de cette architecture, illustrée en figure \ref{fig:archi_fsadapter}, nous avons du mettre
 en place les points suivants :
 \begin{enumerate}
   \item Offrir un accès facile et sûr aux données du modèle aronautique via FSUIPC.
@@ -46,7 +46,7 @@ relativement hétérognes sur l'ensemble du tableau.}. Par la suite, et sur les co
 notre tuteur, nous sommes passés à une solution en C. Cependant, nous nous sommes rapidement aperçus
 que cette solution engendrerait beaucoup de possibilités d'erreurs et de bogues pour des
 raisons que nous n'aborderons pas ici. Il a donc été fait le choix de revenir à la solution initiale,
- savoir écrire notre logiciel en C++.
+à savoir écrire notre logiciel en C++.
 
 Pour cela, Julien Peeters a été affecté en renfort à l'équipe initiale, composée au départ d'Alexandra 
 Starynkevitch et de Zhibin Yin.
@@ -54,3 +54,44 @@ Starynkevitch et de Zhibin Yin.
 En dehors du choix du langage de programmation qui allait déterminer l'orientation majeure de cette
 partie du projet, une contrainte importante a été mise en évidence: le grand nombre des données
 du modèle accessibles au travers de FSUIPC.
+
+
+\subsection{cahier des charges du logiciel}
+Comme nous l'avons précisé précédemment, l'objectif de cette partie est de relier Flight Simulator X à notre 
+simulateur. Plus précisément, nous voulions créer une variable pour chaque boutons du cockpit (par exemple, 
+une variable pour un switch), celle-ci sera relié aux données disponible sur FSadapter par l'intermédiaire du logiciel. 
+Une fois toutes les variables créées, il fallait définir les trames à envoyer à travers le bus CAN. Pour simplifier l'utilisation 
+du bus CAN et donc des messages qui y sont envoyés, les trames doivent être préalablement définies. Autrement dit, 
+les variables à créer pour l'utilisation du cockpit vont être classé par famille et de manière à créer des trames de 8 octets 
+maximales. Pour différencier les trames, on y associe un identifiant sur 11 bits qui est défini de la manière suivante. 
+Lorsque le message va vers le simulateur (FS -> CAN) les trois derniers bits de l'identifiant sont à 0. Dans le sens inverse,
+(CAN -> FS) les trois derniers bits permettent de déterminer quel paramètre de la trame à été modifié. Les autres bits de 
+l'identifiant permettent de différencier les différentes familles de trames et les trames dans une même famille (par exemple,
+famille A, on aura les identifiants 100,108,110, pour la famille B, on aura 200,208). Une famille est le regroupement de plusieurs 
+fonctionnalités faisant appel à un même type de materiel (moteur, front de panel, manettes des gas...).
+
+\subsection{description du logiciel}
+Afin que le logiciel puisse complètement interagir avec FSUIPC, il a fallu écrire le programme
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.4]{images/write}
+  }
+  \caption{Écriture des messages vers FSUIPC}
+  \label{fig:write}
+\end{figure}
+
+
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.4]{images/Read}
+  }
+  \caption{Lecture des messages depuis FSUIPC}
+  \label{fig:Read}
+\end{figure}
+
+
+
