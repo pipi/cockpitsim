@@ -32,8 +32,8 @@ interfacer. Pour faciliter les choses, nous avons choisi de regrouper sur les ci
 entre eux, les diodes également et de la même manière les commutateurs positions. De cette manière nous utilisons
 actuellement 6 circuits PCF pour l'ensemble de ce bloc. Ce dernier est composcomme ceci :
 \begin{itemize}
-  \item32 diodes implantées sur 2 PCF8575
-  \item25 boutons poussoirs pour 2 PCF8575
+  \item 32 diodes implantées sur 2 PCF8575
+  \item 25 boutons poussoirs pour 2 PCF8575
   \item Nyanya commutateurs positions pour les deux derniers PCF8575 utilisés.
 \end{itemize}
 Cette disposition a étdécidée avec le groupe BECK afin de faciliter la lecture et l'écriture sur les PCF. 
@@ -49,8 +49,8 @@ ces derniers n'ont que 3 bits modifiables dans leur adresse ce qui limite le nom
 Néanmoins même dans ces conditions, le front panel et la console centrale peuvent voir leurs boutons, 
 commutateurs et diodes interfacées sur les PCF8575.
 
-Au niveau du fonctionnement des PCF, il a étdécidde brancher les diodes en pull-up. De cette manière, 
-il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côt pour les boutons 
+Au niveau du fonctionnement des PCF, il a été décidé brancher les diodes en pull-up. De cette manière, 
+il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côté pour les boutons 
 poussoirs et les commutateurs positions, l'appui sur une touche ou le contact effectupour les commutateurs
 correspondra un niveau logique 0. Nous relierons donc l'ensemble des commutateurs et boutons poussoirs à la masse.
 
