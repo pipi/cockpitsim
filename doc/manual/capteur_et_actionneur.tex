@@ -50,12 +50,13 @@ Néanmoins même dans ces conditions, le front panel et la console centrale peuven
 commutateurs et diodes interfacées sur les PCF8575.
 
 Au niveau du fonctionnement des PCF, il a été décidé brancher les diodes en pull-up. De cette manière, 
-il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côté pour les boutons 
-poussoirs et les commutateurs positions, l'appui sur une touche ou le contact effectupour les commutateurs
-correspondra un niveau logique 0. Nous relierons donc l'ensemble des commutateurs et boutons poussoirs à la masse.
+il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côté, les boutons 
+poussoirs et commutateurs positions seront fermés pour un niveau 0 dominant constaté sur les PCF.Nous relierons
+donc l'ensemble des commutateurs et boutons poussoirs à la masse.
 
-Au niveau des afficheurs,  c'est l'afficheur de 7 segments qui est adopté. Comme tous les affichages des param¨¨tres
-d'avion ont les mêmes fonctionnements. Donc ?a suffit de tester l'affichage pour un paramètre. En prenant en compte 
+Au niveau des afficheurs,  nous avons adopté l'afficheur de 7 segments. Afin de valider ce bloc fonctionnel,
+nous n'avons eu à afficher une seule valeur car tous les afficheurs du cockpit fonctionnent de la même manière.
+Donc ?a suffit de tester l'affichage pour un paramètre. En prenant en compte 
 qu'on a réussi une chaine complète pour l'altitude en cas d'autopilote. On a testé l'affichage d'altitude.
 
 Une carte avec interface I2C ayant 4 afficheurs de 7 segments  est à notre disposition. C'est SAA1064 qui est intégré
