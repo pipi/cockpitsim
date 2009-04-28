@@ -49,3 +49,14 @@ Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, on a dû util
   \caption{arborescence des bibliothèques}
   \label{fig:bibliothèques}
 \end{figure}
+
+Il y a donc dans les bibliothèques can.h et i2c.h les fonctions d'initialisation, d'envoie de messages ,ansi que la réception (au format approprié).Dans la bibliothèque can-i2c.h nous trouvons les strucures et fonctions permettant de remplir les objectifs de ce block. 
+
+la structure a une rôle primordial ici, car c'est elle qui regroupera pour chaque identifiant CAN, les indentifiant I$^2$C correspondants, la dernière valeur lue sur cet esclave, et la taille des données. Nous avons donc créer un tableau de cette structure pour reggrouper chaque identifiant CAN qui intéresse le noeud CAN, ainsi nous avons pu aisément faire correspondre les messages CAN et les messages I$^2$C.
+Pour utiliser ce tableau nous avons donc trois fonctions particulières :
+\begin{itemize}
+\item i2c_changes_lookup qui détecte les changements sur les esclaves I$^2$C 
+\item i2c_send_changes qui appell i2c_changes_lookup et qui envoie un message CAN s'il y a eu un changement (ces deux fonctions sont synthétisées sous formade de diagramme d'état en figure \ref{}).
+\item update_values qui à la réception d'un message CAN,  
+\end{itemize}
+
