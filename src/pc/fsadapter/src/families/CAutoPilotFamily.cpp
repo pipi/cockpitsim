@@ -1,7 +1,8 @@
 #include "CAutoPilotFamily.h"
 
 CAutoPilotFamily::CAutoPilotFamily(WORD wCanId)
-: CAbstractOffsetFamily(wCanId) { 
+: CAbstractOffsetFamily(wCanId) {
+  m_lstData.push_back(new AltitudeHoldOffset());
 	m_lstData.push_back(new AltitudeOffset());
 	// Adding other offsets.
 	// ...
@@ -22,8 +23,11 @@ can_event_msg_t CAutoPilotFamily::transformToCanMessage() const {
 }
 
 void CAutoPilotFamily::setValueFromCanMessage(can_event_msg_t& oCanEventMsg) {
-	for(std::list<CAbstractOffsetData*>::iterator it =
+	unsigned int index = 0;
+
+  for(std::list<CAbstractOffsetData*>::iterator it =
 			m_lstData.begin(); it != m_lstData.end(); it++) {
-		(*it)->setValueFromRawData(oCanEventMsg.data);
+		(*it)->setValueFromRawData(oCanEventMsg.data+index);
+    index += (*it)->sizeInBytes();
 	}
 }

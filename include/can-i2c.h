@@ -22,11 +22,19 @@
 #ifndef _CAN_I2C_H_
 #define _CAN_I2C_H_
 
-typedef struct {
-	//! I2C node address
+typedef struct _i2c_node_t {
+	//! I2C node address.
 	unsigned char nodeAddr;
-	//! I2C node data length
+   //! I2C node last data.
+   unsigned char lastData[8];
+	//! I2C node data length.
    unsigned char dataLength;
+   //! I2C node data retreiving function.
+   int (*update_data_from_node)(struct _i2c_node_t*);
+   //! I2C node data update from CAN message
+   int (*update_data_from_can)(struct _i2c_node_t*, can_event_msg_t*);
+   //! fills data array in order to build a CAN message.
+   int (*fillBuffer)(struct _i2c_node_t*, unsigned char*);
 } i2c_node_t;
 
 /*!
@@ -36,15 +44,17 @@ typedef struct {
 typedef struct {
 	//! The CAN id.
    unsigned short canId;
-	//! The I2C nodes.
-   i2c_node_t i2cNodes[8];
+   //! The CAN least message data
+   unsigned char leastData[8];
+   //! The least data length
+   unsigned char dataLength;
+   //! Data has changed flag.
+   unsigned char dataHasChanged;
+	//! The I2C nodes array.
+   i2c_node_t* i2cNodes;
    //! Number of I2C nodes.
    unsigned char nodesLength;
-   //! The I2C node old data.
-   char oldData[8];
-   //! The data length.
-   unsigned char dataLength;
-} i2c_can_trans_t;
+} can_family_t;
 
 /*!
  * Check and send changes.
@@ -56,8 +66,8 @@ typedef struct {
  * \param length the array length
  * \return 0 on success, -1 on errors
  */
-int i2c_send_changes(i2c_can_trans_t trans[],
-					  		unsigned short length);
+/*int i2c_send_changes(i2c_can_trans_t trans[],
+					  		unsigned short length);*/
 
 
 /*!
@@ -70,8 +80,8 @@ int i2c_send_changes(i2c_can_trans_t trans[],
  * \param length the array length
  * \return 0 on success, -1 on errors
  */
-int fpga_send_changes(i2c_can_trans_t trans[],
-					  		unsigned short length);
+/*int fpga_send_changes(i2c_can_trans_t trans[],
+					  		unsigned short length);*/
 
 /*!
  * Interpretation of CAN message.
@@ -83,9 +93,22 @@ int fpga_send_changes(i2c_can_trans_t trans[],
  * \param length the array length
  * \return 0 on success, -1 on errors
  */
-int update_values(can_event_msg_t msg,
+/*int update_values(can_event_msg_t msg,
 						i2c_can_trans_t trans[],
-                  unsigned short length);
+                  unsigned short length);*/
+
+
+/*!
+ * Decode of keyboard.
+ * \brief This function checks if there is any press on the keyboard, decodes
+ * and then returns the value of this touch.
+ *
+ * \param slave the slave node address
+ * \param tab array for keyboard value
+ * \return 0 no touch, -1 on errors, or value of the key touched
+ */
+/*int keyboard_decode(unsigned char slave,
+						  unsigned int tab[8][9]);*/
 
 #endif
 

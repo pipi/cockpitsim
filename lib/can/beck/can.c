@@ -40,8 +40,8 @@ int can_init(WORD am, WORD ac, WORD baudrate){
 	int ret;
 
    can0Init.fDisable_Rx = 0; //FALSE /* We want to be able to receive data. */
-   can0Init.Rx_Q_Size = 100;
-   can0Init.Tx_Q_Size[0] = 100;
+   can0Init.Rx_Q_Size = 2;
+   can0Init.Tx_Q_Size[0] = 2;
    can0Init.Tx_Q_Size[1] = 0;
    can0Init.Tx_Q_Size[2] = 0;
 
@@ -64,13 +64,11 @@ int can_init(WORD am, WORD ac, WORD baudrate){
 
 	ret = CAN_Open_Port(CAN0_PORT, &can0Init);
    if(ret != 0) {
-   	printf("Initialization error of CAN port\n");
    	return -1;
    }
 
    ret = CAN_Rx_Filters(CAN0_PORT, CAN_FILT1, &can0RxFilter);
    if(ret != 0) {
-	   printf("Initialization error of filter\n");
    	return -1;
    }
 
@@ -96,7 +94,6 @@ int can_send(can_event_msg_t msg){
    ret=CAN_Send(CAN0_PORT,CAN_TX1,&message);
 
    if(ret != 0) {
-   	printf("Sending CAN message error \n");
       return -1;
    }
    return 0;
@@ -104,19 +101,16 @@ int can_send(can_event_msg_t msg){
 
 int can_recv(WORD timeout, can_event_msg_t* ptr_msg){
 	CAN_MSG message;
-   int i;
    int ret;
 
-   if(ptr_msg==NULL){
-   	printf("Null message pointer\n");
+   if(ptr_msg == NULL){
       return -1;
    }
 
-   ret=CAN_Recv(CAN0_PORT,&message,timeout);
+   ret = CAN_Recv(CAN0_PORT,&message,timeout);
 
    if(ret != 0){
    	if(ret != CAN_EC_TIMEOUT) {
-   		printf("Receiving error\n");
          return -1;
       }
       if(ret == CAN_EC_TIMEOUT){
