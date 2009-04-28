@@ -7,7 +7,6 @@
   \authorinfo{Fabien}{Provost} \\
   \authorinfo{Feng}{Xiong} \\
   \authorinfo{Yongchao}{Xu} \\
-
   \authorinfo{Chunlin}{Zhu}
   
 }
@@ -21,7 +20,7 @@ exemple) et inversement (envoie de message CAN après utilisation d'un actionneur
 l'utilisation d'un FPGA comme interface au bus I$^2$C, c'est à dire que le bloc qui permet de connecter 
 des DEL, des boutons poussoirs ou autre composants plus complexes à un bus I$^2$C. 
 
-\section{I2C Slave}
+\section{Module périphérique sur bus I$^2$C: réalisation VHDL}
 \subsection{Objectif}
 
 Afin d'interfacer les différents éléments du FCU (Flight Control Unit) tels que les commutateurs de position, les encodeurs numériques et les switchs, au contrôleur central du noeud (contrôleur BECK), il est nécessaire de définir un protocole de communication. 
@@ -124,7 +123,7 @@ Dans le cas d'une demande de lecture, on envoie la valeur du registre que le poi
 Au premier abord, cet automate fonctionne en simulation. Cependant, ainsi fait, il n'est pas certain que celui-ci fonctionne en condition de test sur maquette. En effet, cette automate à été créé sans tenir compte des erreurs pouvant se produire en condition réelle. Une condition de 'start' ou 'stop' généré par le mettre pendant l'envoie d'une trame, par exemple, signifiant que le maître a annulé son premier envoie de trame, etc...
 Ainsi, il est nécessaire entre chaque étape de l'automate de détecter la présence ou non d'une condition de 'start' et 'stop'.
 
-\subsection{Résultat et problèmes rencontrés}
+\subsection{Test de validation et résultat}
 
 La difficulté ici résidait dans le test du module. En effet, ne disposant que de très peu de matériel, il était difficile de générer des trames I$^2$C pour savoir si le bloc I$^2$C répondait correctement. Le test a tout de même été réalisé en connectant un microcontrôleur BECK au FPGA équipé d'encodeur numérique pour faire varier les valeurs des registres. 
 La procédure était donc de faire envoyer une trame de demande d'écriture par le BECK, puis une trame de demande de lecture. Alors, le microcontrôleur BECK devait lire cette valeur de retour et l'afficher à l'écran. En faisait varier la valeur des registres pointées, la valeur affichée à l'écran devait à son tour changer. 
