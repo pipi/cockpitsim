@@ -76,10 +76,7 @@ void main() {
 
     //----déclaration des buffers d'entrées et de sorties---
     //static BYTE* request_Angle_Buff;
-    static BYTE* input_Buff;
-    static BYTE* set_Angle_Buff;
-   static BYTE* output_Buff;
-   static BYTE* buff;
+    BYTE* input_Buff, *set_Angle_Buff, *output_Buff, *buff, *read_Angle_Buff;
     
 
     //-----décl des var msg-------
@@ -100,42 +97,26 @@ void main() {
     static BYTE ID;
     int i;
 
-    //-------indicateurs
-
-    //-------manuel
-    /*int end_sendIstru; //fin de transmission d'instruction AX12
-    int end_rcvAngle; //fin de reception de trames de statut AX12
-    int end_traitement;//fin de traitement des données AX12 (concat, remplir tab ..)
-    int end_transfer;//fin de détection de mise à jour de la table, transfer des données vers CAN*/
-
-    //---------automatique
-
- /*   int no_msg;//présence d'un msg sur le port can déstiné aux AX12
-    int end_rcv_msg;//fin de réception de toute la trame
-    int end_decode_msg;//fin du décodage du msg, création de trames instru AX12
-    int end_sendAngle;//fin de l'envoi de trame AX12 pour lire l'angle
-    int end_treat;//timer pour laisser à l'AX12 le temps de prendre en compte les valeurs*/
 
    //------initialisations--------
    state=1;
    ID=13;
    PA=0;
    running=1;
+   for(i=0;i<nByteToRead;i++)
+   	{
+      	read_Angle_Buff[i]=0;
+      }
 
-
-   //------init buffers---------
-   /*read_Angle_Buff[0]=START;
-	read_Angle_Buff[1]=START;
-	read_Angle_Buff[2]=ID;
+   read_Angle_Buff[0]=0xFF;
+	read_Angle_Buff[1]=0xFF;
+	read_Angle_Buff[2]=13;
 	read_Angle_Buff[3]=4;//2 param(msb &lsb angle) + ID + instructions
-	read_Angle_Buff[4]=INST_READ;
-	read_Angle_Buff[5]=P_GOAL_POSITION_L;
-	read_Angle_Buff[6]=2;//2 bytes MSB & LSB
-	read_Angle_Buff[7]=~ (ID+4+INST_READ+P_GOAL_POSITION_L+2);//On peut caster en unsigned char, a verifier la necessite
-     */
+	read_Angle_Buff[4]=0x03;
+	read_Angle_Buff[5]=25;
+	read_Angle_Buff[6]=1;//2 bytes MSB & LSB
+	read_Angle_Buff[7]=~(13+4+0x03+25+1);
 
-
-    // ne contient pas encore la partie Beck-Can
 
     BIOS_Set_Focus (FOCUS_APPLICATION) ;
 
@@ -156,18 +137,27 @@ void main() {
     fossil_purge_output( FOSSIL_COM);
     fossil_purge_input( FOSSIL_COM);
 
-    set_Angle(FOSSIL_COM, 13, 10, set_Angle_Buff, nByteToWrite_Set);
+    printf("nb testbytes sent = %d \n",fossil_writeblock(FOSSIL_COM,read_Angle_Buff,nByteToRead));
     printf("data set : \n");
-    for(i=0;i<nByteToWrite_Set;i++)
-    		printf("%d ",set_Angle_Buff[i]);
+    for(i=0;i<nByteToRead;i++)
+    		printf("%d ",read_Angle_Buff[i]);
     printf("\n");
-    sleep(5);
-    fossil_readblock(FOSSIL_COM,buff,nByteToRead-2);
+    sleep(1);
+    sleep(1);
+    sleep(1);
+    sleep(1);
+    sleep(1);
+
+
+    printf("nb testbytes received = %d \n",fossil_readblock(FOSSIL_COM, buff,nByteToRead));
     for(i=0;i<nByteToRead;i++)
     {
        	printf("%d ",buff[i]);
     }
     printf(" \n ");
+
+    fossil_purge_output( FOSSIL_COM);
+    fossil_purge_input( FOSSIL_COM);
 
 
 
@@ -175,12 +165,6 @@ void main() {
       //can_msg_lookup();
 
          switch(state){
-        /*case 0 :
-        {
-            init_AX12();
-            state=1;
-
-        }break;*/
 
         case 1 :
             {   printf("state 1 : get angle \n");
@@ -193,18 +177,30 @@ void main() {
                 }
                 else
                 {
-                    //read_Angle(ID,read_Angle_Buff);
-                    //end_sendIstru=read_Angle(ID,read_Angle_Buff);
-                    //fossil_purge_output( FOSSIL_COM);
                     if(read_Angle(FOSSIL_COM, ID, output_Buff, nByteToRead )==1)
                     {
-                        state=2;
+
                         printf("sending instructions succed \n");
                         for(i=0;i<nByteToRead;i++)
                         	{
                            	printf("%d ",output_Buff[i]);
                            }
                         printf(" \n ");
+
+                        //printf("state 2 : wait for receiving position \n");
+                        sleep(2);
+                                        			
+                        printf("nb data received % d \n",fossil_readblock( FOSSIL_COM, input_Buff,nByteToRead ));
+                        printf("bytes received \n");
+                			for(i=0;i<nByteToRead;i++)
+                				{
+                     			printf("%d ", input_Buff[i]);
+                     		}
+                			printf("\n");
+
+                        sleep(5);
+
+                        state=2;
 
                     }
                     else
@@ -217,33 +213,14 @@ void main() {
             }break;
 
         case 2:
-            {
-            	printf("state 2 : wait for receiving position \n");
-                //sleep(3);
-                //fossil_purge_input( FOSSIL_COM);
-                sleep(1);
-                sleep(1);
-                sleep(1);
-                sleep(1);
-                sleep(1);
-                sleep(1);
-
-                printf("nb data received % d \n",fossil_readblock( FOSSIL_COM, input_Buff,nByteToRead ));
-                printf("bytes received \n");
-                for(i=0;i<nByteToRead;i++)
-                		{
-                     	printf("%d ", input_Buff[i]);
-                     }
-                printf("\n");
-
+            {  printf("state 2 :--- \n");
                 state=3;
             } break;
 
         case 3:
             {
             	printf("state 3 : fill position in data AX12 \n");
-                //fill_data_AX12(data_AX12, sizeDataAX12, answer_Angle_Buff);
-                //end_rcvAngle=fill_data_AX12(data_AX12, sizeDataAX12, answer_Angle_Buff);
+
                 if(fill_data_AX12(data_AX12, sizeDataAX12, input_Buff)==1)
                 {
                     state=4;
@@ -325,8 +302,6 @@ void main() {
         case 11:
             {
             	printf(" state 11 : decoding can msg and setting AX12 positions \n");
-                /*decode_Msg_CAN(ptrmsg,angle_Value, set_Angle_Buff);
-                end_decode_msg=	decode_Msg_CAN(ptrmsg,angle_Value, set_Angle_Buff);*/
 
                 if(decode_Msg_CAN(ptrmsg,angle_Value, set_Angle_Buff)==1)
                     state=11;
