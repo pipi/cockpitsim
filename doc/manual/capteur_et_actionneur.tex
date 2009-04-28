@@ -1,7 +1,8 @@
 \chapter{Capteur et actionneur}
 \authors{
   \authorinfo{Romain}{Marchaudon} \\
-  \authorinfo{Johnny}{Phor}
+  \authorinfo{Johnny}{Phor}\\
+  \authorinfo{Salwa}{Bahji}
 }
 
 
@@ -103,3 +104,36 @@ Donc la nouvelle valeur ne remplace pas celle ancienne. Il a toujours indiqu¨¦ u
 \section{Clavier matriciel}
 
 \section{Commande des gaz}
+\subsection{Description et contexte}
+
+Pour la commande des gazs on veut être capable de contrôler les moteurs et le trim . On souhaite avoir accès aux commandes en position et en détection de dépassement de couple.
+
+Nous souhaitons être capable d’envoyer, d’une part, vers FSUIPC les différentes positions des servomoteurs et dans le sens FSUIPC vers les AX12, autrement dit le mode pilote automatique,  les servomoteurs doivent être capables de se positionner à des angles bien précis. 
+Pour cela on doit interfacer les servomoteurs avec le bus CAN. On doit donc adapter les formats de trames, venant des servomoteurs ou venant du bus CAN, afin que ces deux entités puissent communiquer entre elles.
+
+Pour la réalisation des commandes de gaz nous utiliserons des Servomoteur Dynamixel AX12. Les AX12 sont pilotés par une liaison série et peuvent être reliés l'un à l'autre pour créer une chaîne de servomoteurs .Nos 3 servomoteurs peuvent donc cohabiter sur un même bus.
+Ces moteurs ont une résolution de 1024 pas et une vitesse réglable également sur 1024 pas. En lecture, il est possible de connaître, entre autres, leur position courante et leur couple ce qui correspond bien à nos besoins.
+
+\subsection{Conception fonctionnelle}
+
+Quand on étudie la documentation du Servomoteur Dynamixel, on remarque que ce dernier peut être contrôlé par un PC via un CM-5.
+Le CM-5 possède un circuit interne qui permet de convertir les signaux en half-duplex. Le diagramme réalisant cette conversion est \ref{fig:half_duplex}:
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/half_duplex}
+  }
+  \caption{half_duplex}
+  \label{fig:half_duplex_AX12}
+\end{figure}
+
+On souhaite donc, que les signaux, de niveau TTL, RxD et TxD dépendent du signal Direction_Port.
+Lorsque le signal Direction_port est au niveau haut on ait le signal TxD la sortie qui représente DATA. Et lorsque, le signal Direction_port est au niveau bas que le signal DATA soit l’entrée du signale RxD.
+On constate qu’on peut s’affranchir du CM5, d’une part à cause de son coût élevé (60€) et d’une autre part pour notre apprentissage, en réalisant une carte électrique qui produirait cette fonctionnalité du CM5.
+
+ 
+
+
+
+
