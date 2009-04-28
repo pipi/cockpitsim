@@ -2,16 +2,17 @@
 \authors{
   \authorinfo{Romain}{Marchaudon} \\
   \authorinfo{Johnny}{Phor}\\
-  \authorinfo{Alexandre}{Ouasin} \\
+  \authorinfo{Salwa}{Bahji}\\
+  \authorinfo{Alexandre}{Ouazan} \\
   \authorinfo{Chunlin}{Zhu}
-}
 
+}
 
 \section{Commutateur et afficheur}
 \subsection{Description et contexte}
 
 Bloc Front Panel
-Utilisation de circuits directement ineffaçables I2C : PCF 8575
+Utilisation de circuits directement ineffaçables I$^2$C : PCF 8575
 Dans le cadre du projet il a étdemandde réaliser plusieurs parties distinctes du cockpit. Une de ces parties
 correspond au front panel, et plus précisément la partie MCP ajoutau contrôle des trains d'atterrissages de
 l'avion. Il existait deux solutions que nous avons prises en compte pour gérer les actions provenant de l'appui
@@ -21,12 +22,14 @@ sur ces boutons :
   \item L'utilisation du PCF8575.
 \end{itemize}
 C'est cette dernière solution qui a étretenue. En effet elle présentait l'avantage d'être la fois rapide 
-mettre en oeuvre et de plus les circuits PCF8575 sont directement compatible I2C. De plus la solution FPGA,
+mettre en oeuvre et de plus les circuits PCF8575 sont directement compatible I$^2$C. De plus la solution FPGA,
 même si elle permettait de limiter le nombre de circuits utiliser dans le cockpit, augmentait la charge
 du FPGA et aller certainement faire perdre du temps dans sa mise en place en raisons des tests que nous
 aurions du effectuer dessus.
 
-Pour finir, lors du développement du code I2C sur les contrôleurs BECK, les circuits PCF8575 que nous avions notre disposition ont servit éprouver le fonctionnement du code implantsur les BECK. De cette manière il était déjsur que ces circuits fonctionneraient parfaitement avec l'ensemble de la chaine de traitement implantée dans le cockpit.
+Pour finir, lors du développement du code I$^2$C sur les contrôleurs BECK, les circuits PCF8575 que nous avions notre 
+disposition ont servit éprouver le fonctionnement du code implantsur les BECK. De cette manière il était déjsur que 
+ces circuits fonctionneraient parfaitement avec l'ensemble de la chaine de traitement implantée dans le cockpit.
 
 Le MCP du cockpit n'ayant jamais éten notre possession temps, nous avons du faire avec les informations
 disponibles pour connaitre le nombre de boutons, diodes, commutateurs position et encodeurs incrémentaux 
@@ -39,7 +42,8 @@ actuellement 6 circuits PCF pour l'ensemble de ce bloc. Ce dernier est composcom
   \item Nyanya commutateurs positions pour les deux derniers PCF8575 utilisés.
 \end{itemize}
 Cette disposition a étdécidée avec le groupe BECK afin de faciliter la lecture et l'écriture sur les PCF. 
-En effet, de cette manière les PCF sont soit en lecture (boutons poussoirs et commutateurs positions) ou bien en écriture (diodes). Nous avons également décidde ne brancher que 32 diodes sur les 33 pour des facilités de 
+En effet, de cette manière les PCF sont soit en lecture (boutons poussoirs et commutateurs positions) ou bien en 
+écriture (diodes). Nous avons également décidde ne brancher que 32 diodes sur les 33 pour des facilités de 
 routage et éviter d'utiliser un circuit supplémentaire pour une seule sortie sur les seize disponibles. De plus 
 la présence de cette 33 ème diode n'a pu être éprouvée du fait que nous ne disposons pas des blocs sous les yeux.
 en effet un doute persiste sur la présence ou non de cette diode qui aurait alors une lumière blanche 
@@ -47,7 +51,7 @@ en effet un doute persiste sur la présence ou non de cette diode qui aurait alor
 Bouaziz, l'interfaçage des boutons, diodes et commutateurs sur le FPGA serait une solution plus stable dans le
 temps, et sera donc a priori la futur solution dans le cockpit. En effet, de cette manière,  tous les composants
 seraient alors interrogés de la même manière, et plus besoin d'utiliser un nombre d'adresses limités avec les PCF,
-ces derniers n'ont que 3 bits modifiables dans leur adresse ce qui limite le nombre de PCF 8 sur chaque bus I2C.
+ces derniers n'ont que 3 bits modifiables dans leur adresse ce qui limite le nombre de PCF 8 sur chaque bus I$^2$C.
 Néanmoins même dans ces conditions, le front panel et la console centrale peuvent voir leurs boutons, 
 commutateurs et diodes interfacées sur les PCF8575.
 
@@ -61,17 +65,17 @@ nous n'avons eu à afficher une seule valeur car tous les afficheurs du cockpit f
 Donc ?a suffit de tester l'affichage pour un paramètre. En prenant en compte 
 qu'on a réussi une chaine complète pour l'altitude en cas d'autopilote. On a testé l'affichage d'altitude.
 
-Une carte avec interface I2C ayant 4 afficheurs de 7 segments  est à notre disposition. C'est SAA1064 qui est intégré
-dans cette carte. SAA1064 a 2 bits modifiables dans leurs adresses ce qui limite le nombre des cartes à 4 sur chaque 
-bus I2C. Cela pose des  problèmes si on veut afficher tous les paramètres. Mais comme il n y a pas d'autres afficheurs 
-qui sont à la disposition et pour simplifier le test. On n'a pas d'autres choix.  Mais l'avantage de SAA1064 est la 
-possibilité de changer l'intensité d'affichage.
+Une carte avec interface I$^2$C ayant 4 afficheurs de 7 segments  est à notre disposition. C'est SAA1064 qui est 
+intégré dans cette carte. SAA1064 a 2 bits modifiables dans leurs adresses ce qui limite le nombre des cartes à 4 sur 
+chaque bus I$^2$C. Cela pose des  problèmes si on veut afficher tous les paramètres. Mais comme il n y a pas d'autres
+afficheurs qui sont à la disposition et pour simplifier le test. On n'a pas d'autres choix.  Mais l'avantage de 
+SAA1064 est la possibilité de changer l'intensité d'affichage.
 
 On a programmé un compteur de 0 à 9999 pour tester l'affichage d'altitude. Elle a fonctionné correctement.
 
 Du coté du BECK, il a été demandé de réaliser la détection d'appui sur une touche ou du  changement de position de 
 commutateurs à position et aussi la actualisation d'affichage. Pour la première partie, c'est à dire la détection de 
-changement des données de PCF. Il suffit de lire les données de PCF via bus I2C et les comparer avec les données 
+changement des données de PCF. Il suffit de lire les données de PCF via bus I$^2$C et les comparer avec les données 
 anciennes. Si un changement est détecté, les données de PCF seront remplacées par ces nouveaux. Le BECK va envoyer un 
 message CAN correspondant comportant  les nouveaux états de touche et les positions actuelles de commutateurs au PC. 
 Au niveau d'actualisation d'affichage. Chaque fois un message CAN visant a modifier l'affichage arrive, le BECK le 
@@ -93,11 +97,12 @@ traitée à temps. L'automate se représente en figure \ref{fig:Automate_PCF}
 
 Comme un appui sur une touche dure quelque 100 ms, donc un TIMER de 50 ms est raisonnable. Tout l'appui peut être 
 détecté.  Pendant le test, on a utilisé un PCF dont 16 pattes sont connectées à 1 récessif. Puis on a connecté une 
-patte à la masse, c'est la même que pour un appui sur une touche. Le PcCANView à bien reçu un message CAN envoyé par le 
-BECK. Pour tester l'actualisation d'affichage, on a utilisé le PcCANView pour envoyer un message CAN au BECK, et puis 
-on a constaté l'affichage de valeur contenue dans le message CAN envoyé.
+patte à la masse, c'est la même que pour un appui sur une touche. Le PcCANView à bien reçu un message CAN envoyé par 
+le BECK. Pour tester l'actualisation d'affichage, on a utilisé le PcCANView pour envoyer un message CAN au BECK, et 
+puis on a constaté l'affichage de valeur contenue dans le message CAN envoyé.
 
-Au début du test, nous nous sommes trompé de niveaux dominant. Nous avons pensé à mettre un niveau 1 dominant dans le circuit. Mais il a apparu que 
+Au début du test, nous nous sommes trompé de niveaux dominant. Nous avons pensé à mettre un niveau 1 dominant dans le 
+circuit. Mais il a apparu que 
 c'est toujours 0 dominant. Donc il faut connecter le bouton à la masse. L'autre problème rencontré est pour lire les 
 pattes de PCF, il faut s'assurer que le registre de mode écriture est 0Xffff avant lecture. Pendant la programmation, 
 on a eu un problème d'utilisation de pointeur. Au début, on n'a pas utilisé le pointeur comme paramètre de fonction. 
@@ -105,58 +110,235 @@ Donc la nouvelle valeur ne remplace pas celle ancienne. Il a toujours indiqué un
 
 \section{Encodeur incrémental}
 
-\section{Clavier matriciel}
 
-\subsection{Objectifs du bloc}
+\subsection{Contexte et objectif}
 
+Les différents encodeurs numériques du cockpit ont diverses utilités comme la variation de la vitesse, la variation 
+de l'altitude etc. Les valeurs récupérées de ces encodeurs sont différentes séquences de deux bits, ces séquences 
+mises dans un certain ordre nous permettent d'identifier le sens de rotation des encodeurs.
 
+L'objectif de ce bloc est d'interfacer ces séquences pour que le message envoyé au BECK soit compréhensible.
 
-	Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître 
-du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier 
-pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 
-9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il est une interface adéquate 
-à clavier (9+8=17 entrées/sorties).
-
-	La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque ligne 
-et chaque colonne sont reliées bidirectionnellement au FPGA.
+Les encodeurs étant reliés au FPGA, ils envoient leur trame aux FPGA, et celui-ci les analyse de la façon suivante :
 
 \begin{figure}[htpb]
   \centering
   \fbox{
-    \includegraphics[scale=0.4]{images/schema_clavier_matriciel}
+    \includegraphics[scale=0.5]{images/automate_codeur}
   }
-  \caption{schema du clavier matriciel}
-  \label{fig:schema_clavier_matriciel}
+  \caption{Diagramme d'état de l'automate codeur }
+  \label{fig:automate_codeur}
 \end{figure}
 
 
-\subsection{Solutions envisagées : les limites}
+Le schéma ci-dessus représente un bloc codé du FPGA : Le bloc automate codeur. Il a fallu prévoir un autre bloc 
+comprenant un registre à implémenter en fonction du sens de rotation pour avoir une réelle appréciation de 
+l'incrémentation ou de la décrémentation: Le bloc lpm-counter16. Chaque changement d'état de l'automate codeur 
+fournit une impulsion au compteur qui lui indique qu'il doit incrémenter ou décrémenter selon le sens de rotation.
 
-	Dans un premier temps, nous avons envisagé que le FPGA traite les informations lui-même en en mettant en place 
-le protocole de détection de touche. Une requête de lecture du clavier étant détectée, le FPGA renvoie la valeur associée 
-de la dernière touche appuyée (de 1 à 72). Si cette valeur a déjà été envoyée et que l'on détecte une nouvelle requête de 
-lecture de la part du beck, le FPGA renvoie la valeur 0.
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/bloc_codeur_compteur}
+  }
+  \caption{Bloc codeur compteur }
+  \label{fig:bloc_codeur_compteur}
+\end{figure}
 
-	Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, 
-elle demande un algorithme trop important à mettre en place au sein du FPGA 
-\subsection{ Solution retenue & ses forces et avantages}
 
-	La solution retenue au sein du FPGA est d’autoriser en lecture et en écriture les lignes et les colonnes de notre matrice. 
-Le traitement direct de détection de touche se fait alors sur le maître du bus I2C. Nous avons gardé les tailles génériques des 
-registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de même pour les colonnes. 
-Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés physiquement, toutefois, cela n'affecte 
-en rien le traitement de l'information.
+Le principe est alors que l'on envoi l'image de ce registre au beck quand il en fait la demande par le biais du bus 
+I$^2$C.
 
-Dans un premier temps, nous avons envisagé que le FPGA traite les informations lui-même en en mettant en place le protocole de détection de touche. Une requête de lecture du clavier étant détectée, le FPGA renvoie la valeur associée de la dernière touche appuyée (de 1 à 72). Si cette valeur a déjà été envoyée et que l'on détecte une nouvelle requête de lecture de la part du beck, le FPGA renvoie la valeur 0.
+\subsection{Conception et choix techniques}
 
-Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, elle demande un algorithme trop important à mettre en place au sein du FPGA 
-\subsection{Solution retenue : ses forces et avantages}
+La première solution envisagée était d'avoir des registres qui reflétaient exactement la valeur concerné (altitude, 
+vitesse, etc.). Le beck  initialisait les registres au démarrage du cockpit puis la valeur était incrémentée ou 
+décrémentée dans le FPGA de façon à correspondre à la valeur significative c'est-à-dire avec des coefficients 
+multiplicateur associé à l'incrémentation/décrémentation. De cette façon, il n'y a aucun traitement à faire par les 
+autres composantes de la chaines de commande : du FPGA jusqu'à FSUIPC.
 
-La solution retenue au sein du FPGA est d'autoriser en lecture et en écriture les lignes et les colonnes de notre matrice. Le traitement direct de détection de touche se fait alors sur le maître du bus I2C. Nous avons gardé les tailles génériques des registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de même pour les colonnes. Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés physiquement, toutefois, cela n'affecte en rien le traitement de l'information.
+Cette solution est plus contraignante au niveau du code à fournir et il semble que le FPGA ne doit pas servir au 
+traitement pur et dur du calcul, ceci doit être fait par une composante plus performante de la chaine de commande.
 
-	Les registres de lecture et d'écriture sont illustrés sur la figureXXX. Un registre d'écriture (à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
+La solution retenue est donc d'envoyer le registre correspondant à la valeur significative quand on le demande.
+Celui-ci est incrémenter/décrémenter un à un et sa valeur est initialisé à 0. Avec cette solution, les blocs
+fonctionnels sont plus simple, ils ne nécessitent pas une écriture de la part du beck et le coté traitement de
+l'information y ait simplifié. Pour ce qui est de l'envoie de la valeur, le beck fait une demande de lecture sur 
+autant de registres qu'il ya d'encodeurs, le FPGA envoi les valeurs sur le bus I$^2$C registre après registre. 
 
- 
+\subsection{Développement}
 
+	
+Le protocole pour tester les encodeurs incrémentaux a été facilité de par le fait que nos cartes FPGA sont dotées 
+d'un registre de LED et de quatre boutons poussoirs. Nous avons affecté deux boutons pour simuler l'encodeur et le 
+registre sortant du compteur(lpm-counter16) a été affecté au LED. Dans un deuxième temps, nous avons utilisé un 
+encodeur incrémental mis à notre disposition. Ces deux manipulations ont été probantes du  bon fonctionnement 
+automate-codeur associé au lpm-counter16. 
+
+
+De la part du BECK, Nous avons seulement lu les registres pour obtenir les valeurs actuelles de l'encodeur. A chaque
+fois, il enregistre la valeur obtenue. Une fois la valeur suivante lu, il calcul la différence entre les deux et 
+obtient une valeur incrémentée/décrémentée qui signifie le changement de l'encodeur. On l'a testé avec les fonctions 
+créées, quand on a incrémenté/décrémenté l'encodeur, nous avons réussi à afficher les valeurs correspondantes.
+
+Les erreurs résiduelles concernaient notre automate I$^2$C slave.  
+
+
+\subsection{Résultat}
+
+Le résultat obtenu est des registres pour chaque valeurs significatives, que nous sommes capables d'envoyer par le 
+biais du bus I$^2$C au beck, afin qu'ils soient traités. Sur le BECK, nous sommes capables de détecter le changement 
+de l'encodeur, et d'envoyer ce changement par bus CAN vers le PC.
+
+\section{Clavier matriciel}
+
+\subsection{Contexte et objectif}
+
+Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le 
+maître du bus I$^2$C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de 
+lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela 
+implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il 
+est une interface adéquate à clavier (9+8=17 entrées/sorties). Du côté de BECK, il a été demandé de réaliser la 
+détection de touche, et également le décodage de cet appui.
+
+La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque 
+ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
+
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/matrice_clavier}
+  }
+  \caption{représentation du clavier matriciel}
+  \label{fig:matrice_clavier}
+\end{figure}
+
+
+
+\subsection{Conception et choix techniques}
+
+
+Dans un premier temps, nous avons envisagé que le FPGA traite les informations lui-même en mettant en place le
+protocole de détection de touche. Une requête de lecture du clavier étant détectée, le FPGA renvoie la valeur 
+associée de la dernière touche appuyée (de 1 à 72). Si cette valeur a déjà été envoyée et que l'on détecte une 
+nouvelle requête de lecture de la part du beck, le FPGA renvoie la valeur 0. Dans ce cas, toutes les informations 
+sont traitées sur le BECK au lieu de FPGA. 
+
+Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, 
+elle demande un algorithme trop important à mettre en place au sein du FPGA. 
+	 
+La solution retenue au sein du FPGA est d'autoriser en lecture et en écriture les lignes et les colonnes de notre 
+matrice. Le traitement direct de détection de touche se fait alors sur le maître du bus I$^2$C, c'est-à-dire le BECK. 
+Il présente l'avantage d'être plus efficace, et il simplifie le fonctionnement du FPGA. Nous avons gardé les tailles 
+génériques des registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de 
+même pour les colonnes. Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés 
+physiquement, toutefois, cela n'affecte en rien le traitement de l'information.
+
+Les registres de lecture et d'écriture sont illustrés sur la figure( I$^2$C slave à rajouter). Un registre d'écriture 
+(à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
+
+\subsection{Développement}
+
+Pour y arriver, au sein du BECK, nous avons créé les fonctions de façon à détecter s'il y a une touche ou pas, et 
+ensuite en cas d'un appui, le décoder. Donc notre automate se présente sous forme suivante :
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/diagramme_etat_clavier}
+  }
+  \caption{diagramme d'état du protocole de détection de touche }
+  \label{fig:diagramme_etat_clavier}
+\end{figure}
+
+Pour réaliser la détection, sachant que les lignes et les colonnes sont codés sur 4 octets c'est-à-dire sur 4 
+registres,  donc chaque écriture et lecture sont fait sur les 4 octets. Dans notre cas, les registres 1 et 2 de FPGA 
+correspondent aux lignes, les registres 3 et 4 correspondent aux colonnes. Pour lire les données des registres du 
+FPGA et également écrire sur les registres, on doit tout d'abord envoyer une trame contenant l'adresse de ces 
+registres. En lisant les registres, on peut savoir s'il y a un appui effectué et obtenir un code brut. En cas de deux 
+appuis détectés, nous considérons que c'est une erreur.
+
+On distingue la différence entre le code touche (code brut) et la valeur de la touche qui représente la signification 
+qu'on donne à la touche. Par la suite,nous avons besoin de décoder cette touche pour obtenir un code significatif.
+
+
+A partir des principes ci-dessus, nous avons créé des fonctions pour détecter et décoder le clavier. Afin de les 
+tester, nous avons réalisé un clavier matriciel de 3 colonnes et 3 lignes, illustré sur la figure 
+\ref{fig:maquette_clavier}. A chacune des 9 touches correspond un bouton qui réalise un contact entre une ligne et 
+une colonne. Les lignes et les colonnes sont polarisées à Vcc via des résistances de Pull-up, et sont connectées aux 
+ports de FPGA.
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/maquette_clavier}
+  }
+  \caption{maquette de test du clavier matriciel}
+  \label{fig:maquette_clavier}
+\end{figure}
+
+Avec cette structure de clavier, nous sommes obligés de réaliser une lecture de la touche enfoncée en détectant 
+d'abord la colonne, puis la ligne (ou inversement). En considérant l'existence de Pull-up, si nous voulons détecter 
+la colonne, il faut fixer les lignes au niveau 0, c'est-à-dire écrire tous 0 sur les registres 1 et 2(ligne), 1 sur 
+les registres 3 et 4(colonne), donc les colonnes présentent alors un niveau 1. En cas d'un appui de la touche, une 
+colonne va passer au niveau 0, on obtient un code brut des colonnes. De la même façon, on procède au retournement du 
+sens en fixant les lignes au niveau 1 et nous écrivons sur les colonnes les niveaux logiques qu'on vient d'obtenir. 
+Dans ce cas, on peut obtenir un code brut des lignes. Niveau 0 présenté dans les codes correspond un appui, on peut 
+donc décoder cet appui par localisation des 0.
+
+Par les tests effectués, nous avons réussit à détecter s'il y a un appui sur les touches, par contre, quand nous 
+écrivons tous 1 sur les registres, nous avons lu un 0 sur un bit que nous n'avons pas affecté sur le FPGA, donc 
+n'avons pas bien décodé cet appui. Le problème est venu probablement des pins que nous n'avons pas affectées sur le 
+FPGA, il a fallu ajouter des résistance de Pull-up sur la définition même des pins c'est-à-dire à l'intérieur du 
+FPGA.
 
 \section{Commande des gaz}
+\subsection{Description et contexte}
+
+	Pour la commande des gazs on veut être capable de contrôler les moteurs et le trim . On souhaite avoir accès aux commandes en position et en détection de dépassement de couple.
+
+	Nous souhaitons être capable d'envoyer, d'une part, vers FSUIPC les différentes positions des servomoteurs et dans le sens FSUIPC vers les AX12, autrement dit le mode pilote automatique,  les servomoteurs doivent être capables de se positionner à des angles bien précis. 
+Pour cela on doit interfacer les servomoteurs avec le bus CAN. On doit donc adapter les formats de trames, venant des servomoteurs ou venant du bus CAN, afin que ces deux entités puissent communiquer entre elles.
+
+Pour la réalisation des commandes de gaz nous utiliserons des Servomoteur Dynamixel AX12. Les AX12 sont pilotés par une liaison série et peuvent être reliés l'un à l'autre pour créer une chaîne de servomoteurs .Nos 3 servomoteurs peuvent donc cohabiter sur un même bus.
+Ces moteurs ont une résolution de 1024 pas en position et une vitesse de rotation réglable également sur 1024 pas. En lecture, il est possible de connaître, entre autres, leur position courante et leur couple ce qui correspond bien à nos besoins.
+
+\subsection{Conception fonctionnelle}
+
+Quand on étudie la documentation du Servomoteur Dynamixel, on remarque que ce dernier peut être contrôlé par un PC via un CM-5.
+Le CM-5 possède un circuit interne qui permet de convertir les signaux en half-duplex. Le diagramme réalisant cette conversion est \ref{fig:half_duplex}:
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/half_duplex}
+  }
+  \caption{half-duplex}
+  \label{fig:half_duplex}
+\end{figure}
+
+On souhaite donc, que les signaux, de niveaux TTL, RxD et TxD dépendent du signal Direction-Port.
+Lorsque le signal Direction-Port est au niveau haut, le signal TxD en sortie représentera DATA et lorsque, le signal Direction-Port est au niveau bas, le signal DATA est l'entrée du signale RxD.
+On constate donc qu'on peut s'affranchir du CM5, d'une part à cause de son coût élevé et d'une autre part pour notre propre apprentissage, en réalisant une carte électrique qui produirait cette fonctionnalité du CM5.
+
+Pour cela on pourra utiliser un GALisp22V10, qu'on implémentera via Abel.
+D'autre part le GAL fonctionne avec des niveaux TTL alors que le port série fonctionne avec des niveaux logiques 1 et 0, notre carte d'interface devra également générer des niveaux TTL. Pour cela on pourra utiliser un MAX232, qui amplifie et met en forme deux entrées et deux sorties TTL/MOS vers deux entrées et deux sorties RS232. 
+Cette carte nous permettra également d'obtenir le signal data nécessaire pour le servomoteur AX12 en sortie du circuit GALisp22V10, qui est également à un niveau TTL.
+
+\subsection{Developpement et problèmes rencontrés}
+La programmation du circuit GALisp22v10, a était faite en langage Abel à l'aide du logiciel Lattice IspDesignExpert, cf.ANNEXE Abel GAL, afin de réaliser la fonction half-duplex, expliquée dans la partie précèdente.
+Les chronogrammes, en l'ANNEXE Chronogrammes GAL, montre bien que la fonction réalise bien son rôle.
+
+Pour la réalisation de la carte qui fait office d'interface entre le port rs232 et le servomoteur, nous avons opté pour un MAX233, car ce dernier éxige moins de condensateurs, ce qui facilite le routage du MAX232, qui lui possède 5 condensateurs, et ceci tout en gardant les mêmes propriétés.
+
+Pour l'alimentation de la carte, nous avons utilisé un régulateur 7805T, capable de fournir une tension stable de 5v (output) en sortie afin d'alimenter le circuit GAL et le MAX233 et d'avoir une tension de l'ordre de 9.6v (input) pour l'alimentation des AX12 \ref{fig:7805}:
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/7805}
+  }
+  \caption{7805}
+  \label{fig:7805}
+\end{figure}

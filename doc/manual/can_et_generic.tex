@@ -1,17 +1,29 @@
 \chapter{Module CAN et généricité}
 \authors{
+
   \authorinfo{Alexandre}{Ouazan}  \\
   \authorinfo{Julien}{Peeters} \\
   \authorinfo{Johnny}{Phor}  \\
   \authorinfo{Fabien}{Provost} \\
   \authorinfo{Feng}{Xiong} \\
   \authorinfo{Yongchao}{Xu} \\
+
   \authorinfo{Chunlin}{Zhu}
   
 }
 
+\section{Description et contexte}
+L'objecif de cette partie est de créer des outils permettant de simplifier l'utilisation des différents bus de manière générique de façon à pouvoir être réutilisé à plusieurs endroits du projet.
+
+Seront vu dans cette partie, la conception et le développement des noeuds CAN qui permettent de recevoir 
+des messages CAN et de les interprêter afin de générer les actions adéquates (envoie de messages I$^2$C par 
+exemple) et inversement (envoie de message CAN après utilisation d'un actionneur), aussi nous verrons
+l'utilisation d'un FPGA comme interface au bus I$^2$C, c'est à dire que le bloc qui permet de connecter 
+des DEL, des boutons poussoirs ou autre composants plus complexes à un bus I$^2$C. 
+
 \section{I2C Slave}
 \subsection{Objectif}
+
 Afin d'interfacer les différents éléments du FCU (Flight Control Unit) tels que les commutateurs de position, les encodeurs numériques et les switchs, au contrôleur central du noeud (contrôleur BECK), il est nécessaire de définir un protocole de communication. 
 
 Le protocole de communication choisi, il était nécessaire de déterminer par quel biais les éléments du FCU allait communiquer. En effet, ces derniers ne sont pas des composants I$^2$C et par conséquent ne peuvent être directement connecté sur les lignes de communication. Un module doit donc être greffé servant d'interface entre les lignes I$^2$C et les différents encodeurs incrémentaux, bouton poussoir etc... 
@@ -19,7 +31,7 @@ Le protocole de communication choisi, il était nécessaire de déterminer par quel
 Deux choix possibles existent, la première, utiliser un microcontrôleur. Ces avantages ne sont pas négligeables et la principale étant son langage de programmation. En effet, le langage C suffisait et était de plus connu des membres de l'équipe. Par ailleurs, ils sont pré équipé d'un module I$^2$C 'hardware' qui permettrait de simplifier sa mise en oeuvre. 
 Mise à part cela, ils peuvent être limités en termes de puissance de calcul ainsi qu'en nombre de port IO disponible, nécessitant donc en plus l'implantation d'autres composants (multiplexeur, registre,...) surchargeant la carte.
  
-La deuxième possibilité, celle qui a été retenu, est d'utiliser un circuit programmable type FPGA et d'y utiliser le langage VHDL. La difficulté se situe donc au niveau de l'apprentissage de ce nouveau langage de description, de son comportement et de ses subtilités. Le FPGA ne possède pas d'interface I$^2$C pré implanter ce qui obligeait à la concevoir en VHDL. Cependant, ce circuit programmable présente d'énormes qualités dans le cadre du projet. Il possède un nombre d'entrées/sorties supérieur à 60, et il a de bonnes capacités de calcul. De plus, utiliser un composant tel que celui-ci en plus du VHDL est une très bonne expérience pour nous apprentis ingénieurs.
+La deuxième possibilité, celle qui a été retenu, est d'utiliser un circuit programmable type FPGA et d'y utiliser le langage VHDL. La difficulté se situe donc au niveau de l'apprentissage de ce nouveau langage de description, de son comportement et de ses subtilités. Le FPGA ne possède pas d'interface I$^2$C pré implanté ce qui obligeait à la concevoir en VHDL. Cependant, ce circuit programmable présente d'énormes qualités dans le cadre du projet. Il possède un nombre d'entrées/sorties supérieur à 60, et il a de bonnes capacités de calcul. De plus, utiliser un composant tel que celui-ci en plus du VHDL est une très bonne expérience pour nous apprentis ingénieurs.
 
 Le langage VHDL donne, par ailleurs, la possibilité de réaliser des blocs fonctionnels indépendants et de les assembler schématiquement. Ainsi, la gestion des éléments du FCU peut être indépendante du bloc de gestion I2C et la conception grandement simplifié. 
 
@@ -79,7 +91,7 @@ Schématiquement, les communications entre 'maître' et 'esclave' se déroulent com
 \begin{figure}[htpb]
   \centering
   \fbox{
-    \includegraphics[scale=0.5]{images/SI2C_automate}
+  \includegraphics[scale=0.7]{images/diagramme_slave_i2c}
   }
   \caption{Automate de l'esclave I2C}
   \label{fig:SI2C_autom}
@@ -131,18 +143,12 @@ Afin de se rendre compte du fonctionnement de l'auto incrémentation du registre,
 Les tests ont été passé avec succès.
 
 
-\section{Description et contexte}
-L'objecif de cette partie est de créer des outils permettant de simplifier l'utilisation des différents bus de manière générique de façon à pouvoir être réutilisé à plusieurs endroits du projet.
 
-Seront vu dans cette partie, la conception et le développement des noeuds CAN qui permettent de recevoir 
-des messages CAN et de les interprêter afin de générer les actions adéquates (envoie de messages I$^2$C par 
-exemple) et inversement (envoie de message CAN après utilisation d'un actionneur), aussi nous verrons
-l'utilisation d'un FPGA comme interface au bus I$^2$C, c'est à dire que le bloc qui permet de connecter 
-des DEL, des boutons poussoirs ou autre composants plus complexes à un bus I$^2$C. 
 
-\section{Noeud USB/CAN}
+\section{Interface USB/CAN}
 
-\section{Noeud CAN/I$^2$C}
+
+\section{Interface CAN/I$^2$C}
 \subsection{Objectifs}
 L'objectif de ce module est donc double:
 \begin{itemize}
@@ -151,5 +157,53 @@ L'objectif de ce module est donc double:
 \end{itemize}
 
 \subsection{Conception}
-Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, on a dû utiliser les fonctions des librairies du BECK pour initialiser, envoyer et recevoir des messages dans chacun des bus. Néanmoins, de manière à avoir la même syntaxe que pour la partie 
+Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, on a dû utiliser les fonctions des librairies du BECK pour initialiser, envoyer et recevoir des messages dans chacun des bus. Néanmoins, de manière à avoir la même syntaxe que pour la partie USB/CAN et à avoir des fonctions plus simple à utiliser, nous avons construit des bibliothèques à partir des bibliothèques BECK.
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/bibliotheques}
+  }
+  \caption{arborescence des bibliothèques}
+  \label{fig:bibliotheques}
+\end{figure}
+
+Il y a donc dans les bibliothèques can.h et i2c.h les fonctions d'initialisation, d'envoie de messages ,ansi que la réception (au format approprié).Dans la bibliothèque can-i2c.h nous trouvons la strucure ( et les fonctions permettant de remplir les objectifs de ce block. 
+
+la structure (i2c-can-trans-t) a une rôle primordial ici, car c'est elle qui regroupera pour chaque identifiant CAN, les indentifiant I$^2$C correspondants, la dernière valeur lue sur cet esclave, et la taille des données. 
+Nous avons donc créer un tableau de cette structure pour reggrouper chaque identifiant CAN qui intéresse le noeud CAN, ainsi nous avons pu aisément faire correspondre les messages CAN et les messages I$^2$C.
+Pour utiliser ce tableau nous avons donc trois fonctions particulières:
+
+\begin{itemize}
+\item i2c-changes-lookup qui détecte les changements sur les esclaves I$^2$C et met à jour la valeur dans le tableau
+\item i2c-send-changes qui appel i2c changes lookup et qui envoie un message CAN s'il y a eu un changement (ces deux fonctions sont synthétisées sous forme de de diagramme d'état en figure \ref{fig:bibliotheques}).
+\item update-values qui à la réception d'un message CAN, va envoyer un message I$^2$C aux esclaves correspondant afin de mettre à jour leur valeur.
+\end{itemize}
+
+
+\subsection{Développement}
+
+La fonction i2c-changes-lookup prend en paramètre un élément de type i2c-can-trans-t et interroge l'esclave I$^2$C, compare la valeur obtenue à l'ancienne valeur lue, si il y a une différence on met à jour et on retourne 0, sinon on retourne -1.
+
+%IMAGE
+
+La fonction i2c-send-changes prend en paramètre le tableau de i2c-can-trans-t, le parcourt et applique i2c-changes-lookup pour chaque élément. Après un test de la valeur de retour, si on a 0 on envoie un message CAN avec en identifiant l'identifiant CAN stocké dans le i2c-can-trans-t, et en data la valeur stocké dans le i2c-can-trans-t.
+
+
+%IMAGE
+La fonction update-values va prendre en paramètre le tableau de i2c-can-trans-t, sa taille et le message CAN a traité. En parourant le tableau, on compare l'identifiant du message aux identifiants CAN du tableau, lorqu'on a trouvé l'élément de i2c-can-trans-t qui a le bon identifiant, on va envoyé un message I$^2$C avec pour identifiant l'identifaint stocké dans le i2c-can-tran-t, et pour data, la même data que le message CAN reçu, enfin cette fonction met à jour la valeur de old-data qui est égale à la valeur de data du message CAN reçu.
+
+%IMAGE
+
+
+\subsection{Tests et résultats}
+
+Les tests ont été faits rapidement sur des afficheurs 7 segments. Pour cela on utilisait un logiciel PCcanView pour envoyer un message CAN qui devait écrire sur un afficheur 7 segments branché en I$^2$C. Cette expérience permettait de valider la fonction update-values.
+Les résultas furent concluant après quelques essais.
+
+Pour les deux autres fonctions, il a fallut utiliser des PCF interfacés en I$^2$C. Il a fallut beaucoup de temps pour
+que le message CAN envoyé par le BECK après changement soit correcet (notamment la DATA). Ce délai est dû à l'ordre ou était envoyé les octets des DATA.
+
+Maintenant ce block est fonctionnel.
+
 
