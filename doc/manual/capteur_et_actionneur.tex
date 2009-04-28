@@ -139,7 +139,7 @@ fournit une impulsion au compteur qui lui indique qu'il doit incrémenter ou décr
 \begin{figure}[htpb]
   \centering
   \fbox{
-    \includegraphics[scale=0.5]{images/bloc_codeur_compteur}
+    \includegraphics[scale=0.3]{images/bloc_codeur_compteur}
   }
   \caption{Bloc codeur compteur }
   \label{fig:bloc_codeur_compteur}
@@ -201,10 +201,6 @@ implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un no
 est une interface adéquate à clavier (9+8=17 entrées/sorties). Du côté de BECK, il a été demandé de réaliser la 
 détection de touche, et également le décodage de cet appui.
 
-La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque 
-ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
-
-
 \begin{figure}[htpb]
   \centering
   \fbox{
@@ -214,7 +210,8 @@ ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
   \label{fig:matrice_clavier}
 \end{figure}
 
-
+La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque 
+ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
 
 \subsection{Conception et choix techniques}
 
