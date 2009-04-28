@@ -72,12 +72,15 @@ Le lecteur notera que nous avons fait le choix de créer une famille relativement
 Elle est composée de l'altitude du pilote automatique ainsi que du bouton poussoir de validation de ce dernier paramètre. La famille
 est donc composée de deux index dans le tableau de FSUIPC, tous deux rendus accessibles et sûrs d'accès via FSAdapter.
 
-\subsection{Tests et résultats}
+\subsection{Ressources mises en place}
+Pour effectué
+
+\section{Tests et résultats}
 Avant tout, nous tenons à mettre en évidence que les tests préliminaires sur les différentes briques ont permis de réduire le temps 
 d'intégration. En effet, ces tests préliminaires ont élagués bon nombres de bogues et d'erreurs intrinsèques aux briques 
 indépendemment du contexte.
 
-\subsubsection{Intégration des capteurs et actionneurs}
+\subsection{Intégration des capteurs et actionneurs}
 Les capteurs et actionneurs n'ont pas posé d'énormes problèmes lors de l'intégration car ils avaient déjà été validés lors des tests 
 préliminaires. Il nous a fallu néanmoins faire quelques adaptations sur le format des données qui transitent sur le bus I$^2$C afin
 qu'elles soient facilement et simplement exploitable par le module CAN.
@@ -95,7 +98,7 @@ les bonnes données et sous la forme escomptée.
 Cette étape de l'intégration est certes courte mais néanmoins cruciale car les élements formant les actionneurs et les capteurs forme
 le point d'entrée pour l'utilisateur lors de son utilisation du simulateur.
 
-\subsubsection{Intégration des modules CAN}
+\subsection{Intégration des modules CAN}
 Contrairement à l'intégration des capteurs et des actionneurs, celle du module CAN ne s'est pas faite aussi simplement.
 Il a fallut effectuer beaucoup de modification dans le code. En particulier, il était nécessaire de nettoyer le code qui portait
 encore les traces des nombreux essais de résolutions d'erreurs des phases préliminaires. L'objectif de ce nettoyage était axé sur
@@ -109,7 +112,7 @@ sur l'implantation d'une nouvelle solution plus propre et plus pragmatique que l
 Néanmoins, ces efforts nous ont permis d'aboutir à une solution fonctionnelle qui permet de récupérer les valeurs émises par
 les capteurs et d'avoir l'impact attendu sur les actionneurs lors de l'envoie de messages.
 
-\subsubsection{Intégration de FSAdapter}
+\subsection{Intégration de FSAdapter}
 Bien que cette partie ait subi de nombreux changements, la dernière solution envisagée et implantée nous laisse espérer de bon résultats futures, pour la suite du projet, aux vues des résultats de l'intégration.
 
 Comme nous l'avons déjà souligné ci-dessus, notre objectif premier est avant tout d'offrir une solution fonctionnelle pour effectuer, avant toute autre chose, la preuve de notre concept. De ce fait, les choix d'implatation de la solution seront amenés à changer
