@@ -1,4 +1,73 @@
 \chapter{Intégration}
 \authors{
-  \authorinfo{prénom}{nom} \\
+  \authorinfo{Julien}{Peeters} \\
 }
+
+Dans ce chapitre, nous traiterons de l'intégration des différents modules dans le simulateur. Cette intégration comprend
+aussi bien le lien avec la partie matériel que logicielle. En effet, il est question de lier les différentes briques logicielles
+développées aux modules matériels produits.
+
+Du côté logiciel, nous avons le partie dénomée FSAdapter, faisant l'interface avec Microsft Flight Simulator X, mais aussi
+les parties logicielles embarquées dans les modules CAN. Du côté matériel, nous disposons des éléments composants la partie
+physique du simulateur. En l'ocurrence il s'agit des décodeurs en quadrature, des interfaces pour les différents éléments
+d'intéraction (boutons poussoirs et LED's).
+
+\section{Contexte et contraintes}
+Avant d'expliquer la procédure d'intégration que nous avons suivi, il est nécessaire de faire un bref rappel du contexte. 
+
+A ce stade du projet, nous disposons d'un module CAN générique fonctionnel prêt à se voir attribué des actionneurs 
+et des capteurs au travers d'un bus I$^2$C, ainsi que d'une liaison CAN active grâce à l'ajout dans FSAdapter d'une 
+première famille \footnote{Les familles dans FSAdapter correspondent à des regroupement d'actionneurs et de capteurs 
+dans la réprésentation du modèle de l'avion considéré. En l'occurrence, il peut s'agir de l'indicateur d'altitude du 
+pilote automatique ou encore du bouton qui la valide.} regroupant les actionneurs et capteurs liés physiquement au 
+module CAN. Le dispositif de l'intégration est illustré en figure \ref{fig:archi_integration}.
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/archi_integration}
+  }
+  \caption{Architecture mise en place pour l'intégration.}
+  \label{fig:archi_integration}
+\end{figure}
+
+Cependant, malgré le fait que nous êtions prêt pour initier cette intégration, nous avons été confronté à des barrières importantes.
+En particulier, nous avons du faire face à des retard dans les commandes qui nous ont empêchées de pousser les tests préliminaires
+suffisamment loin pour pouvoir mettre en oeuvre une intégration complète. C'est pourquoi, nous avons pris le parti de mettre en avant
+la preuve du concept, établi par la mise en place d'une chaine de traitement complète partant du modèle aéronautique sur Microsoft 
+Flight Simulator X et descendant jusqu'aux actionneurs connecté au module CAN via un bus I$^2$C.
+
+\section{Procédure d'intégration}
+L'objectif premier de cette tentative d'intégration est avant tout de faire la preuve du concept comprenant l'ensemble
+des briques matérielles et logicielles développées par nos soins. Par ailleurs, pour que l'intégration puisse mettre en évidence
+le plus significativement possible les erreurs ou bogues et leurs causes, nous avons décidé de procédé par étapes. Cela peut paraître
+du bon sens, mais c'est avant tout une démarche professionnelle souvent baclée mais dont l'importance n'est plus à prouver.
+
+\subsection{Choix des étapes}
+Il nous est apparu logique de suivre la chaine décrite dans la section précédente pour définir la succession des étapes.
+De plus, nous avons décidé de partir des capteurs et actionneurs car il offrent des données continues et complètements déterministes.
+Ce dont nous n'êtions pas sûr du côté de FSAdaper.
+
+Voici la succession des étapes:
+\begin{enumerate}
+  \item Connecter le FPGA configuré pour l'encodeur incrémental sur le bus I$^2$C du module CAN.
+  \item Lancer la boucle de traitement du module CAN.
+  \item Valider les données reçues sur le module par rapport aux actions portées sur l'encodeur.
+  \item Connecter le composant d'interface avec le bouton poussoir au bus I$^2$C du module CAN.
+  \item Valider les données reçues sur le module par rapport à l'appui effectué sur le bouton poussoir.
+  \item Valider l'indépendance des données reçues de l'encodeur et du bouton poussoir.
+  \item Connecter le module CAN au bus CAN.
+  \item Connecter le PC sur lequel se trouve l'analyseur de bus CAN sur le bus CAN.
+  \item Relancer la boucle de traitement sur le module CAN en ajoutant le gestion des messages transitant sur le
+  bus CAN.
+  \item Valider la réception de données sur le PC lorsqu'on actionne soit l'encodeur, soit le bouton poussoir.
+  \item Valider la cohérance des données reçues par rapport aux actions portées sur les actionneurs.
+  \item Lancer FSAdapter en mode "Debug" afin d'afficher les messages d'information sur le transit de messages CAN.
+  \item Valider la mise à jour des données dans FSUIPC grace au logiciel FSInterogate \footnote{FSInterogate donne accès aux
+  valeurs rendues accessibles par FSUIPC sous la forme d'un tableur.}.
+  \item Valider la cohérance de l'impact sur le modèle aéronautique par rapport aux actions portées sur les actionneurs.
+\end{enumerate}
+
+Le lecteur notera que nous avons fait le choix de créer une famille relativement simple pour cette première tentative d'intégration.
+Elle est composée de l'altitude du pilote automatique ainsi que du bouton poussoir de validation de ce dernier paramètre. La famille
+est donc composée de deux index dans le tableau de FSUIPC, tous deux rendus accessibles et sûrs d'accès via FSAdapter.

@@ -6,249 +6,53 @@
 #include <ax12.h>
 #include <can.h>
 
- can_event_msg_t* ptrmsg;                                         
+can_event_msg_t* ptrmsg;
 
-void init_AX12() //à faire------------
+
+//------instruction function-----------
+
+int set_Angle(int port, BYTE ID, int angle, BYTE* set_Angle_Buff, int nb_byte) //angle from 0 to 1023, ID 1 to 3
 {
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID_BROADCAST);
-	fossil_putbyte_wait(FOSSIL_COM, 0x0A);//L à définir
-	fossil_putbyte_wait(FOSSIL_COM, INST_SINCWRITE);
-	fossil_putbyte_wait(FOSSIL_COM, P_ID );
+	set_Angle_Buff[0]=START;
+	set_Angle_Buff[1]=START;
+	set_Angle_Buff[2]=ID;
+	set_Angle_Buff[3]=7;//4 param + ID + instructions + length
+	set_Angle_Buff[4]=INST_WRITE;
+	set_Angle_Buff[5]=P_GOAL_POSITION_L;
+	set_Angle_Buff[6]=(BYTE)(angle && POS_LSB_MASK);
+	set_Angle_Buff[7]=(BYTE)(angle && POS_MSB_MASK);
+	set_Angle_Buff[8]=SPEED_VALUE_LSB;
+   set_Angle_Buff[9]=SPEED_VALUE_MSB;
+	set_Angle_Buff[10]=~(ID + 7 + INST_WRITE + P_GOAL_POSITION_L +set_Angle_Buff[6]+set_Angle_Buff[7]+ set_Angle_Buff[8] + set_Angle_Buff[9]);
 
-	fossil_putbyte_wait(FOSSIL_COM, 0x01);
-	fossil_putbyte_wait(FOSSIL_COM, ID_AX1);
+	//fossil_writeblock ( FOSSIL_COM, set_Angle_Buff,nByteToWrite_Set );
 
-	fossil_putbyte_wait(FOSSIL_COM, 0x01);
-	fossil_putbyte_wait(FOSSIL_COM, ID_AX2);
-
-	fossil_putbyte_wait(FOSSIL_COM, 0x01);
-	fossil_putbyte_wait(FOSSIL_COM, ID_AX3);
-
-
-	//fossil_putbyte_wait(FOSSIL_COM, (ID_BROADCAST+0x04+INST_SINCWRITE+P_ID+ID));
-
-}
-
-int set_ID(short ID)
-{
-fossil_putbyte_wait(FOSSIL_COM, START);
-fossil_putbyte_wait(FOSSIL_COM, START);
-fossil_putbyte_wait(FOSSIL_COM, ID_BROADCAST);
-fossil_putbyte_wait(FOSSIL_COM, 0x04);
-fossil_putbyte_wait(FOSSIL_COM, INST_WRITE);
-fossil_putbyte_wait(FOSSIL_COM, P_ID );
-fossil_putbyte_wait(FOSSIL_COM, ID) ;
-fossil_putbyte_wait(FOSSIL_COM, (ID_BROADCAST+0x04+INST_WRITE+P_ID+ID));
-
-  return 1;
-
-}
-
-//---------Trames d'instructions AX12---------
-
-
-int set_MSB_Angle(unsigned char ID, unsigned char MSB_Angle)
-{
-
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID);
-	fossil_putbyte_wait(FOSSIL_COM, WRITE_LENGTH);
-	fossil_putbyte_wait(FOSSIL_COM, INST_WRITE);
-	fossil_putbyte_wait(FOSSIL_COM, P_GOAL_POSITION_H );
-	fossil_putbyte_wait(FOSSIL_COM, MSB_Angle);
-	fossil_putbyte_wait(FOSSIL_COM, (ID+INST_WRITE+P_GOAL_POSITION_H+MSB_Angle));
-
-	return 1;
-
-}
-
-int set_LSB_Angle(unsigned char ID, unsigned char LSB_Angle)
-{
-	//unsigned char MSB_Angle =.........;
-	//unsigned char LSB_Angle =.........;
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID);
-	fossil_putbyte_wait(FOSSIL_COM, WRITE_LENGTH);
-	fossil_putbyte_wait(FOSSIL_COM, INST_WRITE);
-	fossil_putbyte_wait(FOSSIL_COM, P_GOAL_POSITION_L );
-	fossil_putbyte_wait(FOSSIL_COM, LSB_Angle) ;
-	fossil_putbyte_wait(FOSSIL_COM, (ID+INST_WRITE+P_GOAL_POSITION_L+LSB_Angle));
-
-	return 1;
-
-}
-
-int read_MSB_Angle(unsigned char ID)
-{
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID);
-	fossil_putbyte_wait(FOSSIL_COM, READ_LENGTH);
-	fossil_putbyte_wait(FOSSIL_COM, INST_READ);
-	fossil_putbyte_wait(FOSSIL_COM, P_PRESENT_POSITION_H);
-	fossil_putbyte_wait(FOSSIL_COM, (ID+INST_READ+P_PRESENT_POSITION_H));
-
-	return 1;
-
-
-}
-
-int read_LSB_Angle(unsigned char ID)
-{
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID);
-	fossil_putbyte_wait(FOSSIL_COM, READ_LENGTH);
-	fossil_putbyte_wait(FOSSIL_COM, INST_READ);
-	fossil_putbyte_wait(FOSSIL_COM, P_PRESENT_POSITION_L) ;
-	fossil_putbyte_wait(FOSSIL_COM, (ID+INST_READ+P_PRESENT_POSITION_L));
-
-	return 1;
-
-}
-
-
-int init_couple_max_MSB(unsigned char ID, unsigned char couple_MSB)
-{
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID);
-	fossil_putbyte_wait(FOSSIL_COM, WRITE_LENGTH);
-	fossil_putbyte_wait(FOSSIL_COM, INST_WRITE);
-	fossil_putbyte_wait(FOSSIL_COM, P_MAX_TORQUE_H);
-	fossil_putbyte_wait(FOSSIL_COM, couple_MSB);
-	fossil_putbyte_wait(FOSSIL_COM, (ID+INST_READ+P_MAX_TORQUE_H+couple_MSB));
-
-	return 1;
-
-}
-
-int init_couple_max_LSB(unsigned char ID, unsigned char couple_LSB)
-{
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID);
-	fossil_putbyte_wait(FOSSIL_COM, WRITE_LENGTH);
-	fossil_putbyte_wait(FOSSIL_COM, INST_WRITE);
-	fossil_putbyte_wait(FOSSIL_COM, P_MAX_TORQUE_L);
-	fossil_putbyte_wait(FOSSIL_COM, couple_LSB);
-	fossil_putbyte_wait(FOSSIL_COM, (ID+INST_READ+P_MAX_TORQUE_L+couple_LSB));
-
-	return 1;
-
-}
-
-int enable_couple(unsigned char ID)
-{
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID);
-	fossil_putbyte_wait(FOSSIL_COM, WRITE_LENGTH-1);
-	fossil_putbyte_wait(FOSSIL_COM, INST_WRITE);
-	fossil_putbyte_wait(FOSSIL_COM, P_TORQUE_ENABLE);
-	fossil_putbyte_wait(FOSSIL_COM, 0x01);
-	fossil_putbyte_wait(FOSSIL_COM, ID+WRITE_LENGTH-1+INST_WRITE+P_TORQUE_ENABLE+0x01);
-
-	return 1;
-}
-
-int read_MSB_charge(unsigned char ID)
-{
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID);
-	fossil_putbyte_wait(FOSSIL_COM, READ_LENGTH);
-	fossil_putbyte_wait(FOSSIL_COM, INST_READ);
-	fossil_putbyte_wait(FOSSIL_COM, P_PRESENT_LOAD_H);
-	fossil_putbyte_wait(FOSSIL_COM, (ID+INST_READ+P_PRESENT_LOAD_H));
-
-	return 1;
-
-}
-
-
-int read_LSB_charge(unsigned char ID)
-{
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, START);
-	fossil_putbyte_wait(FOSSIL_COM, ID);
-	fossil_putbyte_wait(FOSSIL_COM, READ_LENGTH);
-	fossil_putbyte_wait(FOSSIL_COM, INST_READ);
-	fossil_putbyte_wait(FOSSIL_COM, P_PRESENT_LOAD_L);
-	fossil_putbyte_wait(FOSSIL_COM, (ID+INST_READ+P_PRESENT_LOAD_L));
-
-	return 1;
-
-
-}
-
-
-//----------reception----------
-
-unsigned char get_MSB_Angle(unsigned char ID)
-{//d signifie DATA
-
-	int i;
-	unsigned char dMSB;
-	read_MSB_Angle(ID);
-	for(i=0;i<6;i++)
-	{
-		fossil_getbyte_wait(FOSSIL_COM);
-		if(i==4)
-			dMSB=fossil_getbyte_wait(FOSSIL_COM);
-	}
-	return dMSB;
-
-}
-
-unsigned char get_LSB_Angle(unsigned char ID)
-{//d signifie DATA
-	int i;
-	unsigned char dLSB;
-	read_LSB_Angle(ID);
-	for(i=0;i<6;i++)
-	{
-		fossil_getbyte_wait(FOSSIL_COM);
-		if(i==4)
-			dLSB=fossil_getbyte_wait(FOSSIL_COM);
-	}
-	return dLSB;
-
-}
-
-unsigned int concat_Angle(unsigned char ID)
-{
-	unsigned int Angle, AngleL;
-	//Angle=ID;
-	Angle=get_MSB_Angle(ID);
-	AngleL=get_LSB_Angle(ID);
-	Angle=((Angle<<8)||(AngleL));
-	return Angle;
-}
-
-int remplir_tab(sDataAX12* data_AX12[], unsigned char ID)
-{
-	int dern_index;
-	dern_index=dern_remplie(data_AX12,size_dataAX12);
-	if(dern_index!=(size_dataAX12-1))
-	{
-		data_AX12[dern_remplie(data_AX12,size_dataAX12)+1]->ID=ID;
-		data_AX12[dern_remplie(data_AX12,size_dataAX12)+1]->angle=concat_Angle(ID);
-	}
+	if(	fossil_writeblock ( port, set_Angle_Buff,nb_byte )==nb_byte)
+		return 1;
 	else
-	{
-		manage_data(data_AX12,size_dataAX12);//on peut s'en passer si on appelle à chaque remplissage manage_data systématiquement
-		data_AX12[size_dataAX12-1]->ID=ID;
-		data_AX12[size_dataAX12-1]->angle=concat_Angle(ID);
-
-	}
-	return 1;
+		return 0;	
 
 }
+
+int read_Angle(int port, BYTE ID, BYTE* read_Angle_Buff, int nb_byte) // ID 1 to 3
+{
+	read_Angle_Buff[0]=START;
+	read_Angle_Buff[1]=START;
+	read_Angle_Buff[2]=ID;
+	read_Angle_Buff[3]=4;//2 param(msb &lsb angle) + ID + instructions
+	read_Angle_Buff[4]=INST_READ;
+	read_Angle_Buff[5]=P_PRESENT_POSITION_L;
+	read_Angle_Buff[6]=2;//2 bytes MSB & LSB
+	read_Angle_Buff[7]=~ (ID+4+INST_READ+P_PRESENT_POSITION_L+2);//On peut caster en unsigned char, a verifier la necessite
+
+	if(fossil_writeblock(port, read_Angle_Buff,nb_byte)==nb_byte)
+		return 1;
+	else
+		return 0;
+}
+
+//--------receive position function------------------------------------
+
 
 int dern_remplie(sDataAX12* data[], int taille)
 {
@@ -257,12 +61,12 @@ int dern_remplie(sDataAX12* data[], int taille)
 	while((i!=0)&&(data[i]==NULL))
 	{
 		i--;
-
+		
 	}
 	return i;
 }
 
-void manage_data(sDataAX12* data[], int taille )
+void manage_data(sDataAX12* data[], int taille)
 {
 	int i;
 	if(data[taille-1]!=0)//il faut initialiser ttes les cases du tab à une valeur non utilisée
@@ -273,20 +77,45 @@ void manage_data(sDataAX12* data[], int taille )
 		}
 		data[taille-1]=NULL;
 	}
+	
 
 }
 
-//-----------------------------------------------------------------
+//---------fill informations from AX12 (positions) in dataAX12 table---------
 
-int transfer_data(sDataAX12* dataAX12[], sDataAX12* dataCAN[])
+int fill_data_AX12(sDataAX12* dAX12[], int size_dAX12, BYTE* answer_Angle_Buff)
 {
+	 	int dern_index, angle_received;
+		dern_index=dern_remplie(dAX12,size_dAX12);
 
-/*if(dataAX12[dern_remplie(dataAX12,size_dataAX12)]!=dataAX12[dern_remplie(dataAX12,size_dataAX12)-1])
-	dataCAN[dern_remplie(dataCAN,size_dataCAN)+1]=dataAX12[dern_remplie(dataAX12,size_dataAX12)];*/
+		angle_received=answer_Angle_Buff[6];// angle
+
+		if(dern_index!=(size_dAX12-1))
+			{
+				dAX12[dern_remplie(dAX12,size_dAX12)+1]->ID=answer_Angle_Buff[2];
+				dAX12[dern_remplie(dAX12,size_dAX12)+1]->angle=((angle_received<<8)||(answer_Angle_Buff[5]));
+			}
+		else
+			{
+				manage_data(dAX12,size_dAX12);//on peut s'en passer si on appelle à chaque remplissage manage_data systématiquement
+				dAX12[dern_remplie(dAX12,size_dAX12)+1]->ID=answer_Angle_Buff[2];
+				dAX12[dern_remplie(dAX12,size_dAX12)+1]->angle=((angle_received<<8)||(answer_Angle_Buff[5]));
+		
+			}
+
+    	return 1;
+
+}
+
+//---------detect update in dataAX12 and send changes to dataCAN--------
+
+int transfer_data(sDataAX12* dataAX12[], sDataAX12* dataCAN[], int size_dataAX12, int size_dataCAN)
+{
 	int i;
    unsigned char ID_dernRemplie;
 	i=dern_remplie(dataAX12,size_dataAX12);
 	ID_dernRemplie=dataAX12[dern_remplie(dataAX12,size_dataAX12)]->ID;//(unsigned char)(dataAX12[dern_remplie(dataAX12,size_dataAX12)]&ID_MASK>>24);
+
 	while(i!=0)
 	{
 		if(ID_dernRemplie==((dataAX12[dern_remplie(dataAX12,size_dataAX12)-i]->ID)))
@@ -297,93 +126,110 @@ int transfer_data(sDataAX12* dataAX12[], sDataAX12* dataCAN[])
 				dataCAN[dern_remplie(dataCAN,size_dataCAN)+1]->angle=dataAX12[dern_remplie(dataAX12,size_dataAX12)]->angle;
 
 			}
-			i=0;//la boucle s'arrête
-			return 1;//fin transfer
+			i=0;//finish boucle
+			return 1;//transfer finished
 		}
 		i--;
 	}
 	return 0;
-
+	
 }
 
 
-//--------CAN-BECK--------------
+//--------CAN-BECK functions--------------
 
-int decode_Msg_CAN(can_event_msg_t* ptr_msg)
+int decode_Msg_CAN(can_event_msg_t* ptr_msg, int angleValue, BYTE* set_Angle_Buff)
 {
+	angleValue=(int)((ptr_msg->data[0]<<8)||(ptr_msg->data[1]));
 	switch(ptr_msg->id)
 	{
 	case ID_GAZ1:
 		{
-			set_MSB_Angle(ID_AX1, ptr_msg->data[0]);//en supposant que data[0] est le MSB de l'angle déjà converti
-			set_LSB_Angle(ID_AX1, ptr_msg->data[1]);//en supposant que data[1] est le LSB de l'angle déjà converti
+         set_Angle(FOSSIL_COM, ID_AX1, angleValue, set_Angle_Buff, 11);
 			return 1;
-
+			
 		}break;
-
+		
 	case ID_GAZ2:
 		{
-			set_MSB_Angle(ID_AX2, ptr_msg->data[0]);//en supposant que data[0] est le MSB de l'angle déjà converti
-			set_LSB_Angle(ID_AX2, ptr_msg->data[1]);//en supposant que data[1] est le LSB de l'angle déjà converti
+         set_Angle(FOSSIL_COM, ID_AX2, angleValue, set_Angle_Buff, 11);
 			return 1;
-
+			
 		}break;
-
+		
 	case ID_TRIM:
 		{
-			set_MSB_Angle(ID_AX3, ptr_msg->data[0]);//en supposant que data[0] est le MSB de l'angle déjà converti
-			set_LSB_Angle(ID_AX3, ptr_msg->data[1]);//en supposant que data[1] est le LSB de l'angle déjà converti
+         set_Angle(FOSSIL_COM, ID_AX3, angleValue, set_Angle_Buff, 11);
 			return 1;
-
+			
 		}break;
-
+		
 	default : return 1;
 	}
-	return 0;//indique fin de décodage
+	return 0;//indique fin de décodage 
 }
 
 
 
 
-int create_msg_CAN(sDataAX12* data_CAN[],can_event_msg_t* ptrmsg )
-{
-
-	switch ((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->ID))
+int create_msg_CAN(sDataAX12* data_CAN[], int size_dataCAN, can_event_msg_t msg )
+{		
+	switch ((unsigned char)(data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->ID))
 	{
 	case ID_AX1:
 		{
-			ptrmsg->id=ID_GAZ1;
-			ptrmsg->length=2;
-			ptrmsg->data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle)& POS_MSB_MASK)>>8);//après conversion
-			ptrmsg->data[1]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle) & POS_LSB_MASK));//après conversion
-
+			msg.id=ID_GAZ1;
+			msg.length=2;
+			msg.data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_MSB_MASK)<<8);//après conversion
+			msg.data[1]=(unsigned char)((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_LSB_MASK);//après conversion
+			
 			return 1;
-
+			
 		}break;
-
+		
 	case ID_AX2:
 		{
-			ptrmsg->id=ID_GAZ2;
-			ptrmsg->length=2;
-			ptrmsg->data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle)& POS_MSB_MASK)>>8);//après conversion
-			ptrmsg->data[1]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle) & POS_LSB_MASK));//après conversion
-
+			msg.id=ID_GAZ2;
+			msg.length=2;
+			msg.data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_MSB_MASK)<<8);//après conversion
+			msg.data[1]=(unsigned char)((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_LSB_MASK);//après conversion
+			
 			return 1;
 		}break;
-
+		
 	case ID_AX3:
 		{
-			ptrmsg->id=ID_TRIM;
-			ptrmsg->length=2;
-			ptrmsg->data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle)& POS_MSB_MASK)>>8);//après conversion
-			ptrmsg->data[1]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataAX12)-1]->angle) & POS_LSB_MASK));//après conversion
-
+			msg.id=ID_TRIM;
+			msg.length=2;
+			msg.data[0]=(unsigned char)(((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_MSB_MASK)<<8);//après conversion
+			msg.data[1]=(unsigned char)((data_CAN[dern_remplie(data_CAN,size_dataCAN)-1]->angle)&POS_LSB_MASK);//après conversion
+			
 			return 1;
 		}break;
-
+		
 	}
-
+	
 	return 0;
 }
 
+//------------power/angle conversion functions ---------
 
+int angle_pow(int angle)
+{
+	return (int)(angle*((power_max-power_min)/(angle_max_bin))+power_min);
+}
+
+int pow_angle(int pow)
+{
+	return (int)((pow-power_min)/((power_max-power_min)/(angle_max_bin)));
+}
+
+unsigned char separateMSB(int value)
+{
+	return (unsigned char)((value & MSB_MASK)>>8);
+}
+
+unsigned char separateLSB(int value)
+{
+	return (unsigned char)(value & LSB_MASK);
+}
