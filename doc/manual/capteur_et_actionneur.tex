@@ -118,17 +118,14 @@ Donc la nouvelle valeur ne remplace pas celle ancienne. Il a toujours indiqué un
 
 \subsection{Objectifs du bloc}
 
-<<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
-Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier pour en déduire l’information utile (appui ou non d’un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d’un nombre d’entrée/sorties important, il est une interface adéquate à clavier (9+8=17 entrées/sorties).
-=======
 
-<<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
-<<<<<<< HEAD:doc/manual/capteur_et_actionneur.tex
+Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier pour en déduire l’information utile (appui ou non d’un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d’un nombre d’entrée/sorties important, il est une interface adéquate à clavier (9+8=17 entrées/sorties).
+
 Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il est une interface adéquate à clavier (9+8=17 entrées/sorties).
->>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
+
 
 La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action direct du FPGA. Chaque ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
-=======
+
 \begin{figure}[htpb]
   \centering
   \fbox{
@@ -137,8 +134,7 @@ La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-di
   \caption{diagramme d'état de l'automate codeur}
   \label{fig:automate_codeur}
 \end{figure}
-=======
->>>>>>> origin/master:doc/manual/capteur_et_actionneur.tex
+
 
 
 Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le maître du bus I2C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il est une interface adéquate à clavier (9+8=17 entrées/sorties).
@@ -246,10 +242,10 @@ Pour l'alimentation de la carte, nous avons utilisé un régulateur 7805T, capable
 
 
 
-=======
+
 
 \subsection{Développement}
-=======
+
 \begin{figure}[htpb]
   \centering
   \fbox{
