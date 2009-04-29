@@ -4,7 +4,7 @@
 }
 
 Dans ce chapitre, nous traiterons de l'intégration des différents modules dans le simulateur. Cette intégration comprend
-aussi bien le lien avec la partie matériel que logicielle. En effet, il est question de lier les différentes briques logicielles
+aussi bien le lien avec la partie matérielle que logicielle. En effet, il est question de lier les différentes briques logicielles
 développées aux modules matériels produits.
 
 Du côté logiciel, nous avons la partie dénomée FSAdapter, faisant l'interface avec Microsft Flight Simulator X, mais aussi
@@ -52,7 +52,7 @@ Voici la succession des étapes:
 \begin{enumerate}
   \item Connecter le FPGA configuré pour l'encodeur incrémental sur le bus I$^2$C du module CAN.
   \item Lancer la boucle de traitement du module CAN.
-  \item Valider les données reçues sur le module par rapport aux actions portées sur l'encodeur.
+  \item Valider les données reçues par le module par rapport aux actions portées sur l'encodeur.
   \item Connecter le composant d'interface avec le bouton poussoir au bus I$^2$C du module CAN.
   \item Valider les données reçues sur le module par rapport à l'appui effectué sur le bouton poussoir.
   \item Valider l'indépendance des données reçues de l'encodeur et du bouton poussoir.
@@ -100,7 +100,7 @@ le point d'entrée pour l'utilisateur lors de son utilisation du simulateur.
 
 \subsection{Intégration des modules CAN}
 Contrairement à l'intégration des capteurs et des actionneurs, celle du module CAN ne s'est pas faite aussi simplement.
-Il a fallut effectuer beaucoup de modifications dans le code. En particulier, il était nécessaire de nettoyer le code qui portait
+Il a fallu effectuer beaucoup de modifications dans le code. En particulier, il était nécessaire de nettoyer le code qui portait
 encore les traces des nombreux essais de résolutions d'erreurs des phases préliminaires. L'objectif de ce nettoyage était axé sur
 le minimalisme et l'efficacité: ne proposer une solution que pour le cas d'application qui concerne l'intégration en minimisant la
 prise en compte des évolutions futures - sans pour autant les ignorer. Il fallait avant tout offrir une solution qui fonctionne,
@@ -115,10 +115,10 @@ les capteurs et d'avoir l'impact attendu sur les actionneurs lors de l'envoie de
 \subsection{Intégration de FSAdapter}
 Bien que cette partie ait subi de nombreux changements, la dernière solution envisagée et implantée nous laisse espérer de bon résultats futures, pour la suite du projet, aux vues des résultats de l'intégration.
 
-Comme nous l'avons déjà souligné ci-dessus, notre objectif premier est avant tout d'offrir une solution fonctionnelle pour effectuer, avant toute autre chose, la preuve de notre concept. De ce fait, les choix d'implatation de la solution seront amenés à changer
+Comme nous l'avons déjà souligné ci-dessus, notre objectif premier est avant tout d'offrir une solution fonctionnelle pour effectuer, avant toute autre chose, la preuve de notre concept. De ce fait, les choix d'implantation de la solution seront amenés à changer
 fortement par la suite. En particulier la gestion des données reçues via le bus CAN.
 
-Maintenant que nous avons posé le contexte de l'intégration de cette partie du projet, nous pouvons maintenant passé aux commentaires
+Maintenant que nous avons posé le contexte de l'intégration de cette partie du projet, nous pouvons maintenant passer aux commentaires
 sur les résultats de cette dernière.
 
 En premier lieu, nous avons été rapidement confrontés à des problèmes de représentation de données. Bien qu'une convention avait été

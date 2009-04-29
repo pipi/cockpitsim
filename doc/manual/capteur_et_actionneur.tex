@@ -49,8 +49,7 @@ actuellement 6 circuits PCF pour l'ensemble de ce bloc. Ce dernier est composé c
 \end{itemize}
 
 
-%JE VEUX SAUTER UNE LIGNE!!!!!!!!!!!!
-%PS : faut changer la disposition de la partie de Yongchao!!!!!
+
 
 
 Cette disposition a été décidée avec le groupe de développement BECK afin de faciliter la lecture et l'écriture sur les PCF. 
@@ -71,7 +70,7 @@ Au niveau du fonctionnement des PCF, il a été décidé de brancher les diodes en p
 il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côté, les boutons 
 poussoirs et commutateurs à positions seront en position fermés quand un niveau 0 sera visualisé sur les PCF. Nous relierons
 donc l'ensemble des commutateurs et boutons poussoirs à la masse.
-%plop
+
 
 \subsection{Afficheurs sept segments}
 \subsubsection{Contexte et objectif}
@@ -260,7 +259,10 @@ génériques des registres utilisés auparavant. Les lignes sont codées sur 2 octet
 même pour les colonnes. Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés 
 physiquement, toutefois, cela n'affecte en rien le traitement de l'information.
 
-Les registres de lecture et d'écriture sont illustrés sur la figure\ref{fig:SI2C_bloclink}. Un registre d'écriture 
+
+Les registres de lecture et d'écriture sont illustrés sur la figure\ref{fig:SI2C_blink}. Un registre d'écriture 
+
+
 (à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
 
 \subsection{Développement}

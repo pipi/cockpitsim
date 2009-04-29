@@ -9,17 +9,17 @@
 \section{Les Bibliothèques}
 
 \subsection{Intérêt}
-Lors du développement des interfaces au niveau du bus CAN et des bus I$^2$C, nous avons remarqué plusieurs choses:
+Lors du développement des interfaces du bus CAN et des bus I$^2$C, nous avons remarqué plusieurs choses:
 
 \begin{itemize}
-\item d'abord, le BECK et le bloc USB/CAN avaient tous les deux des bibliothèques C qui permettent d'envoyer et recevoir des messages appropriés. Seulement, la syntaxe des fonctions étaient trop bas niveau et trop différente,
-\item de plus, la forme des messages CAN dans la partie BECK et USB/CAN était complètement différente.
+\item premièrement, le BECK et le bloc USB/CAN avaient tous les deux des bibliothèques C qui permettaient d'envoyer et recevoir des messages appropriés. Cependant, la syntaxe des fonctions étaient trop bas niveau et trop différentes,
+\item deuxièmement, la forme des messages CAN dans la partie BECK et USB/CAN était complètement différente.
 \end{itemize}
 
-Nous avons donc voulu homogénéiser le tout en construisant une bibliothèque dont les fonctions d'envoie et de réception de messages CAN et I$^2$C auraient la même syntaxe, et qui comporterait une structure définissant de la même manière la forme des messages CAN. De plus, cela permettait de travailler par contrat, c'est à dire que nous avons pu définir avant même qu'elles soient fonctionnelles les fonctions de gestion des bus, et de cette façon les autres équipes pouvaient d'ores et déjà les utiliser. Enfin d'un point de vu communication entre les équipes, d'intégration des systèmes, et de déverminage cette bibliothèque fût réellement une force.
+Nous avons donc voulu homogénéiser le tout en construisant une bibliothèque dont les fonctions d'envoi et de réception de messages CAN et I$^2$C de même syntaxe, et comportant une structure définissant de la même manière la forme des messages CAN. De plus, nous avons défini avant même qu'elles soient fonctionnelles les fonctions de gestion des bus, et de cette façon les autres équipes pouvaient d'ores et déjà les utiliser ; en somme c'est ce qu'on appelle fonctionner par contrat. Enfin, d'un point de vu communication inter-équipes, d'intégration des systèmes, et de déverminage, cette bibliothèque a été réellement une force.
 
 \subsection{Développement}
-Cette bibliothèque est une bibliothèque de haut niveau de complexité, on a donc décider de créer des bibliothèques plus bas niveau, et d'utiliser leurs fonctions pour créer des bibliothèques de haut niveau. Nous avons donc construire can-i2c.h en trois niveaux (voir figure \ref{fig:bibliotheques}).
+Cette bibliothèque est de haut niveau de complexité, nous avons donc décidé de créer des bibliothèques de plus bas niveau, et d'utiliser leurs fonctions pour en créer une de niveau de complexité supérieur. Nous avons donc construire can-i2c.h en trois niveaux (voir figure \ref{fig:bibliotheques}).
 
 \begin{figure}[htpb]
   \centering
@@ -31,15 +31,15 @@ Cette bibliothèque est une bibliothèque de haut niveau de complexité, on a donc 
 \end{figure}
 
 \subsection{Conception}
-Après s'être mis d'accord sur la forme des fonctions nous nous sommes séparés en trois groupe:
+Après s'être mis d'accord sur la forme des fonctions nous nous sommes séparés en trois groupes :
 \begin{itemize}
 \item un groupe codait la partie I$^2$C,
-\item un autre qui codait la parti CAN du module USB/CAN,
-\item un autre qui codait la parti CAN sur le BECK.
+\item un autre qui codait la partie CAN du module USB/CAN,
+\item un autre qui codait la partie CAN sur le BECK.
 \end{itemize}
 
-La réalisation s'est déroulée rapidement et du fait qu'on soit parti de fonctions bas niveau et que petit à petit nous avons créer des bibliothèques plus haut niveau, les erreurs fûrent râres.
+La réalisation s'est déroulée rapidement et du fait qu'on soit parti de fonctions de bas niveau de complexité et que petit à petit nous avons créé des bibliothèques de plus haut niveau, les erreurs fûrent râres.
 
 \subsection{Tests et résultats}
-Les tests furent validés rapidement. Cette partie nous a permis d'avoir des programmes homogènes et le développement des bibliothèques nous a permis d'avoir accès à des fonctions haut niveau de complexité rapidement, ce qui a permis de développer des programmes de façon plus claire et plus rapide.
+Les tests furent validés rapidement. Cette partie nous a permis d'avoir des programmes homogènes et le développement des bibliothèques nous a permis d'avoir accès à des fonctions de haut niveau de complexité rapidement, et donc de développer des programmes de façon plus claire et plus rapide.
 
