@@ -49,8 +49,7 @@ actuellement 6 circuits PCF pour l'ensemble de ce bloc. Ce dernier est composé c
 \end{itemize}
 
 
-%JE VEUX SAUTER UNE LIGNE!!!!!!!!!!!!
-%PS : faut changer la disposition de la partie de Yongchao!!!!!
+
 
 
 Cette disposition a été décidée avec le groupe de développement BECK afin de faciliter la lecture et l'écriture sur les PCF. 
@@ -71,7 +70,7 @@ Au niveau du fonctionnement des PCF, il a été décidé de brancher les diodes en p
 il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côté, les boutons 
 poussoirs et commutateurs à positions seront en position fermés quand un niveau 0 sera visualisé sur les PCF. Nous relierons
 donc l'ensemble des commutateurs et boutons poussoirs à la masse.
-%plop
+
 
 \subsection{Afficheurs sept segments}
 \subsubsection{Contexte et objectif}
@@ -108,7 +107,7 @@ traite et envoie les données reçues à l'afficheur correspondant.
 
 Pour s'assurer que le bus CAN n'est pas surchargé, un TIMER de 50 ms est utilisé. Une fois que le TIMER-FLAG 
 passe à 1, le BECK envoie un message CAN si un changement de données est détecté. Pour sa part, le BECK met toujours à jour
-l'affichage dès qu'un message CAN est reçu. Tout appui sur une touche sera détecté puisque ceci fonctionne en continu . L'automate est représenté en figure \ref{fig:Automate_PCF}. Au départ, le BECK cherche le message CAN dans 
+l'affichage dès qu'un message CAN est reçu. Tout appui sur une touche sera détecté puisque le code fonctionne en continu . L'automate est représenté en figure \ref{fig:Automate_PCF}. Au départ, le BECK cherche le message CAN dans 
 la pile. Si un message est reçu, il fait la mise à jour de l'affichage. Ensuite, il décide s'il faut mettre à jour le 
 tableau. Une fois que le TIMER-FLAG est mis à 1, le BECK vérifie s'il y a un changement de données et remet le TIMER-FLAG à 0.  
 Si un changement de données est détecté, le BECK envoie un message CAN au PC et remet DataHasChanged à 0 (1 s'il y a un changement de données).
@@ -124,8 +123,7 @@ Si un changement de données est détecté, le BECK envoie un message CAN au PC et 
 
 \subsubsection{Résultats}
 
-Pendant le test, nous avons utilisé un PCF dont 16 pattes sont connectées à un niveau 1 récessif. Nous avons connecté
-une patte à la masse, de la même manière que pour un appui sur une touche. Le PcanView à bien reçu le message
+Pour le test, nous avons utilisé un PCF dont 16 pattes ont été connectées à un niveau 1 récessif, ainsi qu'une à la masse simulant l'appui sur une touche. Les tests ont été concluant!!!!!!!!!! Le PcanView à bien reçu le message
 CAN envoyé par le BECK. Pour tester l'actualisation de l'affichage, nous avons utilisé le PcanView afin d'envoyer
 un message CAN au BECK, la valeur affichée correspondant alors bien à la valeur contenue dans le message CAN.
 
@@ -262,7 +260,10 @@ génériques des registres utilisés auparavant. Les lignes sont codées sur 2 octet
 même pour les colonnes. Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés 
 physiquement, toutefois, cela n'affecte en rien le traitement de l'information.
 
+
 Les registres de lecture et d'écriture sont illustrés sur la figure\ref{fig:SI2C_blink}. Un registre d'écriture 
+
+
 (à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
 
 \subsection{Développement}
