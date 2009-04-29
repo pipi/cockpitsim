@@ -8,23 +8,19 @@
 
 }
 
-\section{Commutateurs et afficheurs}
+\section{Commutateur et afficheur}
+\subsection{Description et contexte}
 
-\subsection{Boutons poussoirs, diodes et commutateurs}
-\subsubsection{Contexte et objectif}
+\subsubsection{Bloc Front Panel : Utilisation de circuits directement ineffaçables I$^2$C : PCF 8575}
+
 Dans le cadre du projet il a été demandé de réaliser plusieurs parties distinctes du cockpit. Une de ces parties
 correspond au front panel, et plus précisément la partie MCP ajouté au contrôle des trains d'atterrissages de
-l'avion. Le but ici était de pouvoir appuyer sur un bouton physique tout en ayant l'action voulue au sein de FSX.
-Dans le même temps, les diodes indiquant l'état du bouton auquel elles sont raccrochées devait lui être commandé par
-le logiciel Flight Simulator.
-
-\subsubsection{Conception et choix techniques}
- Deux solutions ont été envisagées afin gérer les actions provenant de l'appui sur les boutons :
+l'avion. Il existait deux solutions que nous avons prises en compte pour gérer les actions provenant de l'appui
+sur ces boutons :
 \begin{itemize}
   \item L'utilisation du FPGA
   \item L'utilisation du PCF8575.
 \end{itemize}
-
 C'est cette dernière solution qui a été retenue. En effet elle présentait l'avantage d'être la fois rapide 
 à mettre en oeuvre et de plus les circuits PCF8575 sont directement compatible I$^2$C. De plus la solution FPGA,
 même si elle permettait de limiter le nombre de circuits utilisés dans le cockpit, augmentait la charge
@@ -32,61 +28,40 @@ du FPGA et allait certainement faire perdre du temps dans sa mise en place en ra
 aurions du effectuer dessus.
 
 Pour finir, lors du développement du code I$^2$C sur les contrôleurs BECK, les circuits PCF8575 que nous avions à 
-notre disposition ont servi à éprouver le fonctionnement du code implanté sur les BECK. De cette manière il était
-déjà certain que ces circuits fonctionneraient parfaitement avec l'ensemble de la chaine de traitement implantée dans le cockpit.
+notre disposition ont servit éprouver le fonctionnement du code implantsur les BECK. De cette manière il était
+déjà sur que ces circuits fonctionneraient parfaitement avec l'ensemble de la chaine de traitement implantée dans le cockpit.
 
-\subsubsection{Développement}
 Le MCP du cockpit n'ayant jamais été en notre possession à temps, nous avons du faire avec les informations
 dont nous disposions pour connaitre le nombre de boutons, diodes, commutateurs à positions et encodeurs incrémentaux 
 à interfacer. Pour faciliter les choses, nous avons choisi de regrouper sur les circuits PCF les boutons poussoirs
 entre eux, les diodes ainsi que de la même manière les commutateurs à positions. De cette manière nous utilisons
 actuellement 6 circuits PCF pour l'ensemble de ce bloc. Ce dernier est composé comme ceci :
-
 \begin{itemize}
   \item 32 diodes implantées sur 2 PCF8575
   \item 25 boutons poussoirs pour 2 PCF8575
   \item 6 commutateurs à positions pour les deux derniers PCF8575 utilisés.
 \end{itemize}
-
-
-%JE VEUX SAUTER UNE LIGNE!!!!!!!!!!!!
-%PS : faut changer la disposition de la partie de Yongchao!!!!!
-
-
-Cette disposition a été décidée avec le groupe de dévellopement BECK afin de faciliter la lecture et l'écriture sur les PCF. 
+Cette disposition a été décidée avec le groupe BECK afin de faciliter la lecture et l'écriture sur les PCF. 
 En effet, de cette manière les PCF sont soit en lecture (boutons poussoirs et commutateurs à positions) ou bien en 
 écriture (diodes). Nous avons également décidé de ne brancher que 32 diodes sur les 33 pour des facilités de 
 routage et éviter d'utiliser un circuit supplémentaire pour une seule sortie sur les seize disponibles. De plus 
-la présence de cette 33$^e$ diode n'a pu être éprouvée du fait que nous ne disposons pas du matériel sous les yeux.
-De plus comme nous l'avons vu avec monsieur Bouaziz, l'interfaçage des boutons,
-diodes et commutateurs sur le FPGA serait une solution plus stable dans le
-temps, et sera donc a priori la future solution dans le cockpit. En effet, de cette manière,  tous les composants
-seraient alors interrogés de la même manière. De plus une autre limite sur les PCF serait levée, à savoir la
-limite du nombre de PCF pas bus I$^2$C, ces derniers n'ayant que 3 bits modifiables
-dans leur adresse ce qui limite le nombre de PCF à 8 sur chaque bus I$^2$C.
+la présence de cette 33$^eme$ diode n'a pu être éprouvée du fait que nous ne disposons pas du matériel sous les yeux.
+En effet un doute persiste sur la présence ou non de cette diode qui aurait alors une lumière blanche 
+(et non jaune) et dont l'utilité n'a pas été vraiment prouvée. De plus comme nous l'avons vu avec monsieur 
+Bouaziz, l'interfaçage des boutons, diodes et commutateurs sur le FPGA serait une solution plus stable dans le
+temps, et sera donc a priori la futur solution dans le cockpit. En effet, de cette manière,  tous les composants
+seraient alors interrogés de la même manière, et plus besoin d'utiliser un nombre d'adresses limités avec les PCF,
+ces derniers n'ayant que 3 bits modifiables dans leur adresse ce qui limite le nombre de PCF 8 sur chaque bus I$^2$C.
 Néanmoins même dans ces conditions, le front panel et la console centrale peuvent voir leurs boutons, 
 commutateurs et diodes interfacées sur les PCF8575.
 
 Au niveau du fonctionnement des PCF, il a été décidé de brancher les diodes en pull-up. De cette manière, 
 il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côté, les boutons 
-poussoirs et commutateurs à positions seront fermés quand un niveau 0 sera visualisé sur les PCF. Nous relierons
+poussoirs et commutateurs positions seront fermés pour un niveau 0 dominant constaté sur les PCF. Nous relierons
 donc l'ensemble des commutateurs et boutons poussoirs à la masse.
-%plop
 
-\subsection{Afficheurs sept segments}
-\subsubsection{Contexte et objectif}
-Dans le MCP du cockpit, en plus des boutons et autres commutateurs ont peut trouver plusieurs blocs d'afficheurs
-sept segments servant à afficher plusieurs données importante comme par exemple l'altitude. Ces informations
-proviennent directement de FSX et il est donc important de pouvoir interfacer ses afficheurs avec l'ensemble de la
-chaine d'acquisition des données. Il sera ici encore de respecter le fonctionnement de ses afficheurs et les éléments
-qui leur sont liés dans le cockpit, à savoir les encodeurs incrémentaux. En effet ce sont les encodeurs incrémentaux
-qui s'occupent d'envoyer la valeur à afficher à FSX, et ce sont aussi eux qui valident la valeur par un appui
-sur le bouton poussoir incorporé.
-
-\subsubsection{Conception et choix techniques}
-Comme expliqué plus haut,  nous avons adopté l'afficheur 7 segments pour les affichages dans le MCP.
-Afin de valider ce bloc fonctionnel,
-nous n'avons eu à afficher qu'une seule valeur puisque tous les afficheurs du cockpit fonctionnent de la même manière.
+Au niveau des afficheurs,  nous avons adopté l'afficheur 7 segments. Afin de valider ce bloc fonctionnel,
+nous n'avons eu à afficher une seule valeur puisque tous les afficheurs du cockpit fonctionnent de la même manière.
 Il a donc suffit de tester l'affichage pour un paramètre. En prenant en compte 
 qu'on disposait d'une chaine complète jusque FSX pour l'affichage de l'altitude.
 
@@ -94,24 +69,25 @@ Une carte disposant d'une interface I$^2$C avec 4 afficheurs 7 segments était à 
 circuit SAA1064 qui est intégré sur cette carte et qui servent de multiplexeurs entre les quatres afficheurs.
 Le SAA1064 dispose de 2 bits modifiables dans leur adresse ce qui limite le nombre de circuits à 4 sur 
 chaque bus I$^2$C. Cela pose des  problèmes si on veut afficher l'ensemble des paramètres du MCP.
-Mais le SAA1064 présente l'avantage de disposer d'un réglage de l'intensité d'affichage.
+Mais le SAA1064 présence l'avantage de disposer d'un réglage de l'intensité d'affichage.
 
-\subsubsection{Développement}
+Du coté du BECK, il a été demandé de réaliser la détection d'appui sur une touche ou du  changement de position de 
+commutateurs à position et aussi la actualisation d'affichage. Pour la première partie, c'est à dire la détection de 
+changement des données de PCF. Il suffit de lire les données de PCF via bus I$^2$C et les comparer avec les données 
+anciennes qui sont enregistré dans un tableau. Si un changement est détecté, le tableau sera actualisé. Le BECK va 
+envoyer un 
+message CAN correspondant comportant  les nouveaux états de touche et les positions actuelles de commutateurs au PC. 
+Au niveau d'actualisation d'affichage. Chaque fois un message CAN visant a modifier l'affichage arrive, le BECK le 
+traite et envoie les données contenues dans le message CAN à l'afficheur correspondant.
 
-Du coté du BECK, il a été demandé de réaliser la détection d'appui sur une touche ou le changement de position des 
-commutateurs à positions ainsi que l'actualisation de l'affichage. Pour la première partie, c'est à dire la détection du changement des données sur le PCF. Il suffit de lire les données du PCF via le bus I$^2$C et de comparer avec les
-anciennes valeurs qui ont été enregistrées dans un tableau. Si un changement a été détecté, le tableau sera
-actualisé sur le BECK. Ce dernier envoie alors le 
-message CAN correspondant comportant les nouveaux états des touches et commutateurs au PC. 
-Pour l'actualisation de l'affichage, à chaque arrivée d'un message CAN, le BECK le 
-traite et envoie les données reçues à l'afficheur correspondant.
-
-Pour s'assurer que le bus CAN n'est pas surchargé, un TIMER de 50 ms est utilisé. Une fois que le TIMER-FLAG 
-passe à 1, le BECK envoie un message CAN si un changement de données est détecté. Pour sa part, le BECK met toujours à jour
-l'affichage dès qu'un message CAN est reçu. Tout appui sur une touche sera détecté puisque ceci fonctionne en continu . L'automate est représenté en figure \ref{fig:Automate_PCF}. Au départ, le BECK cherche le message CAN dans 
-la pile. Si un message est reçu, il fait la mise à jour de l'affichage. Ensuite, il décide s'il faut mettre à jour le 
-tableau. Une fois que le TIMER-FLAG est mis à 1, le BECK vérifie s'il y a un changement de données et remet le TIMER-FLAG à 0.  
-Si un changement de données est détecté, le BECK envoie un message CAN au PC et remet DataHasChanged à 0 (1 s'il y a un changement de données).
+Pour s'assurer que le bus CAN ne soit pas surchargé, un TIMER de 50 ms est utilisé. Seulement quand le TIMER-FLAG 
+est mis à 1, le BECK envoie un message CAN si le changment de données est détecté.  Mais le BECK met à jour toujours 
+l'affichage si un message CAN est reçu. Puisque la détection d'appui est fait toujours, donc tout appui peut être 
+détecté. L'automate se représente en figure \ref{fig:Automate_PCF}. Au départ, le BECK cherche le message CAN dans 
+la pile. Si un message est reçu, il fait mis à jour l'affichage. Par la suite, il décide s'il faut mettre à jour le 
+tableau. Quand le TIMER-FLAG est mis à 1. Le BECK vérifie s'il y a un changement de données et remet TIMER-FLAG à 0.  
+Si un changement de données est détecté, le BECK envoie un message CAN à PC et remet DataHasChanged (1 s'il y a un 
+changement de données) à 0.
 
 \begin{figure}[htpb]
   \centering
@@ -122,21 +98,18 @@ Si un changement de données est détecté, le BECK envoie un message CAN au PC et 
   \label{fig:Automate_PCF}
 \end{figure}
 
-\subsubsection{Résultats}
-
-Pendant le test, nous avons utilisé un PCF dont 16 pattes sont connectées à un niveau 1 récessif. Nous avons connecté
-une patte à la masse, de la même manière que pour un appui sur une touche. Le PcanView à bien reçu le message
-CAN envoyé par le BECK. Pour tester l'actualisation de l'affichage, nous avons utilisé le PcanView afin d'envoyer
+Pendant le test, nous avons utilisé un PCF dont 16 pattes sont connectées à un niveau 1 récessif. Nous avons connecté une patte à la masse, de la même manière que pour un appui sur une touche. Le PcCANView à bien reçu un message
+CAN envoyé par le BECK. Pour tester l'actualisation de l'affichage, nous avons utilisé le PcCANView pour envoyer
 un message CAN au BECK, la valeur affichée correspondant alors bien à la valeur contenue dans le message CAN.
 
 Au début du test, nous nous sommes trompé de niveau dominant. Nous avions pensé à mettre un niveau 1 dominant dans le 
 circuit, mais il nous ait apparu que c'était encore un niveau 0 dominant.
-Il faut donc connecter les boutons à la masse. L'autre problème rencontré est pour la lecture des 
+Il faut donc bien connecter les boutons à la masse. L'autre problème rencontré est pour la lecture des 
 pattes du PCF, il faut s'assurer que le registre de mode écriture est 0Xffff avant d'effectuer une lecture.
-Pendant la programmation, nous avons rencontré des problèmes d'utilisation de pointeurs de fonctions.
-En effet, au début, nous n'avions pas utilisé le pointeur comme paramètre dans les fonctions. 
-Dans ce cas les modifications étaient perdues et on gardait toujours l'ancienne valeur.
-Après modification ceci fonctionnait parfaitement.
+Pendant la programmation, nous avons rencontrer des problèmes d'utilisation de pointeur de fonction.
+En effet, au début, nous n'avions pas utilisé le pointeur comme paramètre des fonctions. 
+Dans ce cas les modifications étaient perdues et on gardait toujours l'anciène valeur.
+Après modification ceci fonctionait parfaitement.
 
 \section{Encodeur incrémental}
 
@@ -332,7 +305,71 @@ Pour la réalisation des commandes de gaz nous utiliserons des Servomoteur Dynami
 Ces moteurs ont une résolution de 1024 pas en position et une vitesse de rotation réglable également sur 1024 pas. En lecture, il est possible de connaître, entre autres, leur position courante et leur couple ce qui correspond bien à nos besoins.
 
 \subsection{Conception fonctionnelle}
+\textbf{}Description architecturale
+D'après la description des besoins pour les commandes de gaz et le trim énoncées précédemment,  notre réflexion sur la conception des commandes a abouti à la description architecturale représentée sur la figure \ref{fig:architecture fonctionnelle pour la commande des gazs}:
 
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/archi2}
+  }
+  \caption{archi2}
+  \label{fig:architecture fonctionnelle pour la commande des gazs}
+\end{figure}
+
+Au vu de cette architecture, on peut distinguer deux parties dans l'interfaçage du bus Can avec les servomoteurs :
+\begin{itemize}
+  \item Le stockage des données 
+  \item Les modules de traitement des données
+\end{itemize}
+
+Le stockage des données:
+On doit être capable de pouvoir s'adapter en fonction des besoins en informations du FSUIPC et du débit du bus CAN. Aussi, afin d'avoir les mises à jour les plus récentes des positions des servomoteurs, nous avons pensé à stocker les positions des servomoteurs. Les positions de chaque servomoteur seront récupérées très fréquemment et les données les plus récentes seront déjà présentes dans la table au moment voulu.
+De plus, afin de ne pas surcharger le bus CAN et d'alléger les informations à destination de FSUIPC, une autre table (DATA CAN) serait souhaitable pour contenir toutes les mises à jour détectées dans la table.
+Cependant, pour ce faire des modules de récupérations, de traitement et d’envoi de données seront nécessaires.
+D'où l’existence de l'autre partie de l'architecture.
+Les modules de traitement des données:
+Cette partie doit comprendre plusieurs modules et dépend du sens de parcours des données : soit des servomoteurs vers le bus (en pilotage manuel), soit du bus CAN(FSUIPC) vers les servomoteurs (en pilotage automatique). Ces modules doivent donc être capables d'acheminer les données en format adapté  de la manière la plus fiable et la plus rapide possible afin d'obtenir des réactions des plus réalistes possibles.
+Ainsi, des servomoteurs vers le bus CAN, ces modules doivent comprendre :
+\begin{itemize}
+  \item Un module d’acquisition et de stockage des positions des servomoteurs fill data ax12  qui se chargera de récupérer assez fréquemment la position de chaque servomoteur. Ainsi, il doit être apte à :
+  	\begin{itemize}
+  	\item Envoyer les instructions nécessaires pour lire la position des servomoteurs 
+  	\item Recevoir ces positions
+  	\item Les stocker dans la table
+	\end{itemize}
+  
+  \item Un module qui sert à détecter chaque mise à jour de la table  detect table update. Ce module doit être capable de détecter si les servomoteurs ont changé de position, auquel cas elle transfère ces mises à jours dans la table DATA_CAN qui contient les valeurs les plus récentes et  prêtes à être envoyées à FSUIPC. 
+  
+  Ces deux modules, puisqu'ils gèrent des tables de données doivent être capables de gérer également le dépassement de la taille de ces tables, de les mettre à jour.
+  
+  \item Un module de conversion des positions des servomoteurs en puissance convert angle to power. Celle-ci préparera les données à envoyer à FSUIPC via le bus CAN. Données qui doivent directement être compréhensibles par FSUIPC. 
+  
+  \item Un module qui créera le message CAN à envoyer create CAN msg. Ce module mettra en format adapté au bus CAN les valeurs des positions convertis en puissance et les enverra sur le bus.
+  
+\end{itemize}
+Dans l’autre sens (du bus CAN vers les servomoteurs) les modules feront les opérations inverses. Ainsi, elles vont comprendre :
+\begin{itemize}
+  	\item Un module qui reçoit les messages véhiculés sur le bus CAN qui sont destinés aux commandes des gaz \textbf{decode CAN msg}. Elle est également sensé décoder le message : savoir à quel servomoteur il est destiné, récupérer ses paramètres (valeurs de puissances à mettre) et pouvoir les fournir.
+  	\item Un module qui converti les valeurs de puissances en angles directement interprétable par les servomoteurs \textbf{convert power to angle}. Il préparera les données qui doivent être envoyés aux servomoteurs et les met en forme pour être contenu à l'intérieur des plages de positions.
+  	\item Un module qui crée les trames à envoyer aux servomoteurs \textbf{create ax12 frames}. Il doit recevoir l'angle converti et le numéro identifiant du servomoteur concerné. Il fournit une trame qu'on peut directement communiquer aux servomoteurs.
+  	\item Un module qui envoie les trames déjà constitué \textbf{send ax12 frames}. Il doit envoyer successivement chaque octet de la trame suivant un ordre bien précis défini dans la documentation des servomoteurs.
+  	\end{itemize}
+  	
+ Ces modules ainsi développés, il est nécessaire d'ordonner leur interaction afin d'obtenir des informations non-erronées, mis à jour et véhiculées le plus rapidement possible le tout d'une manière automatique. 
+ 
+\textbf{Description fonctionnelle de l'automate} 
+La manière dont vont s'interagir les différents modules est gérée par un automate scindé en deux parties : pilote automatique et pilote manuel.
+Néanmoins, ces deux parties sont fortement  liées, parce que pour basculer de l'une à l'autre, il suffit d'enclencher ou de déclencher le pilotage automatique.
+Chacune des deux parties fonctionne comme suit :
+\begin{itemize}
+  \item \textbf{Pilote automatique:}
+Dans le cas du pilote automatique,  on commence par attendre la réception d'un message CAN. Une fois la réception achevée on décode le message de façon à ne garder que  les données utiles pour former les trames à envoyer aux servomoteurs. Cependant, les servomoteurs renvoient, à chaque fois qu'on communique avec, des trames de statut alors qu'on n'en a pas forcément besoin en pilote automatique. Voilà pourquoi nous devrons ajouter un autre état de latence afin d'éviter la réception de ces trames.
+  \item \textbf{Pilote manuel:}
+Dans le cas du pilotage manuel, on commence par interroger chaque servomoteur afin de connaitre à quelle position il se trouve. Puis on attend que le servomoteur en question réponde. Une fois la trame de statut complète reçue, on remplit la table qui va contenir les données venant du servomoteur concerné. Après on détecte les mises à jour éventuelles de la table et on les transfère vers la table DATA-CAN. La table DATA-CAN remplie, on crée les messages CAN contenant les nouvelles positions du servomoteur. Comme les états précédents ne concernent qu'un seul servomoteur, on passe à un autre servomoteur afin de lui appliquer les mêmes opérations. Si l'ID courant équivaut à celui du dernier servomoteur, on revient au premier.
+\end{itemize}
+ 
+\textbf{Carte d'interface:}
 Quand on étudie la documentation du Servomoteur Dynamixel, on remarque que ce dernier peut être contrôlé par un PC via un CM-5.
 Le CM-5 possède un circuit interne qui permet de convertir les signaux en half-duplex. Le diagramme réalisant cette conversion est \ref{fig:half_duplex}:
 
@@ -354,18 +391,82 @@ D'autre part le GAL fonctionne avec des niveaux TTL alors que le port série fonc
 Cette carte nous permettra également d'obtenir le signal data nécessaire pour le servomoteur AX12 en sortie du circuit GALisp22V10, qui est également à un niveau TTL.
 
 \subsection{Developpement et problèmes rencontrés}
+Pour construire ces modules et ordonner leur interaction, afin de développer le gestionnaire des commandes de gaz, nous avons utilisé une carte BECK SC123 présentée précédemment. Les modules et la façon dont  on veut qu'ils interagissent entre eux ont été réalisés en langage C (langage utilisée par la carte Beck). De plus la carte est fournie avec des API déjà prédéfinis, contenus dans des librairies spécifiques et qu'on peut directement utiliser notamment pour la communication le port Série.
+Les API qu'on a utilisé se trouvent dans la librairie <<Clib.h>> comme toutes les API du Beck et plus précisément dans <<Fossil.h>>(autre appellation de la communication Série).
+\textbf{Développement des modules:}
+Pour créer les différents modules initialement énoncés, nous avons créé une libraire propre aux servomoteurs<<ax12.c>>(Cf Annexe ??) dans laquelle ces modules sont représentés par des fonctions qui prennent en paramètre les données à traiter et retournent en sortie les données traités. 
+Les fonctions ont été développées à l'aide des API de communication Série du Beck  et correspondent à la fois aux normes imposées par les servomoteurs et à celles imposées par la communication Série.
+Il existe ainsi des fonctions (modules) qui servent à :
+\begin{itemize}
+  	\item Ordonner aux servomoteurs de se placer à une certaine position avec une certaine vitesse de rotation qu'on a fixé : ….. Elle prend en entrée l'ID du servomoteur en question et l'angle auquel il doit se positionner puis lui envoie la trame. 
+  	\item Demander aux servomoteurs d'envoyer leurs positions courantes : … Prend en entrée l'ID du servomoteur dont on veut récupérer la position courante et envoie la trame de demande. 
+  	\item Remplir la table de position des servomoteurs :…prend en entrée la table dans laquelle vont être stockées l'ID et la position du servomoteur.
+  	\item Détecter les mises à jour de cette table puis les transférer à la table DATA CAN : … prend en entrées les deux tables DATA-AX12 et DATA-CAN et transfère les données de l'une à l'autre.
+  	\item Gérer les 2 tables : …. Elle a besoin de la table qu'elle va gérer, détecte si elle est pleine et lui enlève les plus anciennes valeurs stockées.
+
+\item Convertir la position en puissance et inversement : Elle dépend de l'entité à convertir (Angle/puissance)
+
+
+\item Décoder  un message CAN provenant de FSUIPC en pilotage automatique : .. .Elle prend en paramètre  un pointeur vers un message CAN  duquel on va extraire les champs ID et Angle nécessaire à la communication avec les servomoteurs.
+
+\item Créer un message CAN contenant l'ID du servomoteur en question et la position à laquelle il se trouve lorsqu'on est en pilotage manuel : .. Elle prend en paramètre un message CAN, complète ses champs avec les informations contenues dans DATA-CAN, puis l'envoie à FSUIPC.
+ \end{itemize}
+Il est nécessaire de préciser que pour pouvoir utiliser les API du Beck, il faut inclure dans le code les bibliothèques dans lesquelles sont les API. Dans notre cas, nous avons inclus <<Fossil.h>> car ce qui nous concernait était la communication Série. Le reste des fonctions utilise des fonctions standards du langage C.
+En outre, pour pouvoir recevoir et envoyer les messages CAN, nous étions en étroite collaboration avec l'équipe qui s'en occupait. Les bibliothèques qu'ils ont créées nous étaient d'une aide précieuse.
+
+\textbf{Difficultés rencontrées:}
+Dans le développement des modules le principal problème qu'on a rencontré est une mauvaise-compréhension des supports du Beck et l'insuffisance des documentations sur les servomoteurs. L'obtention de cette documentation à temps nous aurait facilité la tâche de développement. Avant la récupération de ces documents, nous nous sommes lancés dans un développement complexe des modules. Ce qui a certainement pénalisé l'avancement de cette partie du projet.
+Avec cette documentation, mieux adaptée,  nos fonctions ont pu être simplifiées. Aussi un code plus simple, a facilité la correction des erreurs. Car non seulement les API sont plus simples mais aussi plus fiables.
+
+Nous avons aussi rencontré des problèmes portant sur les formats de données. Alors que nous nous apprêtions à utiliser des formats de données sur 32bits, nous nous sommes rendus compte que ces derniers ne peuvent pas être traités par le Beck. Nous avons  donc opté pour la solution suivante : utiliser une structure de données qui aura comme champs (de 8 bits chacun) : l'ID et l'Angle (position).
+
+\textbf{Développement de l'automate:}
+L'automate qui gère le transfert de données FSUIPC – Servomoteurs a été intégré dans une boucle infinie (while(1)) afin d'avoir des informations en temps réel sur les positions auxquelles est le servomoteur et auxquelles il doit se mettre. Il a été conçu pour être déterministe afin de ne pas pouvoir se perdre dans un état.  
+Comme il a été énoncé précédemment cet automate va faire interagir les différents modules développés. Ainsi, chaque état de cet automate va utiliser ces modules.
+De l'état 1 à l'état 7, on est en pilotage manuel. Donc, les fonctions qui vont être utilisées seront celles qui interrogent l'état des servomoteurs, gèrent les données résultantes, et les transmettent au CAN.
+De l'état 8 à 12, on est en pilotage automatique. Aussi, les modules qui y seront utilisées seront celles qui traiteront les messages CAN, les décoderont et enverront les données aux servomoteurs.
+D'où cette liste d'appel de chaque module dans chacun des états : 
+\begin{itemize}
+\item Etat 1 : read-Angle(FOSSIL-COM, ID, output-Buff, nByteToRead );
+\item Etat 2 : fossil-readblock(FOSSIL-COM, input-Buff, nByteToRead);
+\item Etat 3 : fill-data_AX12(data-AX12, sizeDataAX12, input-Buff);
+\item dern-remplie(data-AX12, sizeDataAX12);
+\item Etat 4 : transfer-data(data-AX12, data-CAN, sizeDataAX12, sizeDataCAN);
+\item Etat 5 : create-msg-CAN(data-CAN, sizeDataCAN, msg );
+
+\item Etat 10 : can-recv(1, ptrmsg);
+\item Etat  11 : decode-Msg-CAN(ptrmsg,angle-Value, set-Angle-Buff).
+ \end{itemize}
+
+Dans cet automate, les temps de latence nécessaires à la réponse des servomoteurs ont été intégrés automatiquement du fait qu'entre l'envoi des trames d'instruction et la réception des trames de statut, les taches qui y sont effectuées couvrent suffisamment ce délai d'attente requis.
+Cet automate intègre également une fonction can-msg-lookup(), qui surveille l'arrivée d'un message CAN.
+
+\textbf{Tests et résultats:}
+Pour les tests, nous nous sommes placés dans les conditions suivantes :
+\begin{itemize}
+\item Un servomoteur non encore initialisé : on ne savait ni à quel débit il communiquait, ni quelle était ses positions limites alors que dans notre développement on a choisi des positions variant de 0° à 300° (0x0000 à 0x03FF)
+\item Communication série mode RS232 initialisé à un débit de 57600 bauds, sans contrôle de flux grâce aux API qui y sont spécialement consacrés (FOSSILSETBAUD, FOSSILINIT, etc.).
+ \end{itemize}
+ 
+Test de communication Beck-ax12 :
+En premier lieu, nous avons testé la partie pilote manuelle. Nous souhaitions vérifier que les servomoteurs reçoivent correctement les messages envoyés (Ex : Allumer la LED et se positionner à un angle donné).  
+	Aucun octet de la trame n'était reçu par le servomoteur, il n'y avait aucune communication entre le Beck et les servomoteurs. Cependant le bon nombre de trames a  été correctement envoyé.
+	Pour résoudre ce problème, il nous a fallu initialiser le servomoteur via le CM5. On lui a donné un débit de communication qui s'accorde avec celui du port série à défaut duquel aucune communication ne sera possible. Grâce à l'aide de Xynkui FENG, cette initialisation a pu être effectuée.
+	Nous avons recommencé les envois de trames d'essai vers le servomoteur. La réaction du servomoteur a été celle attendue (LED allumée, position changée). Cependant, on ne pouvait pas recevoir les trames de statut venant du servomoteur. Vu que ce qui nous intéressait était de récupérer la position du servomoteur contenue dans ces trames de statut, le résultat fut décevant. 
+	La résolution de ce problème a nécessité une recherche approfondie sur les communications Séries du Beck. Nous nous sommes rendus compte que le signal RTS (qui contrôle le flux de données) ne basculait jamais de son état initial (à 1). Donc, le Beck était tout le temps en émission et ne pouvait rien recevoir. De plus, ce signal ne nous a pas été accessible, on ne pouvait pas le contrôler manuellement. 
+Deux solutions ont été envisagées : 
+\begin{itemize}
+\item soit de relier, sur la carte d'interface entre le Beck et le servomoteur, les pins CTS et RTS afin que le CTS puisse être forcé à l'état haut une fois l'émission achevée.    
+\item Soit de passer du mode RS232 au RS485. Ce dernier, permettant de contrôler même automatiquement le RTS/CTS, autoriserait la réception.
+Aussi, nous avons opté pour la deuxième solution. En effet, elle était simple à réaliser, n’ayant que deux lignes de codes à écrire.
+Le résultat a été en partie satisfaisant car nous avons pu recevoir des octets de la trame de statut. Donc le Beck  pouvait se placer en mode  réception. 
+Néanmoins, on a du prendre en considération le temps de latence nécessaire au servomoteur pour réagir et envoyer la trame complète.
+Ce problème résolu, on a pu passer à d'autres tests.
+
+\textbf{Réalisation de la carte interface}
 La programmation du circuit GALisp22v10, a était faite en langage Abel à l'aide du logiciel Lattice IspDesignExpert, cf.ANNEXE Abel GAL, afin de réaliser la fonction half-duplex, expliquée dans la partie précèdente.
 Les chronogrammes, en l'ANNEXE Chronogrammes GAL, montre bien que la fonction réalise bien son rôle.
 
 Pour la réalisation de la carte qui fait office d'interface entre le port rs232 et le servomoteur, nous avons opté pour un MAX233, car ce dernier éxige moins de condensateurs, ce qui facilite le routage du MAX232, qui lui possède 5 condensateurs, et ceci tout en gardant les mêmes propriétés.
 
-Pour l'alimentation de la carte, nous avons utilisé un régulateur 7805T, capable de fournir une tension stable de 5v (output) en sortie afin d'alimenter le circuit GAL et le MAX233 et d'avoir une tension de l'ordre de 9.6v (input) pour l'alimentation des AX12 \ref{fig:7805}:
-
-\begin{figure}[htpb]
-  \centering
-  \fbox{
-    \includegraphics[scale=0.5]{images/7805}
-  }
-  \caption{7805}
-  \label{fig:7805}
-\end{figure}
+Pour l'alimentation de la carte, nous avons utilisé un régulateur 7805T, capable de fournir une tension stable de 5v (output) en sortie afin d'alimenter le circuit GAL et le MAX233 et d'avoir une tension de l'ordre de 9.6v (input) pour l'alimentation des AX12.
