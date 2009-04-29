@@ -32,6 +32,30 @@ L'overhead n'a pas été réalisé. L'équipe avait envisagé de le réaliser à l'aide 
 Pour afficher le monde extérieur, l'équipe avait proposé d'utiliser des projecteurs. Cette solution présentait l'avantage d'être moins coûteuse, facilement transportable et s'avérait surtout moins destructrice pour la vues des personnes se trouvant dans le cockpit en ne plaçant pas des écrans à proximité des yeux. Cependant, cette solution présentait l'inconvénient d'obliger à déformer l'image, ce que ne permet pas Wide FS. Il a finalement été décidé d'utiliser des écrans 24 pouces, voir 32 pouces.
 
 \subsection{Les ordinateurs}
+Afin de faire fonctionner FSX sur plusieurs écrans et de pouvoir interfacer le programme avec l'ensemble des
+éléments du cockpit, nous avons du choisir le nombre de machines ainsi que leur configuration.
+Dans un premier temps nous nous sommes occupé de choisir le nombre de machines à acheter, et donc pour cela
+le nombre d'écrans à interfacer en tout et pour tout. Sachant qu'il avait été décidé de ne faire que la partie
+pilote du cokcpit et de délaisser la partie copilote, seulement une partie des instruments de bords avaient besoin
+de disposer d'un moniteur capable de faire l'affichage. L'ensemble des écrans étant utilisés pour l'affichage des
+instruments de bords est au nombre de deux. Pour l'affichage du monde exterrieur, il a été choisi d'utiliser un
+ensemble de 4 écrans 24 pouces. Cela nous amène donc à interfacer 6 écrans au total.
+
+Nous avons décidé d'utiliser des machines d'une puissance assez importante en raison de la taille des écrans utilisés. De
+plus, afin de limiter le coût des machines, nous avons fait le choix de n'utiliser qu'une seule carte graphique par
+ordinateur, les configurations multicarte ayant un prix nettement plius important pour des performances d'affichage
+qui peuvent baisser si on installe trop d'écrans sur chaque PC.
+
+Dans un deuxième temps il a fallu choisir le type de boitier a adopter. Le principal argument ayant orienté notre
+choix réside dans l'espace requis pour les boitiers. En effet, une des priorités était de pouvoir déplacer le cockpit
+pour faire des démonstrations, et dans ce cas de figure l'utilisation de PC en rack se trouvait beaucoup plus
+intéressante que l'utilisation d'un boitier classique. Pour déplacer les ordinateurs cette configuration à beaucoup
+plus d'avantage que pour une tour classique. De plus ceci permettra de mettre dans le rack le switch que nous
+utilisons pour faire communiquer les pc entre eux.
+
+Afin de pouvoir supporter facilement la charge de travail imposée par flight simulator et ses programmes annexes,
+avons décider de configurer une machine avec un processeur quatre coeur, ainsi que deux autres machines avec
+des processeurs double coeur s'occupant des affichages du monde exterrieur et des instruments de bords.
 
 \section{Organisation}
 Pour développer notre cockpit, 
