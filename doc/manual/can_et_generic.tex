@@ -156,20 +156,19 @@ L'objectif de ce module est donc double:
 \end{itemize}
 
 \subsection{Conception}
-Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, on a dû utiliser les fonctions des librairies du BECK pour initialiser, envoyer et recevoir des messages dans chacun des bus. Néanmoins, de manière à avoir la même syntaxe que pour la partie USB/CAN et à avoir des fonctions plus simple à utiliser, nous avons construit des bibliothèques à partir des bibliothèques BECK.
+Tout d'abord, afin de pouvoir utiliser le bus CAN et le bus I$^2$C, nous avons utiliser la blibliothèque que l'on a créé can-i2c.h.
+D'un autre côté, sur le fichier main.c, on a créé une structure (i2c-can-trans-t)permettant de stocker:
 
-\begin{figure}[htpb]
-  \centering
-  \fbox{
-    \includegraphics[scale=0.5]{images/bibliotheques}
-  }
-  \caption{arborescence des bibliothèques}
-  \label{fig:bibliotheques}
-\end{figure}
 
-Il y a donc dans les bibliothèques can.h et i2c.h les fonctions d'initialisation, d'envoie de messages ,ansi que la réception (au format approprié).Dans la bibliothèque can-i2c.h nous trouvons la strucure ( et les fonctions permettant de remplir les objectifs de ce block. 
+\begin{itemize}
+\item un identifiant CAN unique pour chaque élément de cette structure,
+\item l'identifiant I$^2$C de l'esclave qui est concerné par les message CAN dontlidentifiant est le même que ci-dessus,
+\item la dernière valeur lue à parir de cet esclave (qu'on appelera old-value),
+\item et d'autres informations commme la taille des données.
+\end{itemize}
 
-la structure (i2c-can-trans-t) a une rôle primordial ici, car c'est elle qui regroupera pour chaque identifiant CAN, les indentifiant I$^2$C correspondants, la dernière valeur lue sur cet esclave, et la taille des données. 
+
+Cette structure (i2c-can-trans-t) a une rôle primordial ici, car elle va nous permettre de faire le lien entre messages CAN et messages I$^2$C.
 Nous avons donc créer un tableau de cette structure pour reggrouper chaque identifiant CAN qui intéresse le noeud CAN, ainsi nous avons pu aisément faire correspondre les messages CAN et les messages I$^2$C.
 Pour utiliser ce tableau nous avons donc trois fonctions particulières:
 
