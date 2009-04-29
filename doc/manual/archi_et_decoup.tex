@@ -34,4 +34,37 @@ Pour afficher le monde extérieur, l'équipe avait proposé d'utiliser des projecte
 \subsection{Les ordinateurs}
 
 \section{Organisation}
-Pour développer notre cockpit, 
+Pour développer notre cockpit, nous avons établi des blocs fonctionnel, en fonction des fonction à réaliser. Ce découpage est réalisé selon la figure \ref{fig:schema_bloc}.
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.7]{images/schema_bloc}
+  }
+  \caption{Schéma bloc}
+  \label{fig:schema_bloc}
+\end{figure}
+
+
+
+Pour nous répartir le travail à réaliser, nous avons créé plusieurs sous-groupes au sein du projet. Chacun d'eux avait la responsabilité de développer une partie. Celles-ci correspondaient à une fonctionnalité de l'avion. Nous avons réalisé ce partage selon un découpage "horizontal", tel que montré sur la figure \ref{fig:decoup_horizontal}.
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.7]{images/decoup_horizontal}
+  }
+  \caption{Découpage horizontal du projet}
+  \label{fig:decoup_horizontal}
+\end{figure}
+
+Par la suite, nous avons abandonné ce système. Il ne permettait pas de réaliser des blocs fonctionnels réutilisables comme nous le souhaitions. En effet, ce système aurait nécessité que chaque sous-groupe développent sont interface avec le bus CAN par exemple. Il en est de meme pour plusieurs éléments. Pour cela, nous avons réalisé un nouveau découpage. Celui-ci sépare les tâches selon leur nature. Il permet de regrouper des fonctions identique entre elles. Ainsi chaque groupe est devenu responsable d'une fonction électronique au lieu d'une fonctionnalité de l'avion. Cette méthode nous a permis de développer des blocs génériques comme nous le souhaitions. Cette architecture permet de gagner en modularité. Elle facilite l'ajout de nouveaux éléments. Ce découpage est de type "vertical", il est détaillé sur la figure  \ref{fig:decoup_vertical}.
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.7]{images/decoup_vertical}
+  }
+  \caption{Découpage vertical du projet}
+  \label{fig:decoup_vertical}
+\end{figure}
