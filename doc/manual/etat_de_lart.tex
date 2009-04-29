@@ -2,50 +2,15 @@
 \authors{
   \authorinfo{Marc}{de la Motte Rouge} \\
 }
-\section{Etat de l'art}
-Pour débuter notre projet sur la réalisation du cockpit, nous avons eu besoin de positionner les différents éléments de notre travail dans "l'univers Flight Simulator". En effet, les données sont extraites différemment selon leurs types. Les données concernant l'affichage sur les écrans passent par les logiciels WideView et WideFS. Ces logiciels existent déjà. Les données concernant les paramètres réglable ou à communiquer à l'utilisateur par différents afficheurs (autre que celle simuler par les écrans) passent par le logiciel FSUIPC. Il a donc fallu réaliser une surcouche logiciel afin de pouvoir dialoguer avec ce dernier. 
 
-Le positionnement de notre projet par rapport à l'univers Flight Simulator est détaillé sur la figure \ref{fig:position}.
+Pour orienter notre projet, nous avons d'abord observé les différentes solution déja mises en oeuvre dans des projets similaires. Nous avons étudié les possibilités proposées pour chaque partie ainsi que l'interêt qu'elles présentaient pour nous par rapport à l'objectif pédagogique du projet.
 
-\begin{figure}[htpb]
-  \centering
-  \fbox{
-    \includegraphics[scale=0.7]{images/positionnement}
-  }
-  \caption{Positionnement du projet dans l'univers Flight Simulator}
-  \label{fig:position}
-\end{figure}
+\section{L'appareil}
+La majorité des projets déja créés, utilisent des airbus A320 ou des Boeing 737. L'électronique de ces appareils est "relativement simple" à mettre en oeuvre car ce sont des appareils de "petite taille".  Quelque projet utilisent des appareils plus important. Ils sont souvent destinés à la formation du personel naviguant. 
 
-Par la suite, nous avons recherché des informations sur chaque partie 
-à réaliser. Pour cela, nous avons organisé des groupes de travail au sein de l'équipe, chaque groupe étant
-responsable d'un bloc.
+\section{Les bus de données}
 
-Nous avons découpé la réalisation technique du projet en quatre grandes parties :
+\section{La partie commande}
 
-\begin{itemize}
-\item Tâche 1 : Saisie des données, commande (vitesse, cap etc...)
-\item Tâche 2 : Commande de pilotage, puissance  (cette partie comprend l'asservissement des commandes)
-\item Tâche 3 : Monde extérieur et réseaux
-\item Tâche 4 : Interface Homme Machine (IHM) et extraction des données de Flight Simulator (FS).
-\item Tâche 5 : Recherche générale sur le projet, information sur les projets de ce type déjà réalisés.
-\end{itemize}
+\section{Affichage}
 
-Ces tâches sont répartis dans le cockpit selon la figure \ref{fig:decoup1}.
-
-\begin{figure}[htpb]
-  \centering
-  \fbox{
-    \includegraphics[scale=0.7]{images/decoup1}
-  }
-  \caption{Découpage des parties en début de projet}
-  \label{fig:decoup1}
-\end{figure}
-
-Ce découpage fut choisi selon le type d'instrument à réaliser. Les affichages par exemple ont été séparés selon leurs fonctions. Ceux qui affichent le monde exterieure, sur lequel nous avions uniquement les paramètres d'affichages à modifier pour gérer l'angle des écrans par exemple ont fait l'objet d'une partie. Les écrans qui affichent les instruments de bord, qui ont besoin de faire appel à une bibliothèque ont fait l'objet d'une autre  partie.
-La partie des commandes des gaz qui fait appel à des servo-moteurs capable de modifier leur position mais également de la lire a fait l'objet d'une partie entière. En effet, c'est la seul partie qui utilise ce type de technologie. Nous avons également réalisé une partie pour gérer tous les composants tel que les interrupteurs, les potentiomètres, les afficheurs etc... Enfin, l'interfaçage logiciel avec Flight Simulator a également été étudié.
-
-Ce découpage a été réalisé selon des regroupements fonctionnels. Il couvrait les différentes parties du cockpit. Il a été fortement modifié par la suite. En effet, nous ne pouvions pas réaliser toutes ces parties simultanément, il a été nécessaire de nous recentrer sur certaines parties. Ce découpage a été réalisé pour l'état de l'art, celui utilisé pour le développement sera étudié ultérieurement.
-
-
-
- 
