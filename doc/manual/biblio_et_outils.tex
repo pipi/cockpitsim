@@ -1,10 +1,9 @@
 \chapter{Bibliothèque et outils}
 \authors{  
-
   \authorinfo{Julien}{Peeters} \\
   \authorinfo{Fabien}{Provost} \\
   \authorinfo{Feng}{Xiong} \\
-  \authorinfo{Yongchao}{Xu} \\
+  \authorinfo{Yongchao}{Xu}
 }
 
 \section{Les Bibliothèques}
@@ -15,8 +14,8 @@ Lors du développement des interfaces au niveau du bus CAN et des bus I$^2$C, nou
 \begin{itemize}
 \item d'abord, le BECK et le bloc USB/CAN avaient tous les deux des bibliothèques C qui permettent d'envoyer et recevoir des messages appropriés. Seulement, la syntaxe des fonctions étaient trop bas niveau et trop différente,
 \item de plus, la forme des messages CAN dans la partie BECK et USB/CAN était complètement différente.
-
 \end{itemize}
+
 Nous avons donc voulu homogénéiser le tout en construisant une bibliothèque dont les fonctions d'envoie et de réception de messages CAN et I$^2$C auraient la même syntaxe, et qui comporterait une structure définissant de la même manière la forme des messages CAN. De plus, cela permettait de travailler par contrat, c'est à dire que nous avons pu définir avant même qu'elles soient fonctionnelles les fonctions de gestion des bus, et de cette façon les autres équipes pouvaient d'ores et déjà les utiliser. Enfin d'un point de vu communication entre les équipes, d'intégration des systèmes, et de déverminage cette bibliothèque fût réellement une force.
 
 \subsection{Développement}
@@ -29,7 +28,7 @@ Cette bibliothèque est une bibliothèque de haut niveau de complexité, on a donc 
   }
   \caption{arborescence des bibliothèques}
   \label{fig:bibliotheques}
-\end{figure}\begin{figure}[htpb]
+\end{figure}
 
 \subsection{Conception}
 Après s'être mis d'accord sur la forme des fonctions nous nous sommes séparés en trois groupe:
