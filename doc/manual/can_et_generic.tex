@@ -12,33 +12,33 @@
 }
 
 \section{Description et contexte}
-L'objecif de cette partie est de créer des outils permettant de simplifier l'utilisation des différents bus de manière générique de façon à pouvoir être réutilisé à plusieurs endroits du projet.
+L'objecif de cette partie est de créer des outils permettant de simplifier l'utilisation des différents bus de manière générique de façon à pouvoir être réutilisés à plusieurs endroits du projet.
 
 Seront vu dans cette partie, la conception et le développement des noeuds CAN qui permettent de recevoir 
 des messages CAN et de les interprêter afin de générer les actions adéquates (envoie de messages I$^2$C par 
 exemple) et inversement (envoie de message CAN après utilisation d'un actionneur), aussi nous verrons
 l'utilisation d'un FPGA comme interface au bus I$^2$C, c'est à dire que le bloc qui permet de connecter 
-des DEL, des boutons poussoirs ou autre composants plus complexes à un bus I$^2$C. 
+des DEL, des boutons poussoirs ou autres composants plus complexes à un bus I$^2$C. 
 
 \section{Module périphérique sur bus I$^2$C: réalisation VHDL}
 \subsection{Objectif}
 
 Afin d'interfacer les différents éléments du FCU (Flight Control Unit) tels que les commutateurs de position, les encodeurs numériques et les switchs, au contrôleur central du noeud (contrôleur BECK), il est nécessaire de définir un protocole de communication. 
 
-Le protocole de communication choisi, il était nécessaire de déterminer par quel biais les éléments du FCU allait communiquer. En effet, ces derniers ne sont pas des composants I$^2$C et par conséquent ne peuvent être directement connecté sur les lignes de communication. Un module doit donc être greffé servant d'interface entre les lignes I$^2$C et les différents encodeurs incrémentaux, bouton poussoir etc... 
+Le protocole de communication choisi, il était nécessaire de déterminer par quel biais les éléments du FCU allait communiquer. En effet, ces derniers ne sont pas des composants I$^2$C et par conséquent ne peuvent être directement connectés sur les lignes de communication. Un module doit donc être greffé servant d'interface entre les lignes I$^2$C et les différents encodeurs incrémentaux, boutons poussoirs etc... 
 
-Deux choix possibles existent, la première, utiliser un microcontrôleur. Ces avantages ne sont pas négligeables et la principale étant son langage de programmation. En effet, le langage C suffisait et était de plus connu des membres de l'équipe. Par ailleurs, ils sont pré équipé d'un module I$^2$C 'hardware' qui permettrait de simplifier sa mise en oeuvre. 
+Deux choix possibles existent, la première, utiliser un microcontrôleur. Ses avantages ne sont pas négligeables et la principale étant son langage de programmation. En effet, le langage C suffisait et était de plus connu des membres de l'équipe. Par ailleurs, ils sont pré équipés d'un module I$^2$C 'hardware' qui permettrait de simplifier sa mise en oeuvre. 
 Mise à part cela, ils peuvent être limités en termes de puissance de calcul ainsi qu'en nombre de port IO disponible, nécessitant donc en plus l'implantation d'autres composants (multiplexeur, registre,...) surchargeant la carte.
  
-La deuxième possibilité, celle qui a été retenu, est d'utiliser un circuit programmable type FPGA et d'y utiliser le langage VHDL. La difficulté se situe donc au niveau de l'apprentissage de ce nouveau langage de description, de son comportement et de ses subtilités. Le FPGA ne possède pas d'interface I$^2$C pré implanté ce qui obligeait à la concevoir en VHDL. Cependant, ce circuit programmable présente d'énormes qualités dans le cadre du projet. Il possède un nombre d'entrées/sorties supérieur à 60, et il a de bonnes capacités de calcul. De plus, utiliser un composant tel que celui-ci en plus du VHDL est une très bonne expérience pour nous apprentis ingénieurs.
+La deuxième possibilité, celle qui a été retenue, est d'utiliser un circuit programmable type FPGA et d'y utiliser le langage VHDL. La difficulté se situe donc au niveau de l'apprentissage de ce nouveau langage de description, de son comportement et de ses subtilités. Le FPGA ne possède pas d'interface I$^2$C pré implanté ce qui obligeait à la concevoir en VHDL. Cependant, ce circuit programmable présente d'énormes qualités dans le cadre du projet. Il possède un nombre d'entrées/sorties supérieur à 60, et il a de bonnes capacités de calcul. De plus, utiliser un composant tel que celui-ci en plus du VHDL est une très bonne expérience pour nous apprentis ingénieurs.
 
-Le langage VHDL donne, par ailleurs, la possibilité de réaliser des blocs fonctionnels indépendants et de les assembler schématiquement. Ainsi, la gestion des éléments du FCU peut être indépendante du bloc de gestion I2C et la conception grandement simplifié. 
+Le langage VHDL donne, par ailleurs, la possibilité de réaliser des blocs fonctionnels indépendants et de les assembler schématiquement. Ainsi, la gestion des éléments du FCU peut être indépendante du bloc de gestion I2C et la conception grandement simplifiée. 
 
-Par soucis de réalisation, la conception du module sur circuit logique programmable FPGA à été préféré à celle sur microcontrôleur, puisse qu'il offrait des possibilités plus importantes.
+Par soucis de réalisation, la conception du module sur circuit logique programmable FPGA à été préférée à celle sur microcontrôleur, puisse qu'il offrait des possibilités plus importantes.
 
 \subsection{Solution envisagée}
 La création de ce module interfaçant I$^2$C et les éléments du FCU devait répondre à un cahier des charges fixés décrivant les protocoles de communication entre 'maître' et 'esclave' I$^2$C. Il a été choisi par soucis de simplification qu'il n'existerait qu'un unique 'maître' sur la ligne de communication. Celui-ci  ne pourra donc jamais rendre la main et donc sera le seul à avoir le contrôle du bus. Cela implique qu'il ne peut obtenir d'informations que par requête auprès des différents éléments du FCU.  
-De plus, plusieurs éléments du FCU étant reliés au FPGA, il a été décidé en accord avec l'équipe BECK d'associer à chacun, un identifiant I$^2$C unique. Ainsi, le FPGA serait non pas un esclave I$^2$C étant que tel mais plutôt une réelle interface. Il émule donc autant de noeud esclave qu'il existe d'élément relié.  Ces derniers seront donc considérés comme esclave I$^2$C. 
+De plus, plusieurs éléments du FCU étant reliés au FPGA, il a été décidé en accord avec l'équipe BECK d'associer à chacun, un identifiant I$^2$C unique. Ainsi, le FPGA serait non pas un esclave I$^2$C étant que tel mais plutôt une réelle interface. Il émule donc autant de noeuds esclaves qu'il existe d'éléments reliés.  Ces derniers seront donc considérés comme esclave I$^2$C. 
 Schématiquement, les communications entre 'maître' et 'esclave' I$^2$C se déroulent principalement de la manière suivante :
 
 \begin{figure}[htpb]
@@ -50,7 +50,7 @@ Schématiquement, les communications entre 'maître' et 'esclave' I$^2$C se déroul
   \label{fig:SI2C_c1}
 \end{figure}
 
-En résumé, le 'maître' envoie une trame aux 'esclaves' contenant l'identifiant de l'élément souhaité.  Si l'esclave à bien acquitté à la demande du maître, son unique réponse ne peut être que de renvoyer sa valeur.
+En résumé, le 'maître' envoie une trame aux 'esclaves' contenant l'identifiant de l'élément souhaité.  Si l'esclave a bien acquitté à la demande du maître, son unique réponse ne peut être que de renvoyer sa valeur.
 L'avantage est que cet échange ne demande donc que d'établir une unique trame de trois octets (un octet issue du maître et deux octets de  l'esclave). 
 
 Remarque : l'identifiant est, d'après la définition générale du protocole I$^2$C, sur 7 bits et un bit de lecture/écriture (R/W) vient compléter la l'octet à envoyer. 
@@ -102,7 +102,7 @@ En résumé et toujours en partant du principe que le FPGA ne peut prendre contrôl
 
 En tenant compte du nouveau cahier des charges, on est en mesure de réaliser l'automate de base de l'esclave I$^2$C.
 
-Le premier état 'idle' correspond à l'état de repos du bus I$^2$C c'est-à-dire lorsque les lignes SDA et SCL sont au niveau logique '1' récessif. L'automate restera donc toujours dans cet état à moins d'une détection de condition de 'start' qui a été découpé en deux phases (la première phase étant détectée dans 'Idle') afin d'éviter les erreurs. 
+Le premier état 'idle' correspond à l'état de repos du bus I$^2$C c'est-à-dire lorsque les lignes SDA et SCL sont au niveau logique '1' récessif. L'automate restera donc toujours dans cet état à moins d'une détection de condition de 'start' qui a été découpée en deux phases (la première phase étant détectée dans 'Idle') afin d'éviter les erreurs. 
 
 L'état 'clockTime' permet la détection de la seconde phase de condition de 'start'.
 Une fois la détection faite, il s'agit de lire l'identifiant et le bit de lecture/écriture envoyé par le maître dans l'état 'readAdd'.  Ceci fait, on regarde si l'identifiant est bon. Si tel est le cas, il s'agit alors de déterminer si le maître à envoyé une requête de lecture ou d'écriture (état 'bitRW').
@@ -120,7 +120,7 @@ Dans le cas d'une demande de lecture, on envoie la valeur du registre que le poi
   \label{fig:SI2C_blink}
 \end{figure}
 
-Au premier abord, cet automate fonctionne en simulation. Cependant, ainsi fait, il n'est pas certain que celui-ci fonctionne en condition de test sur maquette. En effet, cette automate à été créé sans tenir compte des erreurs pouvant se produire en condition réelle. Une condition de 'start' ou 'stop' généré par le mettre pendant l'envoie d'une trame, par exemple, signifiant que le maître a annulé son premier envoie de trame, etc...
+Au premier abord, cet automate fonctionne en simulation. Cependant, ainsi fait, il n'est pas certain que celui-ci fonctionne en condition de test sur maquette. En effet, cet automate à été créé sans tenir compte des erreurs pouvant se produire en condition réelle. Une condition de 'start' ou 'stop' généré par le maître pendant l'envoie d'une trame, par exemple, signifiant que le maître a annulé son premier envoie de trame, etc...
 Ainsi, il est nécessaire entre chaque étape de l'automate de détecter la présence ou non d'une condition de 'start' et 'stop'.
 
 \subsection{Test de validation et résultat}
