@@ -5,3 +5,15 @@
 
 \section{Évolution de FSadapter}
 Étant donné que tout le materiel nécessaire n'était pas disponible, nous avons décidé de prouver le concept de la réalisation du cockpit, en interfaçant un bouton permettant d'incrémenter la valeur de l'altitude. Les fonctions permettant d'utiliser cette valeur ont donc été écrites. Par contre, les autres fonctionnalitées n'ont pas été ajoutées au simulateur. Autrement dit, pour chaque réalisation matérielle faite sur le cockpit, des adaptations doivent être réalisées dans le programme. Les trames doivent ainsi être réalisées pour toutes les données qui sont ajoutées au simulateur, et les fonctions de traitement (dans le sens CAN vers FS et FS vers CAN) doivent être écrites pour chaque famille de données, et (le plus important) les données obtenues par le bus CAN doivent être reliées aux valeurs fournies par FSUIPC.
+
+\section{Capteurs et actionneurs}
+\subsection{Commutateurs et afficheurs}
+En raison de l'avancement du projet, nous avions décidé d'utiliser les circuits PCF8575 afin d'interfacer les boutons poussoirs,
+commutateurs à positions et diode en raison de la date butoire imposée lors du lancement du projet. Néanmoins une
+deuxième solution consistant à utiliser le FPGA. Dans ce cas il faudra implanter un routage qui permettrait
+d'interfacer les boutons poussoirs et les diodes sous forme de deux matrices (une matrice pour chaque).
+Dans le cas des boutons poussoirs le fonctionnement serait exactement le même que pour le clavier du FMC.
+Pour les diodes, le FPGA alumerait les diodes voules en fonction des informations reçues depuis le BECK. Il serait
+en quelque sorte une interface de multiplexage des diodes. Par contre les comutateurs eux ne pourront pas être
+interfacés via un clavier matriciel à cause de leurs caractéristiques électriques. en effet, il serait alors impossible
+de détecter un changement de position.
