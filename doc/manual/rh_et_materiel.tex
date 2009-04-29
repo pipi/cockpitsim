@@ -1,4 +1,4 @@
-\chapter{Gestion ressources humaines et matériels}
+\chapter{Gestion ressources humaines et matérielles}
 \authors{
   \authorinfo{Romain}{Marchaudon} \\
 }
@@ -39,14 +39,16 @@ C'est ainsi que plusieurs groupes de dévellopement ont été définis comme suit:
   \item Groupe environnement
 \end{itemize}
 
-Ces quatres groupes se sont retrouvé à travailler sur les noeuds importants définis dans le cadre du dévellopement du
+Tous ces groupes se sont retrouvé à travailler sur les noeuds importants définis dans le cadre du dévellopement du
 cokcpit. le groupe FsAdapter était en charge du dévellopement d'un code source permettant d'accéder au valeur
 de FSX via l'interface de gestion FSUIPC. Tout ceci dans le but de pouvoir communiquer des informations aux
 différents blocs dévellopé par les équipes et de respecter le fonctionnement d'un cockpit réel.
 
+Le groupe FrontPanel s'est occupé de trouver des solutions afin d'interfacer tous les élements du FrontPanel (MCP, contrôle des trains d'attérissage) sur un bus I$^2$C. C'est de ce groupe de travail qu'est venur l'idée du FPGA pour interfacer les encodeurs incrémentaux. Par la suite le groupe FPGA a vu sa charge de travail augmenter avec l'arrivée de nouvelle fonctionnalité à remplir.
+
 Le groupe FPGA, pour sa part, a eu comme tache de dévelloper un code permettant de s'interfacer sur le bus I$^2$C
 , tout en étant capable de gérer les encodeurs incrémentaux et de faire l'interface pour la détection de l'appui sur
-une touche du clavier matriciel du FMC. Cette dernière fonctionalité a été dévellopée en accord avec le groupe BECK.
+une touche du clavier matriciel du FMC. Cette dernière fonctionalité a été dévellopée en commun avec le groupe BECK.
 
 Le groupe de dévellopement BECK avait lui pour tache de réaliser un code permettant au contrôleur BECK de communiquer
 à la fois avec FsAdapter via le bus CAN, d'envoyer et recevoir des trames de données sur le bus I$^2$C pour le FPGA
@@ -55,8 +57,9 @@ sur le bus I$^2$C, le BECK est le responsable du décodage d'information provenan
 En effet, c'est lui qui vient lire les états des lignes et colonnes de la matrice du clavier et en déduit la touche
 appuyée par l'utilisateur.
 
-Pour finir le groupe AX12 était le responsable du fonctionnement de la manète des gaz. Le but étant de dévelloper
+Le groupe AX12 était le responsable du fonctionnement de la manète des gaz. Le but étant de dévelloper
 une code source permettant aux AX12 d'indiquer leur position angulaire, mais aussi d'être capable de détecter le
 le couple appliqué sur les commandes de gaz du cockpit, tout ceci dans l'esprit de respecter le bon fonctionnement
 des gaz dans un cokcpit réel.
 
+Un groupe de gestion de l'environnement c'est occupé occasionellement des montages, soudures ou encore de tirer des typons pour le besoin du projet. Des cables ont aussi été coupé et mis en place (cables I$^2$C et CAN). C'est aussi dans ce groupe que les personnes se sont occupé de l'installation des différents logiciels sur les ordinateurs, de monter les cartes graphiques.
