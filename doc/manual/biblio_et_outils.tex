@@ -1,4 +1,45 @@
 \chapter{Bibliothèque et outils}
-\authors{
-  \authorinfo{prénom}{nom} \\
+\authors{  
+  \authorinfo{Julien}{Peeters} \\
+  \authorinfo{Fabien}{Provost} \\
+  \authorinfo{Feng}{Xiong} \\
+  \authorinfo{Yongchao}{Xu}
 }
+
+\section{Les Bibliothèques}
+
+\subsection{Intérêt}
+Lors du développement des interfaces au niveau du bus CAN et des bus I$^2$C, nous avons remarqué plusieurs choses:
+
+\begin{itemize}
+\item d'abord, le BECK et le bloc USB/CAN avaient tous les deux des bibliothèques C qui permettent d'envoyer et recevoir des messages appropriés. Seulement, la syntaxe des fonctions étaient trop bas niveau et trop différente,
+\item de plus, la forme des messages CAN dans la partie BECK et USB/CAN était complètement différente.
+\end{itemize}
+
+Nous avons donc voulu homogénéiser le tout en construisant une bibliothèque dont les fonctions d'envoie et de réception de messages CAN et I$^2$C auraient la même syntaxe, et qui comporterait une structure définissant de la même manière la forme des messages CAN. De plus, cela permettait de travailler par contrat, c'est à dire que nous avons pu définir avant même qu'elles soient fonctionnelles les fonctions de gestion des bus, et de cette façon les autres équipes pouvaient d'ores et déjà les utiliser. Enfin d'un point de vu communication entre les équipes, d'intégration des systèmes, et de déverminage cette bibliothèque fût réellement une force.
+
+\subsection{Développement}
+Cette bibliothèque est une bibliothèque de haut niveau de complexité, on a donc décider de créer des bibliothèques plus bas niveau, et d'utiliser leurs fonctions pour créer des bibliothèques de haut niveau. Nous avons donc construire can-i2c.h en trois niveaux (voir figure \ref{fig:bibliotheques}).
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/bibliotheques}
+  }
+  \caption{arborescence des bibliothèques}
+  \label{fig:bibliotheques}
+\end{figure}
+
+\subsection{Conception}
+Après s'être mis d'accord sur la forme des fonctions nous nous sommes séparés en trois groupe:
+\begin{itemize}
+\item un groupe codait la partie I$^2$C,
+\item un autre qui codait la parti CAN du module USB/CAN,
+\item un autre qui codait la parti CAN sur le BECK.
+\end{itemize}
+
+La réalisation s'est déroulée rapidement et du fait qu'on soit parti de fonctions bas niveau et que petit à petit nous avons créer des bibliothèques plus haut niveau, les erreurs fûrent râres.
+
+\subsection{Tests et résultats}
+Les tests furent validés rapidement. Cette partie nous a permis d'avoir des programmes homogènes et le développement des bibliothèques nous a permis d'avoir accès à des fonctions haut niveau de complexité rapidement, ce qui a permis de développer des programmes de façon plus claire et plus rapide.
+

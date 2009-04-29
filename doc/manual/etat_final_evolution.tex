@@ -2,3 +2,6 @@
 \authors{
   \authorinfo{prénom}{nom} \\
 }
+
+\section{Évolution de FSadapter}
+Étant donné que tout le materiel nécessaire n'était pas disponible, nous avons décidé de prouver le concept de la réalisation du cockpit, en interfaçant un bouton permettant d'incrémenter la valeur de l'altitude. Les fonctions permettant d'utiliser cette valeur ont donc été écrites. Par contre, les autres fonctionnalitées n'ont pas été ajoutées au simulateur. Autrement dit, pour chaque réalisation matérielle faite sur le cockpit, des adaptations doivent être réalisées dans le programme. Les trames doivent ainsi être réalisées pour toutes les données qui sont ajoutées au simulateur, et les fonctions de traitement (dans le sens CAN vers FS et FS vers CAN) doivent être écrites pour chaque famille de données, et (le plus important) les données obtenues par le bus CAN doivent être reliées aux valeurs fournies par FSUIPC.

@@ -54,12 +54,8 @@ Starynkevitch et de Zhibin Yin.
 En dehors du choix du langage de programmation qui allait déterminer l'orientation majeure de cette
 partie du projet, une contrainte importante a été mise en évidence: le grand nombre des données
 du modèle accessibles au travers de FSUIPC.
-
-\section{Évolution du programme} 
-Tout d'abord, étant donné que nous ne connaissions pas toutes les variables que nous seront amenés à utiliser, nous avons décidé de créer un logiciel pouvant ajouter n'importe quelle valeur provenant de FSUIPC, sans modifier directement le programme. Les données provenant de FSUIPC et les informations les concernant étaient sauvegardées dans un fichier texte pouvant être lu par le programme. Les données qui étaient utilisées par le simulateur étaient intégrées dans une structure de type table de Hash. De ce fait, lorsqu'une nouvelle valeur de FSUIPC était utilisée, elle s'intégrait automatiquement dans la table. Celle-ci devait être mise à jour à une certaine période et envoyer vers le simuateur. La complexité de ce programme résidait dans le fait que toutes les données devaient être reliées à un point précis du cockpit. Cela impliquait de connaître le détail de toutes les valeurs provenant de FSUIPC, et le détail de toutes les fonctionnalités des commandes du cockpit. 
-Étant donné que cette partie du programme demandait un temps considérable, notre tuteur nous a alors conseillé de changer notre approche face au logiciel.
  
-\section{Cahier des charges du logiciel}
+\subsection{Cahier des charges du logiciel}
 Comme nous l'avons précisé précédemment, l'objectif de cette partie est de relier Flight Simulator X à notre 
 cockpit. Plus précisément, nous voulions créer une variable pour chaque boutons du cockpit (par exemple, 
 une variable pour un switch), celle-ci sera reliée aux données disponibles sur FSadapter par l'intermédiaire du logiciel. 
@@ -114,5 +110,7 @@ structure \textit{from-can}. La table \textit{to-can} est mise à jour tout les 5
 appelée. Cette fonction prend la valeur provenant de FSUIPC et calcule la donnée à envoyer à tracers le bus CAN. Dès qu'une donnée a été 
 modifiée, la trame correspondante est envoyée à travers le bus CAN.
 
-\section{Les améliorations à réaliser}
-Étant donné que tout le materiel nécessaire n'était pas disponible, nous avons décidé de prouver le concept de la réalisation du cockpit, en interfaçant un bouton permettant d'incrémenter la valeur de l'altitude. Les fonctions permettant d'utiliser cette valeur ont donc été écrites. Par contre, les autres fonctionnalitées n'ont pas été ajoutées au simulateur. Autrement dit, pour chaque réalisation matérielle faite sur le cockpit, des adaptations doivent être réalisées dans le programme. Les trames doivent ainsi être réalisées pour toutes les données qui sont ajoutées au simulateur, et les fonctions de traitement (dans le sens CAN vers FS et FS vers CAN) doivent être écrites pour chaque famille de données, et (le plus important) les données obtenues par le bus CAN doivent être reliées aux valeurs fournies par FSUIPC.
+\section{Évolution du programme} 
+Dans un premier temps, étant donné que nous ne connaissions pas toutes les variables que nous seront amenés à utiliser, nous avons décidé de créer un logiciel pouvant ajouter n'importe quelle valeur provenant de FSUIPC, sans modifier directement le programme. Les données provenant de FSUIPC et les informations les concernant étaient sauvegardées dans un fichier texte pouvant être lu par le programme. Les données qui étaient utilisées par le simulateur étaient intégrées dans une structure de type table de Hash. De ce fait, lorsqu'une nouvelle valeur de FSUIPC était utilisée, elle s'intégrait automatiquement dans la table. Celle-ci devait être mise à jour à une certaine période et envoyer vers le simuateur. La complexité de ce programme résidait dans le fait que toutes les données devaient être reliées à un point précis du cockpit. Cela impliquait de connaître le détail de toutes les valeurs provenant de FSUIPC, et le détail de toutes les fonctionnalités des commandes du cockpit. 
+Étant donné que cette partie du programme demandait un temps considérable, notre tuteur nous a alors conseillé de changer notre approche face au logiciel.
+
