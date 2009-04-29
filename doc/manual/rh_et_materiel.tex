@@ -6,36 +6,54 @@
 \section{Responsabilités au sein du projet}
 
 Lors de la création de l'équipe projet, nous nous sommes tout de suite réunis afin de décider des grands postes à pourvoir
-au sein de ce groupe. Il a été décidé d'élire un chef de projet ainsi un responsable technique ainsi
-qu'un adjoint au management. C'est ainsi que nous avons nommé:
+au sein de notre groupe. Il a été décidé que nous élisions un chef de projet, un responsable technique ainsi
+qu'un adjoint au managment. C'est ainsi que nous avons nommé:
 \begin{itemize}
   \item Chef de projet: Marc de la Motte Rouge
   \item Responsable technique : Julien Peeters
-  \item Adjoint au management : Romain Marchaudon
+  \item Adjoint au managment : Romain Marchaudon
 \end{itemize}
 
-Ces personnes allaient alors être responsables à différent niveau de la gestion de projet.
+Ces personnes forment l'organe de gestion du projet.
 
-Marc, en tant que chef de projet, supervisera les taches, décidera de la gestion des équipes et sera en charge
-des choix technologiques pouvant être fait au cours du projet. Julien pour sa part aura en charge la gestion du
-matériel, sera le représentant des groupes de dévellopement et présentera les choix technologiques en accord avec les
-équipes de dévellopement au chef de projet. Pour finir Romain, en tant qu'adjoint au management, s'occupera de la
+Marc, en tant que chef de projet, supervise les taches, décide de la gestion des équipes. Julien pour sa part a
+en charge la gestion du matériel, est le représentant des groupes de dévellopement et présente les choix
+technologiques en accord avec les équipes de dévellopement au chef de projet.
+Pour finir Romain, en tant qu'adjoint au managment, s'occupe de la
 communication avec les fournisseurs et les administrations qui ont la charge de la gestion du budget. Les commandes
-fournisseurs seront pour leur part établies entre ces trois responsables en fonction des besoins en matériel des
+fournisseurs sont pour leur part établies entre ces trois responsables en fonction des besoins en matériel des
 différentes équipes.
 
 \section{Gestion des équipes de dévellopement}
-
-D'après les différents découpages qui ont été effectués, nous avons éclater l'équipe en plusieurs entités
-différents correspondant à des groupes de dévellopement.
+D'après les différents découpages qui ont été effectués, nous avons éclaté l'équipe en plusieurs entités
+différentes correspondant à des groupes de dévellopement.
 
 C'est ainsi que 4 groupes de dévellopement ont été définis:
 \begin{itemize}
-  \item Groupe FsAdapter
+  \item Groupe FsAdapter avec interface Flight Simulator
   \item Groupe FPGA
   \item Groupe BECK
   \item Groupe AX12
 \end{itemize}
 
+Ces quatres groupes se sont retrouvé à travailler sur les noeuds importants définis dans le cadre du dévellopement du
+cokcpit. le groupe FsAdapter était en charge du dévellopement d'un code source permettant d'accéder au valeur
+de FSX via l'interface de gestion FSUIPC. Tout ceci dans le but de pouvoir communiquer des informations aux
+différents blocs dévellopé par les équipes et de respecter le fonctionnement d'un cockpit réel.
 
+Le groupe FPGA, pour sa part, a eu comme tache de dévelloper un code permettant de s'interfacer sur le bus I$^2$C
+, tout en étant capable de gérer les encodeurs incrémentaux et de faire l'interface pour la détection de l'appui sur
+une touche du clavier matriciel du FMC. Cette dernière fonctionalité a été dévellopée en accord avec le groupe BECK.
+
+Le groupe de dévellopement BECK avait lui pour tache de réaliser un code permettant au contrôleur BECK de communiquer
+à la fois avec FsAdapter via le bus CAN, d'envoyer et recevoir des trames de données sur le bus I$^2$C pour le FPGA
+et l'ensemble des PCF8575, ainsi que de communiquer avec les AX12 sur le port série. Au niveau de la communication
+sur le bus I$^2$C, le BECK est le responsable du décodage d'information provenant de l'appui d'une touche sur le FMC.
+En effet, c'est lui qui vient lire les états des lignes et colonnes de la matrice du clavier et en déduit la touche
+appuyée par l'utilisateur.
+
+Pour finir le groupe AX12 était le responsable du fonctionnement de la manète des gaz. Le but étant de dévelloper
+une code source permettant aux AX12 d'indiquer leur position angulaire, mais aussi d'être capable de détecter le
+le couple appliqué sur les commandes de gaz du cockpit, tout ceci dans l'esprit de respecter le bon fonctionnement
+des gaz dans un cokcpit réel.
 
