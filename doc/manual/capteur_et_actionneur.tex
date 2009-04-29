@@ -8,19 +8,23 @@
 
 }
 
-\section{Commutateur et afficheur}
-\subsection{Description et contexte}
+\section{Commutateurs et afficheurs}
 
-\subsubsection{Bloc Front Panel : Utilisation de circuits directement ineffaçables I$^2$C : PCF 8575}
-
+\subsection{Boutons poussoirs, diodes et commutateurs}
+\subsubsection{Contexte et objectif}
 Dans le cadre du projet il a été demandé de réaliser plusieurs parties distinctes du cockpit. Une de ces parties
 correspond au front panel, et plus précisément la partie MCP ajouté au contrôle des trains d'atterrissages de
-l'avion. Il existait deux solutions que nous avons prises en compte pour gérer les actions provenant de l'appui
-sur ces boutons :
+l'avion. Le but ici était de pouvoir appuyer sur un bouton physique tout en ayant l'action voulue au sein de FSX.
+Dans le même temps, les diodes indiquant l'état du bouton auquel elles sont raccrochées devait lui être commandé par
+le logiciel Flight Simulator.
+
+\subsubsection{Conception et choix techniques}
+ Deux solutions ont été envisagées afin gérer les actions provenant de l'appui sur les boutons :
 \begin{itemize}
   \item L'utilisation du FPGA
   \item L'utilisation du PCF8575.
 \end{itemize}
+
 C'est cette dernière solution qui a été retenue. En effet elle présentait l'avantage d'être la fois rapide 
 à mettre en oeuvre et de plus les circuits PCF8575 sont directement compatible I$^2$C. De plus la solution FPGA,
 même si elle permettait de limiter le nombre de circuits utilisés dans le cockpit, augmentait la charge
@@ -28,40 +32,61 @@ du FPGA et allait certainement faire perdre du temps dans sa mise en place en ra
 aurions du effectuer dessus.
 
 Pour finir, lors du développement du code I$^2$C sur les contrôleurs BECK, les circuits PCF8575 que nous avions à 
-notre disposition ont servit éprouver le fonctionnement du code implantsur les BECK. De cette manière il était
-déjà sur que ces circuits fonctionneraient parfaitement avec l'ensemble de la chaine de traitement implantée dans le cockpit.
+notre disposition ont servi à éprouver le fonctionnement du code implanté sur les BECK. De cette manière il était
+déjà certain que ces circuits fonctionneraient parfaitement avec l'ensemble de la chaine de traitement implantée dans le cockpit.
 
+\subsubsection{Développement}
 Le MCP du cockpit n'ayant jamais été en notre possession à temps, nous avons du faire avec les informations
 dont nous disposions pour connaitre le nombre de boutons, diodes, commutateurs à positions et encodeurs incrémentaux 
 à interfacer. Pour faciliter les choses, nous avons choisi de regrouper sur les circuits PCF les boutons poussoirs
 entre eux, les diodes ainsi que de la même manière les commutateurs à positions. De cette manière nous utilisons
 actuellement 6 circuits PCF pour l'ensemble de ce bloc. Ce dernier est composé comme ceci :
+
 \begin{itemize}
   \item 32 diodes implantées sur 2 PCF8575
   \item 25 boutons poussoirs pour 2 PCF8575
   \item 6 commutateurs à positions pour les deux derniers PCF8575 utilisés.
 \end{itemize}
-Cette disposition a été décidée avec le groupe BECK afin de faciliter la lecture et l'écriture sur les PCF. 
+
+
+%JE VEUX SAUTER UNE LIGNE!!!!!!!!!!!!
+%PS : faut changer la disposition de la partie de Yongchao!!!!!
+
+
+Cette disposition a été décidée avec le groupe de dévellopement BECK afin de faciliter la lecture et l'écriture sur les PCF. 
 En effet, de cette manière les PCF sont soit en lecture (boutons poussoirs et commutateurs à positions) ou bien en 
 écriture (diodes). Nous avons également décidé de ne brancher que 32 diodes sur les 33 pour des facilités de 
 routage et éviter d'utiliser un circuit supplémentaire pour une seule sortie sur les seize disponibles. De plus 
-la présence de cette 33$^eme$ diode n'a pu être éprouvée du fait que nous ne disposons pas du matériel sous les yeux.
-En effet un doute persiste sur la présence ou non de cette diode qui aurait alors une lumière blanche 
-(et non jaune) et dont l'utilité n'a pas été vraiment prouvée. De plus comme nous l'avons vu avec monsieur 
-Bouaziz, l'interfaçage des boutons, diodes et commutateurs sur le FPGA serait une solution plus stable dans le
-temps, et sera donc a priori la futur solution dans le cockpit. En effet, de cette manière,  tous les composants
-seraient alors interrogés de la même manière, et plus besoin d'utiliser un nombre d'adresses limités avec les PCF,
-ces derniers n'ayant que 3 bits modifiables dans leur adresse ce qui limite le nombre de PCF 8 sur chaque bus I$^2$C.
+la présence de cette 33$^e$ diode n'a pu être éprouvée du fait que nous ne disposons pas du matériel sous les yeux.
+De plus comme nous l'avons vu avec monsieur Bouaziz, l'interfaçage des boutons,
+diodes et commutateurs sur le FPGA serait une solution plus stable dans le
+temps, et sera donc a priori la future solution dans le cockpit. En effet, de cette manière,  tous les composants
+seraient alors interrogés de la même manière. De plus une autre limite sur les PCF serait levée, à savoir la
+limite du nombre de PCF pas bus I$^2$C, ces derniers n'ayant que 3 bits modifiables
+dans leur adresse ce qui limite le nombre de PCF à 8 sur chaque bus I$^2$C.
 Néanmoins même dans ces conditions, le front panel et la console centrale peuvent voir leurs boutons, 
 commutateurs et diodes interfacées sur les PCF8575.
 
 Au niveau du fonctionnement des PCF, il a été décidé de brancher les diodes en pull-up. De cette manière, 
 il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côté, les boutons 
-poussoirs et commutateurs positions seront fermés pour un niveau 0 dominant constaté sur les PCF. Nous relierons
+poussoirs et commutateurs à positions seront fermés quand un niveau 0 sera visualisé sur les PCF. Nous relierons
 donc l'ensemble des commutateurs et boutons poussoirs à la masse.
+%plop
 
-Au niveau des afficheurs,  nous avons adopté l'afficheur 7 segments. Afin de valider ce bloc fonctionnel,
-nous n'avons eu à afficher une seule valeur puisque tous les afficheurs du cockpit fonctionnent de la même manière.
+\subsection{Afficheurs sept segments}
+\subsubsection{Contexte et objectif}
+Dans le MCP du cockpit, en plus des boutons et autres commutateurs ont peut trouver plusieurs blocs d'afficheurs
+sept segments servant à afficher plusieurs données importante comme par exemple l'altitude. Ces informations
+proviennent directement de FSX et il est donc important de pouvoir interfacer ses afficheurs avec l'ensemble de la
+chaine d'acquisition des données. Il sera ici encore de respecter le fonctionnement de ses afficheurs et les éléments
+qui leur sont liés dans le cockpit, à savoir les encodeurs incrémentaux. En effet ce sont les encodeurs incrémentaux
+qui s'occupent d'envoyer la valeur à afficher à FSX, et ce sont aussi eux qui valident la valeur par un appui
+sur le bouton poussoir incorporé.
+
+\subsubsection{Conception et choix techniques}
+Comme expliqué plus haut,  nous avons adopté l'afficheur 7 segments pour les affichages dans le MCP.
+Afin de valider ce bloc fonctionnel,
+nous n'avons eu à afficher qu'une seule valeur puisque tous les afficheurs du cockpit fonctionnent de la même manière.
 Il a donc suffit de tester l'affichage pour un paramètre. En prenant en compte 
 qu'on disposait d'une chaine complète jusque FSX pour l'affichage de l'altitude.
 
@@ -69,25 +94,24 @@ Une carte disposant d'une interface I$^2$C avec 4 afficheurs 7 segments était à 
 circuit SAA1064 qui est intégré sur cette carte et qui servent de multiplexeurs entre les quatres afficheurs.
 Le SAA1064 dispose de 2 bits modifiables dans leur adresse ce qui limite le nombre de circuits à 4 sur 
 chaque bus I$^2$C. Cela pose des  problèmes si on veut afficher l'ensemble des paramètres du MCP.
-Mais le SAA1064 présence l'avantage de disposer d'un réglage de l'intensité d'affichage.
+Mais le SAA1064 présente l'avantage de disposer d'un réglage de l'intensité d'affichage.
 
-Du coté du BECK, il a été demandé de réaliser la détection d'appui sur une touche ou du  changement de position de 
-commutateurs à position et aussi la actualisation d'affichage. Pour la première partie, c'est à dire la détection de 
-changement des données de PCF. Il suffit de lire les données de PCF via bus I$^2$C et les comparer avec les données 
-anciennes qui sont enregistré dans un tableau. Si un changement est détecté, le tableau sera actualisé. Le BECK va 
-envoyer un 
-message CAN correspondant comportant  les nouveaux états de touche et les positions actuelles de commutateurs au PC. 
-Au niveau d'actualisation d'affichage. Chaque fois un message CAN visant a modifier l'affichage arrive, le BECK le 
-traite et envoie les données contenues dans le message CAN à l'afficheur correspondant.
+\subsubsection{Développement}
 
-Pour s'assurer que le bus CAN ne soit pas surchargé, un TIMER de 50 ms est utilisé. Seulement quand le TIMER-FLAG 
-est mis à 1, le BECK envoie un message CAN si le changment de données est détecté.  Mais le BECK met à jour toujours 
-l'affichage si un message CAN est reçu. Puisque la détection d'appui est fait toujours, donc tout appui peut être 
-détecté. L'automate se représente en figure \ref{fig:Automate_PCF}. Au départ, le BECK cherche le message CAN dans 
-la pile. Si un message est reçu, il fait mis à jour l'affichage. Par la suite, il décide s'il faut mettre à jour le 
-tableau. Quand le TIMER-FLAG est mis à 1. Le BECK vérifie s'il y a un changement de données et remet TIMER-FLAG à 0.  
-Si un changement de données est détecté, le BECK envoie un message CAN à PC et remet DataHasChanged (1 s'il y a un 
-changement de données) à 0.
+Du coté du BECK, il a été demandé de réaliser la détection d'appui sur une touche ou le changement de position des 
+commutateurs à positions ainsi que l'actualisation de l'affichage. Pour la première partie, c'est à dire la détection du changement des données sur le PCF. Il suffit de lire les données du PCF via le bus I$^2$C et de comparer avec les
+anciennes valeurs qui ont été enregistrées dans un tableau. Si un changement a été détecté, le tableau sera
+actualisé sur le BECK. Ce dernier envoie alors le 
+message CAN correspondant comportant les nouveaux états des touches et commutateurs au PC. 
+Pour l'actualisation de l'affichage, à chaque arrivée d'un message CAN, le BECK le 
+traite et envoie les données reçues à l'afficheur correspondant.
+
+Pour s'assurer que le bus CAN n'est pas surchargé, un TIMER de 50 ms est utilisé. Une fois que le TIMER-FLAG 
+passe à 1, le BECK envoie un message CAN si un changement de données est détecté. Pour sa part, le BECK met toujours à jour
+l'affichage dès qu'un message CAN est reçu. Tout appui sur une touche sera détecté puisque ceci fonctionne en continu . L'automate est représenté en figure \ref{fig:Automate_PCF}. Au départ, le BECK cherche le message CAN dans 
+la pile. Si un message est reçu, il fait la mise à jour de l'affichage. Ensuite, il décide s'il faut mettre à jour le 
+tableau. Une fois que le TIMER-FLAG est mis à 1, le BECK vérifie s'il y a un changement de données et remet le TIMER-FLAG à 0.  
+Si un changement de données est détecté, le BECK envoie un message CAN au PC et remet DataHasChanged à 0 (1 s'il y a un changement de données).
 
 \begin{figure}[htpb]
   \centering
@@ -98,18 +122,21 @@ changement de données) à 0.
   \label{fig:Automate_PCF}
 \end{figure}
 
-Pendant le test, nous avons utilisé un PCF dont 16 pattes sont connectées à un niveau 1 récessif. Nous avons connecté une patte à la masse, de la même manière que pour un appui sur une touche. Le PcCANView à bien reçu un message
-CAN envoyé par le BECK. Pour tester l'actualisation de l'affichage, nous avons utilisé le PcCANView pour envoyer
+\subsubsection{Résultats}
+
+Pendant le test, nous avons utilisé un PCF dont 16 pattes sont connectées à un niveau 1 récessif. Nous avons connecté
+une patte à la masse, de la même manière que pour un appui sur une touche. Le PcanView à bien reçu le message
+CAN envoyé par le BECK. Pour tester l'actualisation de l'affichage, nous avons utilisé le PcanView afin d'envoyer
 un message CAN au BECK, la valeur affichée correspondant alors bien à la valeur contenue dans le message CAN.
 
 Au début du test, nous nous sommes trompé de niveau dominant. Nous avions pensé à mettre un niveau 1 dominant dans le 
 circuit, mais il nous ait apparu que c'était encore un niveau 0 dominant.
-Il faut donc bien connecter les boutons à la masse. L'autre problème rencontré est pour la lecture des 
+Il faut donc connecter les boutons à la masse. L'autre problème rencontré est pour la lecture des 
 pattes du PCF, il faut s'assurer que le registre de mode écriture est 0Xffff avant d'effectuer une lecture.
-Pendant la programmation, nous avons rencontrer des problèmes d'utilisation de pointeur de fonction.
-En effet, au début, nous n'avions pas utilisé le pointeur comme paramètre des fonctions. 
-Dans ce cas les modifications étaient perdues et on gardait toujours l'anciène valeur.
-Après modification ceci fonctionait parfaitement.
+Pendant la programmation, nous avons rencontré des problèmes d'utilisation de pointeurs de fonctions.
+En effet, au début, nous n'avions pas utilisé le pointeur comme paramètre dans les fonctions. 
+Dans ce cas les modifications étaient perdues et on gardait toujours l'ancienne valeur.
+Après modification ceci fonctionnait parfaitement.
 
 \section{Encodeur incrémental}
 

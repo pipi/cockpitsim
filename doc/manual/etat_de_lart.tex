@@ -3,9 +3,9 @@
   \authorinfo{Marc}{de la Motte Rouge} \\
 }
 \section{Etat de l'art}
-Pour débuter notre projet sur la réalisation du cockpit,  nous avons eu besoin de positionner les différents élements de notre travail dans "l'univers Flight Simulator". En effet, les données sont extraites différament selon leurs type. Les données concernant l'affichage sur les écrans passe par les lofgiciel WideView et WideFS. Ces logiciels existent déja. Les données concernant les paramètres réglable ou a communiquer à l'utilisateur par différents afficheur (autre que celle simuler par les écrans) passent par le logiciel FSUIPC. Il a donc fallu réaliser une surcouche logiciel afin de pouvoir dialoguer avec ce dernier. 
+Pour débuter notre projet sur la réalisation du cockpit, nous avons eu besoin de positionner les différents éléments de notre travail dans "l'univers Flight Simulator". En effet, les données sont extraites différemment selon leurs types. Les données concernant l'affichage sur les écrans passent par les logiciels WideView et WideFS. Ces logiciels existent déjà. Les données concernant les paramètres réglable ou à communiquer à l'utilisateur par différents afficheurs (autre que celle simuler par les écrans) passent par le logiciel FSUIPC. Il a donc fallu réaliser une surcouche logiciel afin de pouvoir dialoguer avec ce dernier. 
 
-Le positionnement de notre projet par rapport à l'univers Flight Simuilator est détaillé sur la figure \ref{fig:position}.
+Le positionnement de notre projet par rapport à l'univers Flight Simulator est détaillé sur la figure \ref{fig:position}.
 
 \begin{figure}[htpb]
   \centering
@@ -41,31 +41,10 @@ Ces tâches sont répartis dans le cockpit selon la figure \ref{fig:decoup1}.
   \label{fig:decoup1}
 \end{figure}
 
-Ce découpage fut choisi selon le type d'instrument à réaliser. Les affichages par exemple ont été séparés selon leurs fonction. Ceux qui affichent le monde exterieure, sur lequel nous avions uniquement les paramètres d'affichages à modifier pour gérer l'angle des écrans par exemple ont fait l'objet d'une partie. Les écrans qui affichent les instruments de bord, qui ont besoin de faire appel à une bibliothèque ont fait l'objet d'une autre  partie.
-La partie des commandes des gaz qui fait appel à des servo-moteurs capable de modifier leur position mais également de la lire a fait l'objet d'une partie entière. En effet, c'est la seul partie qui utilise ce type de technologie. Nous avons également réalisé une partie pour gérer tous les composants tel que les interrupteurs, les potentiomèrtes, les afficheurs etc ... Enfin, l'interfacage logiciel avec Flight Simulator a également été étudié.
+Ce découpage fut choisi selon le type d'instrument à réaliser. Les affichages par exemple ont été séparés selon leurs fonctions. Ceux qui affichent le monde exterieure, sur lequel nous avions uniquement les paramètres d'affichages à modifier pour gérer l'angle des écrans par exemple ont fait l'objet d'une partie. Les écrans qui affichent les instruments de bord, qui ont besoin de faire appel à une bibliothèque ont fait l'objet d'une autre  partie.
+La partie des commandes des gaz qui fait appel à des servo-moteurs capable de modifier leur position mais également de la lire a fait l'objet d'une partie entière. En effet, c'est la seul partie qui utilise ce type de technologie. Nous avons également réalisé une partie pour gérer tous les composants tel que les interrupteurs, les potentiomètres, les afficheurs etc... Enfin, l'interfaçage logiciel avec Flight Simulator a également été étudié.
 
-Ce découpage a été réalisé selon des regroupements fonctionnels. Il couvrait les différentes parties du cockpit. Il a été fortement modifié par la suite. En effet, nous ne pouvions pas réaliser toutes ces parties simultanément, il a été nécessaire de nous recentrer sur certaines parties. Ce découpage a été réalisé pour l'état de l'art, celui utilisé pour le développement sera étudié ultèrieurement.
-
-\section{Choix technologiques}
-Après avoir étudié les tâches à réaliser et les différentes solutions envisageable, nous avons choisi des solutions en accord avec nos professeurs encadrant. Nous avons également observé les solutions existantes sur des projet de même type déja abouti. Cependant, ces projet sont souvent destiné au rendu visuel pour l'utilisateur et font appel à des solutions "complètes" pour certain modules. Nous recherchions le but pédagogique dans ce projet, nous avons donc réalisé nous mêmes ces modules. Nous ne nous somme donc pas engagé sur la même voix que ces application. Les décisions prisent aux débuts du projet ont par la suite évoluées en fonction de l'avancement.
-
-\subsection{Les bus de données}
-L'équipe avait envisagé d'utiliser différents type de bus selon les parties à traiter avec notamment du CAN, de l'I2C, du LIN et de l'Ethernet.  Le bus LIN avait été retenu car il est très présent dans  les industries automobiles et aéronautiques et rentre donc dans le cadre de notre projet. Cependant, nous ne sommes pas assez nombreux pour développer quatre architectures de bus différentes. Le LIN est utilisé dans l'industrie uniquement pour des raisons économiques, car contrairement au CAN, il ne s'agit pas d'un protocole propriétaire, il n'y a donc pas de droits à payer pour l'implanter. C'est le seul avantage du LIN, il n'a donc pas été utilisé dans ce projet. En interne, chaque brique communique en I2C. Ces signaux sont ensuite convertis pour s'adapter au CAN qui relie l'ensemble des éléments. Enfin, les affichages issus directement de Flight Simulator utilisent de l'Ethernet. Les servo-moteurs de la commande des gaz sont reliés en série en RS232.
-
-\subsection{La partie Commande}
-
-Les commandes de gaz sont à la fois capteurs et actionneurs. En effet, en pilotage manuel, elles servent à régler la vitesse choisie. En pilotage automatique, leur position doit évoluer en fonction de la vitesse imposée par le calculateur. De plus, nous souhaitions pouvoir désactiver le pilote automatique et reprendre le contrôle de l'avion par une simple pression sur la poignée. Nous avons donc cherché un composant capable de détecter égalementle couple imposé.
-
-Nous avons choisie d'utiliser les servo-moteurs AX12 de Bioloid. Cet élément est disponible en une version compatible avec le bus CAN, ce qui permet de rester dans une normalisation afin d'éviter de se diversifier en protocole. Il a également une interface RS 232 TTL. Cela permet de placer plusieurs éléments en série. Il fonctionne en maître / esclave avec deux types de commandes, une en interrogation - une en action. Parmis les commandes disponiblent sur ce composant, on trouve notamment la position, le couple ou la détection de couple (utile pour le dépassement). De plus, lors de l'accélération d'un avion réel, il y a un délai d'environ cinq secondes entre le mouvement sur la manette et la poussé des moteurs. Ce délai est très largement supérieur à ceux nécassaire en électronique. Nous n'avons donc pas de contrainte de vitesse sur ce composant.
-
-Cet élément permet donc d'acquérir une donnée, mais également de s'adapter à la consigne fixée par le pilote automatique.
-
-\subsection{Les affichages}
-Pour l'affichage de certaine partie, nous souhaitions tous réaliser avec des écrans, cependant la présence de boutons comme des interrupteurs, potentiomètre etc... au milieu a posé problèmes. Il a donc été nécessaire de ré-étudier le positionnement des écrans du glass-cockpit.
-
-Pour les afficheurs du MFC, l'équipe avait proposée d'utiliser des afficheurs LCD afin de réaliser un bloc "universel" qui peut s'adapter à tous les affichages nécessaires, quelque soit le nombre de chiffres à afficher (et donc le nombre de bits d'entrés).  Mr Bouaziz a souhaité qu'une brique de base avec cinq afficheurs multisegements  soit réalisée (certains seront retirés ou cachés pour les applications nécessitant  moins d'afficheurs). Le circuit 1064 a été sélectionné. Il présente une interface LCD avec des afficheurs multisegements. Ces afficheurs sont reliés en I2C.
-
-L'overhead n'a pas été réalisé. L'équipe avait envisagé de le réalisé à l'aide d'écran tactile. Il est nécessaire d'étudier cette possibilité. Cependant, est-il possible de schématiser des potentiomètres sur des écrans tactiles ? Certains blocs de composant de l'overhead ont été commandés.
+Ce découpage a été réalisé selon des regroupements fonctionnels. Il couvrait les différentes parties du cockpit. Il a été fortement modifié par la suite. En effet, nous ne pouvions pas réaliser toutes ces parties simultanément, il a été nécessaire de nous recentrer sur certaines parties. Ce découpage a été réalisé pour l'état de l'art, celui utilisé pour le développement sera étudié ultérieurement.
 
 
 
