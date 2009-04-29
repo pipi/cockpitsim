@@ -1,5 +1,6 @@
 \chapter{Architecture et découpage en bloc}
 \authors{
+  \authorinfo{Romain}{Marchaudon}
   \authorinfo{Marc}{de la Motte Rouge} \\
 }
 
@@ -75,6 +76,31 @@ L'overhead n'a pas été réalisé. L'équipe avait envisagé de le réalisé à l'aide d
 Pour afficher le monde extérieur, l'équipe avait proposé d'utiliser des projecteurs. Cette solution présentait l'avantage d'être moins coûteuse, facilement transportable et s'avèrait surtout moins destructrice pour la vues des personnes se trouvant dans le cockpit en ne plaçant pas des écrans à proximité des yeux. Cependant, cette solution présentait l'inconvénient d'obliger à déformer l'image, ce que ne permet pas Wide FS. Il a finalement été décidé d'utiliser des écrans 24 pouces, voir 32 pouces.
 
 \subsection{Les ordinateurs}
+
+Afin de faire fonctionner Microsoft Flight Simulator X sur plusieurs écrans et de pouvoir interfacer le programme avec l'ensemble des
+éléments du cockpit, nous avons du choisir le nombre de machines ainsi que leur configuration.
+Dans un premier temps nous nous sommes occupé de choisir le nombre de machines à acheter, et donc pour cela
+le nombre d'écrans à interfacer en tout et pour tout. Sachant qu'il avait été décidé de ne faire que la partie
+pilote du cokcpit et de délaisser la partie copilote, seulement une partie des instruments de bords avaient besoin
+de disposer d'un moniteur capable de faire l'affichage. On utilise deux écrans pour afficher les instruments de bord.
+Pour l'affichage du monde exterrieur, il a été choisi d'utiliser un
+ensemble de 4 écrans 24 pouces. Cela nous amène donc à interfacer 6 écrans au total.
+
+Nous avons décidé d'utiliser des cartes graphiques d'une puissance assez importante en raison de la taille des écrans utilisés. De
+plus, afin de limiter le coût des machines, nous avons fait le choix de n'utiliser qu'une seule carte graphique par
+ordinateur, les configurations multicarte ayant un prix nettement plius important pour des performances d'affichage
+qui peuvent baisser si on installe trop d'écrans sur chaque PC.
+
+Dans un deuxième temps il a fallu choisir le type de boitier a adopter. Le principal argument ayant orienté nore
+choix réside dans l'espace requis pour les boitiers. En effet, une des priorités était de pouvoir déplacer le ockpit
+pour faire des démonstrations, et dans ce cas de figure l'utilisation de PC en rack se trouvait beaucoup plus
+intéressante que l'utilisation d'un boitier classique. De plus ceci permettait de mettre dans le rack le switch que nous
+utilisons pour faire communiquer les pc entre eux.
+
+Afin de pouvoir supporter facilement la charge de travail imposée par Microsoft Flight Simulator X et ses programmes annexes (WideView, WideFS, FSUIPC),
+nous avons décidé de configurer une machine avec un processeur quatre coeur, ainsi que deux autres machines avec
+des processeurs double coeur s'occupant des affichages du monde exterrieur et des instruments de bords.
+
 
 \section{Organisation}
 Pour développer notre cockpit, nous avons établi des blocs fonctionnel, en fonction des éléments à réaliser. Ce découpage est réalisé selon la figure \ref{fig:schema_bloc}.
