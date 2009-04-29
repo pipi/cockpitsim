@@ -7,18 +7,18 @@ Dans ce chapitre, nous traiterons de l'intégration des différents modules dans l
 aussi bien le lien avec la partie matériel que logicielle. En effet, il est question de lier les différentes briques logicielles
 développées aux modules matériels produits.
 
-Du côté logiciel, nous avons le partie dénomée FSAdapter, faisant l'interface avec Microsft Flight Simulator X, mais aussi
+Du côté logiciel, nous avons la partie dénomée FSAdapter, faisant l'interface avec Microsft Flight Simulator X, mais aussi
 les parties logicielles embarquées dans les modules CAN. Du côté matériel, nous disposons des éléments composants la partie
 physique du simulateur. En l'ocurrence il s'agit des décodeurs en quadrature, des interfaces pour les différents éléments
 d'intéraction (boutons poussoirs et LED's).
 
 \section{Contexte et contraintes}
-Avant d'expliquer la procédure d'intégration que nous avons suivi, il est nécessaire de faire un bref rappel du contexte. 
+Avant d'expliquer la procédure d'intégration que nous avons suivie, il est nécessaire de faire un bref rappel du contexte. 
 
-A ce stade du projet, nous disposons d'un module CAN générique fonctionnel prêt à se voir attribué des actionneurs 
+A ce stade du projet, nous disposons d'un module CAN générique fonctionnel prêt à se voir attribuer des actionneurs 
 et des capteurs au travers d'un bus I$^2$C, ainsi que d'une liaison CAN active grâce à l'ajout dans FSAdapter d'une 
-première famille \footnote{Les familles dans FSAdapter correspondent à des regroupement d'actionneurs et de capteurs 
-dans la réprésentation du modèle de l'avion considéré. En l'occurrence, il peut s'agir de l'indicateur d'altitude du 
+première famille \footnote{Les familles dans FSAdapter correspondent à des regroupements d'actionneurs et de capteurs 
+dans la représentation du modèle de l'avion considéré. En l'occurrence, il peut s'agir de l'indicateur d'altitude du 
 pilote automatique ou encore du bouton qui la valide.} regroupant les actionneurs et capteurs liés physiquement au 
 module CAN. Le dispositif de l'intégration est illustré en figure \ref{fig:archi_integration}.
 
@@ -31,22 +31,22 @@ module CAN. Le dispositif de l'intégration est illustré en figure \ref{fig:archi
   \label{fig:archi_integration}
 \end{figure}
 
-Cependant, malgré le fait que nous êtions prêt pour initier cette intégration, nous avons été confronté à des barrières importantes.
-En particulier, nous avons du faire face à des retard dans les commandes qui nous ont empêchées de pousser les tests préliminaires
-suffisamment loin pour pouvoir mettre en oeuvre une intégration complète. C'est pourquoi, nous avons pris le parti de mettre en avant
+Cependant, malgré le fait que nous êtions prêts pour initier cette intégration, nous avons été confrontés à des barrières importantes.
+En particulier, nous avons dû faire face à des retards dans les commandes qui nous ont empêché de pousser les tests préliminaires
+suffisamment loin pour pouvoir mettre en oeuvre une intégration complète. C'est pourquoi, nous avons pris la partie de mettre en avant
 la preuve du concept, établi par la mise en place d'une chaine de traitement complète partant du modèle aéronautique sur Microsoft 
-Flight Simulator X et descendant jusqu'aux actionneurs connecté au module CAN via un bus I$^2$C.
+Flight Simulator X et descendant jusqu'aux actionneurs connectés au module CAN via un bus I$^2$C.
 
 \section{Procédure d'intégration}
 L'objectif premier de cette tentative d'intégration est avant tout de faire la preuve du concept comprenant l'ensemble
 des briques matérielles et logicielles développées par nos soins. Par ailleurs, pour que l'intégration puisse mettre en évidence
-le plus significativement possible les erreurs ou bogues et leurs causes, nous avons décidé de procédé par étapes. Cela peut paraître
+le plus significativement possible les erreurs ou bogues et leurs causes, nous avons décidé de procéder par étapes. Cela peut paraître
 du bon sens, mais c'est avant tout une démarche professionnelle souvent baclée mais dont l'importance n'est plus à prouver.
 
 \subsection{Choix des étapes}
 Il nous est apparu logique de suivre la chaine décrite dans la section précédente pour définir la succession des étapes.
-De plus, nous avons décidé de partir des capteurs et actionneurs car il offrent des données continues et complètements déterministes.
-Ce dont nous n'êtions pas sûr du côté de FSAdaper.
+De plus, nous avons décidé de partir des capteurs et actionneurs car ils offrent des données continues et complètements déterministes.
+Ce dont nous n'étions pas sûr du côté de FSAdaper.
 
 Voici la succession des étapes:
 \begin{enumerate}
@@ -58,12 +58,12 @@ Voici la succession des étapes:
   \item Valider l'indépendance des données reçues de l'encodeur et du bouton poussoir.
   \item Connecter le module CAN au bus CAN.
   \item Connecter le PC sur lequel se trouve l'analyseur de bus CAN sur le bus CAN.
-  \item Relancer la boucle de traitement sur le module CAN en ajoutant le gestion des messages transitant sur le
+  \item Relancer la boucle de traitement sur le module CAN en ajoutant la gestion des messages transitant sur le
   bus CAN.
   \item Valider la réception de données sur le PC lorsqu'on actionne soit l'encodeur, soit le bouton poussoir.
   \item Valider la cohérance des données reçues par rapport aux actions portées sur les actionneurs.
   \item Lancer FSAdapter en mode "Debug" afin d'afficher les messages d'information sur le transit de messages CAN.
-  \item Valider la mise à jour des données dans FSUIPC grace au logiciel FSInterogate \footnote{FSInterogate donne accès aux
+  \item Valider la mise à jour des données dans FSUIPC grâce au logiciel FSInterogate \footnote{FSInterogate donne accès aux
   valeurs rendues accessibles par FSUIPC sous la forme d'un tableur.}.
   \item Valider la cohérance de l'impact sur le modèle aéronautique par rapport aux actions portées sur les actionneurs.
 \end{enumerate}
@@ -77,33 +77,33 @@ Pour effectué
 
 \section{Tests et résultats}
 Avant tout, nous tenons à mettre en évidence que les tests préliminaires sur les différentes briques ont permis de réduire le temps 
-d'intégration. En effet, ces tests préliminaires ont élagués bon nombres de bogues et d'erreurs intrinsèques aux briques 
+d'intégration. En effet, ces tests préliminaires ont élagué bon nombres de bogues et d'erreurs intrinsèques aux briques 
 indépendemment du contexte.
 
 \subsection{Intégration des capteurs et actionneurs}
 Les capteurs et actionneurs n'ont pas posé d'énormes problèmes lors de l'intégration car ils avaient déjà été validés lors des tests 
 préliminaires. Il nous a fallu néanmoins faire quelques adaptations sur le format des données qui transitent sur le bus I$^2$C afin
-qu'elles soient facilement et simplement exploitable par le module CAN.
+qu'elles soient facilement et simplement exploitables par le module CAN.
 
-De plus, concernant ces formats de données, nous avons dû nous mettre d'accord sur l'ensemble du projet pour que tout les
+De plus, concernant ces formats de données, nous avons dû nous mettre d'accord sur l'ensemble du projet pour que tous les
 différents éléments du simulateur utilisent la même représentation de données, en l'occurrence un format \emph{Little-Endian} 
 \footnote{La représentation des données était une question déjà fort présente à l'esprit des pionniers de l'informatique. 
 Deux voies se sont tracées suivant le constructeur: la représentation Big-Endian et la représentation Little-Endian, 
 respectivement commencant par les bits de poids fort ou les bits de poids faible. L'alignement des données est également 
 important car il détermine la taille d'un bloc de donnée unitaire. Un PC est aligné sur des mots de 32 bits par exemple.}.
 
-Dès lors que les composants étaient prêt et une fois connecté, nous avons vu constater avec plaisir et satisfaction qu'ils envoyaient
+Dès lors que les composants étaient prêts et une fois connectés, nous avons vu constater avec plaisir et satisfaction qu'ils envoyaient
 les bonnes données et sous la forme escomptée.
 
-Cette étape de l'intégration est certes courte mais néanmoins cruciale car les élements formant les actionneurs et les capteurs forme
+Cette étape de l'intégration est certes courte mais néanmoins cruciale car les élements formant les actionneurs et les capteurs forment
 le point d'entrée pour l'utilisateur lors de son utilisation du simulateur.
 
 \subsection{Intégration des modules CAN}
 Contrairement à l'intégration des capteurs et des actionneurs, celle du module CAN ne s'est pas faite aussi simplement.
-Il a fallut effectuer beaucoup de modification dans le code. En particulier, il était nécessaire de nettoyer le code qui portait
+Il a fallut effectuer beaucoup de modifications dans le code. En particulier, il était nécessaire de nettoyer le code qui portait
 encore les traces des nombreux essais de résolutions d'erreurs des phases préliminaires. L'objectif de ce nettoyage était axé sur
 le minimalisme et l'efficacité: ne proposer une solution que pour le cas d'application qui concerne l'intégration en minimisant la
-prise en compte des évolutions futures - sans pour autant les ignorées. Il fallait avant tout offrir une solution qui fonctionne,
+prise en compte des évolutions futures - sans pour autant les ignorer. Il fallait avant tout offrir une solution qui fonctionne,
 quitte à la faire évoluer par la suite.
 
 Une fois nettoyé, le code était enfin prêt pour l'intégration. Cependant, un temps non négligeable a été passé sur ce nettoyage et
@@ -121,14 +121,14 @@ fortement par la suite. En particulier la gestion des données reçues via le bus 
 Maintenant que nous avons posé le contexte de l'intégration de cette partie du projet, nous pouvons maintenant passé aux commentaires
 sur les résultats de cette dernière.
 
-En premier lieu, nous avons été rapidement confronté à des problèmes de représentation de données. Bien qu'une convention avait été
+En premier lieu, nous avons été rapidement confrontés à des problèmes de représentation de données. Bien qu'une convention avait été
 fixée au préalable par les membres du projet, des erreurs d'interprétation des composants utilisés nous ont conduit à transmettre des
 données incohérentes. Ce point était bloquant et devait être résolu en priorité pour continuer l'intégration.
 
 En dehors de ce problème, les tests préliminaires sur FSAdapter avaient permis également d'élaguer les bogues de nature intrinsèques.
 
-La suite de l'intégration nous a pourtant demander de revoir notre modèle de messages transitant sur le bus CAN. En effet, il fallait
+La suite de l'intégration nous a pourtant demandé de revoir notre modèle de messages transitant sur le bus CAN. En effet, il fallait
 trouver une représentation des données transmises demandant le moins de traitement par les différents modules/noeuds du simulateur.
-N'oubliant pas, par ailleurs, que nous voulons avant tout faire la preuve de notre concept, nous avons décider de faire un choix
+N'oubliant pas, par ailleurs, que nous voulons avant tout faire la preuve de notre concept, nous avons décidé de faire un choix
 de représentation que nous savions exclusif pour l'application voulue. Néanmoins, nous la savions également facilement modifiable
 pour la faire correspondre à de nouveaux besoins, plus complets, plus larges et plus réalistes.
