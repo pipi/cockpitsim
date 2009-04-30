@@ -22,6 +22,7 @@
 \setcounter{page}{1}
 
 \tableofcontents
+\newpage
 \thispagestyle{plain}
 \cleardoublepage
 
@@ -35,46 +36,49 @@
 \cleardoublepage
 
 \include{etat_de_lart}
-\thispagestyle{plain}
+%\thispagestyle{plain}
 \cleardoublepage
 
 \include{archi_et_decoup}
-\thispagestyle{plain}
+%\thispagestyle{plain}
 \cleardoublepage
 
 \include{planning_et_taches}
-\thispagestyle{plain}
+%\thispagestyle{plain}
 \cleardoublepage
 
 \include{rh_et_materiel}
-\thispagestyle{plain}
+%\thispagestyle{plain}
 \cleardoublepage
 
 \include{biblio_et_outils}
-\thispagestyle{plain}
+%\thispagestyle{plain}
 \cleardoublepage
 
 \include{fsadapter}
-\thispagestyle{plain}
+%\thispagestyle{plain}
 \cleardoublepage
 
 \include{can_et_generic}
-\thispagestyle{plain}
+%\thispagestyle{plain}
 \cleardoublepage
 
 \include{capteur_et_actionneur}
-\thispagestyle{plain}
+%\thispagestyle{plain}
 \cleardoublepage
 
 \include{integration}
-\thispagestyle{plain}
+%\thispagestyle{plain}
 \cleardoublepage
 
 \include{etat_final_evolution}
 \thispagestyle{plain}
 \cleardoublepage
 
-\include{bilan}
+\pagestyle{plain}
+\newpage
+
+\include{conclusion}
 \thispagestyle{plain}
 \cleardoublepage
 
@@ -82,8 +86,8 @@
 \thispagestyle{plain}
 \cleardoublepage
 
-\include{conclusion}
-\thispagestyle{plain}
-\cleardoublepage
+\appendix
+
+\include{annexes}
 
 \end{document}

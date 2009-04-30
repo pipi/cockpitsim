@@ -142,11 +142,44 @@ Afin de se rendre compte du fonctionnement de l'auto incrémentation du registre,
 
 Les tests ont été passés avec succès et ainsi le module a pu être validée.
 
-
-
-
 \section{Interface USB/CAN}
+\subsection{Objectfis}
+L'objectif de cette partie du projet est de fournir l'implantation de l'interface CAN décrite dans la section \ref{sec:bibliotheques}.
+Comme nous l'avons expliqué précédemment, ne avons mis en place une API \footnote{Acronyme de l'anglais Application Programming
+Interface, qui décrit l'interface - les fonctions disponibles - d'une partie ou de la totalité d'un programme.} homogène pour tous 
+les noeuds du bus CAN, il s'agit donc ici de réaliser l'implantation de cette API pour les programmes qui tourneront sur PC.
 
+Pour cela, nous avons à disposition un module USB/CAN, qui se connecte donc en USB sur les PC et fourni deux interfaces CAN -
+cependant nous n'en utiliserons qu'une dans le cadre de ce projet. Une libraire est également fournie par le constructeur. Notre
+travail s'est donc concentrée sur la compréhension du fonctionnement de cette librairie, sur le développement de l'implantation des
+fonctionnalités que nous désirions avoir et sur la validation du code produit en procédant à des tests.
+
+\subsection{Conception}
+La conception de cette partie du projet n'a pas révélé de problèmes majeurs. Le travail le plus important en temps et en réflexion
+fût de comprendre le fonctionnement de la librairie - en particulier la compréhension de sa API. En effet, plusieurs produits
+existent dans la gamme du constructeur et la librairie fournie est prévue pour être compatible avec tous l'ensemble de la gamme, ce
+qui implique des redondances au niveau de l'API même et une difficulté supplémentaire pour connaître les fonctions qui nous intéresse
+dans le cadre de notre application.
+
+Alors que nous étions encore dans la phase de conception, nous nous sommes rendu compte que les librairies sur les systèmes BECK et
+PC présentaient certaines différences significatives, principalement regroupées autour du concept de \emph{fonction bloquante}
+\footnote{Une fonction est dite bloquante si, après être appelée, elle peut se bloquer tant qu'elle n'est pas capable de produire 
+un résultat. Cela à pour effet de bloquer les programmes \emph{mono-threadés}.} Il a donc fallu contourner cette difficulté. Nous avons
+pris le parti de rendre transparent la non utilisation des propriétés bloquante sur la partie PC, permettant ainsi de ne pas impacter
+sur l'implantation faite sur le BECK - l'API ayant déjà été arrêtée en amont, nous avons préférer minimiser les changements pour gagner
+du temps.
+
+\subsection{Développement}
+Le développement quant à lui s'est strictement limité à l'assemblage des différentes fonction formant notre API CAN. Grâce aux
+points étudiés lors de la conception, la partie développement s'est très bien passée. Les erreurs étant minimes et très vite corrigées.
+
+\subsection{Tests et résultats}
+Pour la réalisation des tests sur cette partie du projet, nous avons utilisé un outil fourni par le constructeur du module USB/CAN.
+Ce dernier permet de scruter les trames qui transitent sur le bus et d'en afficher les informations (identifiant, données, taille,
+période, occurence). Ce fût fort utile, car il nous a suffit de générer quelques trames modèles choisies arbitrairement pour mettre en
+évidence les erreurs possibles et de vérifier l'exactitude des données grâce à l'outil du constructeur.
+
+Les tests se sont conclus très rapidement par de très bons résultats.
 
 \section{Interface CAN/I$^2$C}
 \subsection{Objectifs}

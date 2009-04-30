@@ -28,3 +28,7 @@ Pour les diodes, le FPGA alumerait les diodes voulues en fonction des informatio
 en quelque sorte une interface de multiplexage des diodes. Par contre les commutateurs eux ne pourront pas être
 interfacés via un clavier matriciel à cause de leurs caractéristiques électriques. En effet, il serait alors impossible
 de détecter un changement de position.
+\subsection{Commandes des gaz}
+La communication Beck-Ax12 fonctionnant correctement et le code pour la communication Beck-Can étant implémenté mais non testé, la prochaine étape pourrait être le test de cette deuxième partie.
+Il faudra penser à initialiser les servomoteurs, réalisant le deuxième moteur et le trim, à un débit de 75600 bauds via le MC5 afin que les servomoteurs puissent communiquer avec le port série.
+

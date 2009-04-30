@@ -1,9 +1,12 @@
 \chapter{Etat de l'art}
 \authors{
-  \authorinfo{Marc}{de la Motte Rouge} \\
+
+  \authorinfo{Marc}{de la Motte Rouge}\\
+  
+  \authorinfo{Fabien}{Provost} \\
 }
 
-Pour orienter notre projet, nous avons d'abord observé les différentes solution déja
+Pour orienter notre projet, nous avons d'abord observé les différentes solutions déjà
 mises en oeuvre dans des projets similaires. Nous avons étudié les possibilitées
 proposées pour chaque partie ainsi que l'interét qu'elles présentaient pour nous par
 rapport à l'objectif pédagogique du projet.
@@ -15,8 +18,32 @@ sont des appareils de "petite taille".  Quelque projet utilisent des appareils p
 important. Ils sont souvent destinés à la formation du personel naviguant. 
 
 \section{Les bus de données}
+Premièrement, notre projet comporte deux réseaux différents:
+\begin{itemize}
+  \item un bus permettant de relier tous les blocs généraux du cockpit,
+  \item des bus de petite taille permettant d'interfacer tous les petits modules (afficheurs, boutons...)
+\end{itemize}
+
+Pour chacun d'entre eux, nous avions trouvé différentes solutions.
+
+En particulier, pour le réseau principal nous avions :
+
+\begin{itemize}
+  \item Soit un réseau de type éthernet (tels que ProfitNe,ou ModBus/TCP), qui avait l'aventage d'avoir un débit largement suffisant (de l'ordre de 100Mbits/s), et de pouvoir nous initier à une technologie que l'on peut trouver fréquement. Néanmoins, ce genre de réseau est un peu complexe à mettre en oeuvre.
+  \item Soit un type de réseau utilisant un protocole série était envisageable (tesls que Profibus et ModBus). Ce genre de réseau on un bon compromis simplicité de mise en place et débit (jusqu'à 10 Mbits/s), tout en restant robuste.
+  \item Ou encore, une autre idée de bus était le bus CAN, qui avait pour principal avantage la simplicité de mise en place, tout en restant très robuste. Un autre avantage dans ce genre de réseau est le mode d'adressage par identifiant de message et non par adresse de noeud. Seul inconvénient : ce genre de bus est nettement moins rapide ( moins d'un Mbit/s pour un réseau de notre taille).
+\end{itemize}
+
+Quant aux bus de petite taille, deux solutions étaient envisageables :
+
+\begin{itemize}
+  \item soit un réseau de type I$^2$C que nous avions déjà étudié et qui présentait l'avantage de répondre à nos besoins au niveau débit (de l'ordre de 400kbits/s) et robustesse.
+  \item Une autre solution était d'utiliser un réseau LIN. Ce genre de bus avait plusieurs avantages à nos yeux, dont le fait que ce genre de bus est utilisé dans l'avionique, et nous aurait permis de nous familiarisé avec cette technologie. Néanmoins ce type de bus n'a un débit que de 40kbits/s.
+\end{itemize}
+
 
 \section{La partie commande}
+En effectuant des recherches concernant la partie des commandes des gaz, nous nous sommes rendu compte que la majorité des projets utilisent ou des solutions à bas prix, trouvés dans les magazins de jeux vidéos mais peut conforme à la réalité, ou souvent des modules dèjà réalisés par des professionnels. Ces solutions sont trés honéreuses. 
 
 \section{Affichage}
 Lors de nos recherches effectuées sur le monde extérieur, nous avons trouver un
