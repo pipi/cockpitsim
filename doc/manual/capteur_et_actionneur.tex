@@ -232,11 +232,8 @@ de l'encodeur, et d'envoyer ce changement par bus CAN vers le PC.
 \end{figure}
 
 Le but de ce bloc est d'interfacer un clavier matriciel tel que celui décrit sur la figure suivante afin que le 
-maître du bus I$^2$C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de 
-lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela 
-implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il 
-est une interface adéquate pour un clavier (9+8=17 entrées/sorties). Du côté de BECK, il a été demandé de réaliser la 
-détection de touche, et également le décodage de cet appui.
+maître du bus I$^2$C puisse reconnaître quelle touche est actionnée. Le clavier matriciel a autant de colonnes et de lignes à relier pour en déduire l'information utile (appui ou non d'un bouton poussoir). Dans notre cas, cela 
+implique 8 colonnes et 9 lignes. Le FPGA étant un processeur bénéficiant d'un nombre d'entrée/sorties important, il est une interface adéquate pour un clavier (9+8=17 entrées/sorties). Du côté de BECK, il a été demandé de réaliser la détection de touche, et également le décodage de cet appui.
 
 La matrice ainsi câblée, autorise des niveaux 1 récessifs par défaut, c'est-à-dire sans action directe du FPGA. Chaque 
 ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
@@ -247,24 +244,21 @@ ligne et chaque colonne sont reliées bidirectionnellement au FPGA.
 Dans un premier temps, nous avons envisagé que le FPGA traite les informations lui-même en mettant en place le
 protocole de détection de touche. Une requête de lecture du clavier étant détectée, le FPGA renvoie la valeur 
 associée de la dernière touche appuyée (de 1 à 72). Si cette valeur a déjà été envoyée et que l'on détecte une 
-nouvelle requête de lecture de la part du beck, le FPGA renvoie la valeur 0. Dans ce cas, toutes les informations 
-sont traitées par le BECK au lieu du FPGA. 
+nouvelle requête de lecture de la part du beck, le FPGA renvoie la valeur 0. 
 
 Cette solution implique une certaine simplicité du traitement sur le reste de la chaîne de commande, en contrepartie, 
 elle demande un algorithme trop important à mettre en place au sein du FPGA. 
 	 
 La solution retenue au sein du FPGA est d'autoriser en lecture et en écriture les lignes et les colonnes de notre 
-matrice. Le traitement direct de détection de touche se fait alors sur le maître du bus I$^2$C, c'est-à-dire le BECK. 
+matrice. Le traitement direct de détection de touche se fait alors sur le maître du bus I$^2$C, c'est-à-dire le BECK. Dans ce cas, toutes les informations 
+sont traitées par le BECK au lieu du FPGA.  
 Il présente l'avantage d'être plus efficace, et il simplifie le fonctionnement du FPGA. Nous avons gardé les tailles 
 génériques des registres utilisés auparavant. Les lignes sont codées sur 2 octets c'est-à-dire sur 2 registres, de 
 même pour les colonnes. Certains bits correspondants aux lignes (8 bits) et aux colonnes (7 bits) ne sont pas reliés 
 physiquement, toutefois, cela n'affecte en rien le traitement de l'information.
 
 
-Les registres de lecture et d'écriture sont illustrés sur la figure\ref{fig:SI2C_blink}. Un registre d'écriture 
-
-
-(à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
+Les registres de lecture et d'écriture sont illustrés sur la figure\ref{fig:SI2C_blink}. Un registre d'écriture (à droite) correspond à un registre de lecture (à gauche) dans le cas du clavier matriciel.
 
 \subsection{Développement}
 
