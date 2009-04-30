@@ -1,6 +1,7 @@
 \chapter{Etat final et possibilitées d'évolutions}
 \authors{
-  \authorinfo{prénom}{nom} \\
+  \authorinfo{Romain}{Marchaudon} \\
+  \authorinfo{Johnny}{Phor} \\
 }
 
 \section{Évolution de FSadapter}
@@ -19,7 +20,7 @@ Evidement, cela imposerait vraisemblablement  une complexification de l'architec
 \subsection{Commutateurs et afficheurs}
 En raison de l'avancement du projet, nous avions décidé d'utiliser les circuits PCF8575 afin d'interfacer les boutons poussoirs,
 commutateurs à positions et diodes en raison de la date butoire imposée lors du lancement du projet. Néanmoins une
-deuxième solution consistant à utiliser le FPGA. Dans ce cas il faudra implanter un routage qui permettrait
+deuxième solution existe consistant à utiliser le FPGA. Dans ce cas il faudra implanter un routage qui permettrait
 d'interfacer les boutons poussoirs et les diodes sous forme de deux matrices (une matrice pour chaque).
 Dans le cas des boutons poussoirs le fonctionnement serait exactement le même que pour le clavier du FMC.
 Pour les diodes, le FPGA alumerait les diodes voulues en fonction des informations reçues depuis le BECK. Il serait
