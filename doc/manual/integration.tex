@@ -73,7 +73,13 @@ Elle est composée de l'altitude du pilote automatique ainsi que du bouton pousso
 est donc composée de deux index dans le tableau de FSUIPC, tous deux rendus accessibles et sûrs d'accès via FSAdapter.
 
 \subsection{Ressources mises en place}
-Pour effectué
+Pour effectué l'intégration, avant de lancer les procédures de tests, il nous fallait mettre en place la manipulation: préparer le
+cablage, les alimentations, connecter les différents modules à leurs bus respectifs et finalement connecter le tout au PC central
+via le bus CAN et le module USB/CAN.
+
+Par ailleurs, cela à nécessité d'assigner une personne à temps plein sur cette partie. La tâche n'étant pas spécialement compliquée
+mais demandant du temps et surtout beaucoup de rigueur afin d'éviter de créer des interférences lors des tests, leurs faisant perdre,
+pour l'heure, leurs propriétés déterministes.
 
 \section{Tests et résultats}
 Avant tout, nous tenons à mettre en évidence que les tests préliminaires sur les différentes briques ont permis de réduire le temps 
