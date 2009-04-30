@@ -1,40 +1,109 @@
 \chapter{Architecture et découpage en bloc}
 \authors{
+  \authorinfo{Romain}{Marchaudon}\\
   \authorinfo{Marc}{de la Motte Rouge} \\
 }
 
+\
+Pour débuter notre projet sur la réalisation du cockpit, nous avons eu besoin de positionner les différents éléments de notre travail dans "l'univers Flight Simulator". En effet, les données sont extraites différemment selon leurs types. Les données concernant l'affichage sur les écrans passent par les logiciels WideView et WideFS. Ces logiciels existent déjà. Les données concernant les paramètres réglable ou à communiquer à l'utilisateur par différents afficheurs (autre que celle simuler par les écrans) passent par le logiciel FSUIPC. Il a donc fallu réaliser une surcouche logiciel afin de pouvoir dialoguer avec ce dernier. 
+
+Le positionnement de notre projet par rapport à l'univers Flight Simulator est détaillé sur la figure \ref{fig:position}.
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.7]{images/positionnement}
+  }
+  \caption{Positionnement du projet dans l'univers Flight Simulator}
+  \label{fig:position}
+\end{figure}
+
+Par la suite, nous avons recherché des informations sur chaque partie 
+à réaliser. Pour cela, nous avons organisé des groupes de travail au sein de l'équipe, chaque groupe étant
+responsable d'un bloc.
+
+Nous avons découpé la réalisation technique du projet en quatre grandes parties :
+
+\begin{itemize}
+\item Tâche 1 : Saisie des données, commande (vitesse, cap etc...)
+\item Tâche 2 : Commande de pilotage, puissance  (cette partie comprend l'asservissement des commandes)
+\item Tâche 3 : Monde extérieur et réseaux
+\item Tâche 4 : Interface Homme Machine (IHM) et extraction des données de Flight Simulator (FS).
+\item Tâche 5 : Recherche générale sur le projet, information sur les projets de ce type déjà réalisés.
+\end{itemize}
+
+Ces tâches sont répartis dans le cockpit selon la figure \ref{fig:decoup1}.
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.7]{images/decoup1}
+  }
+  \caption{Découpage des parties en début de projet}
+  \label{fig:decoup1}
+\end{figure}
+
+Ce découpage fut choisi selon le type d'instrument à réaliser. Les affichages par exemple ont été séparés selon leurs fonctions. Ceux qui affichent le monde exterieure, sur lequel nous avions uniquement les paramètres d'affichages à modifier pour gérer l'angle des écrans par exemple ont fait l'objet d'une partie. Les écrans qui affichent les instruments de bord, qui ont besoin de faire appel à une bibliothèque ont fait l'objet d'une autre  partie.
+La partie des commandes des gaz qui fait appel à des servo-moteurs capable de modifier leur position mais également de la lire a fait l'objet d'une partie entière. En effet, c'est la seul partie qui utilise ce type de technologie. Nous avons également réalisé une partie pour gérer tous les composants tel que les interrupteurs, les potentiomètres, les afficheurs etc... Enfin, l'interfaçage logiciel avec Flight Simulator a également été étudié.
+
+Ce découpage a été réalisé selon des regroupements fonctionnels. Il couvrait les différentes parties du cockpit. Il a été fortement modifié par la suite. En effet, nous ne pouvions pas réaliser toutes ces parties simultanément, il a été nécessaire de nous recentrer sur certaines parties. Ce découpage a été réalisé pour l'état de l'art, celui utilisé pour le développement sera étudié ultérieurement.
 
 \section{Choix technologiques}
-Après avoir étudié les tâches à réaliser et les différentes solutions envisageable, nous avons choisi des solutions en accord avec nos professeurs encadrant. Nous avons également observé les solutions existantes sur des projet de même type déja abouti. Cependant, ces projet sont souvent destiné au rendu visuel pour l'utilisateur et font appel à des solutions "complètes" pour certain modules. Nous recherchions le but pédagogique dans ce projet, nous avons donc réalisé nous mêmes ces modules. Nous ne nous somme donc pas engagé sur la même voix que ces application. Les décisions prisent aux débuts du projet ont par la suite évoluées en fonction de l'avancement.
+Après avoir étudié les tâches à réaliser et les différentes solutions envisageable, nous avons choisi des solutions en accord avec nos professeurs. Nous nous sommes servi de l'état de l'art réalisé en amont pour définir nos choix. Cependant, ces projets mettent souvent en le visuel en avant et se positionne du point de vue "human in the loop" en utilisant des modules déja existant. Cela n'était pas notre objectif, nous souhaitions faire du "hardware in the loop".  Nous avons donc créé nos propres composants.
 
 \subsection{L'appareil}
-Une des premières décision que nous avons du prendre concernait le choix de l'avion utilisé pour le projet. En effet, lors de la présentation, il avait été décidé que l'Airbus A 320 serait utilisé. Cependant, sur certains types d'appareils, FSUIPC ne retourne aucune donnée. Il était donc nécessaire de choisir un appareil où l'on pouvait accèder au maximum de données. Pour l'Airbus A 320, la modélisation la plus proche était WILCO, avec l'utilisation de brique MAGENTA. Cette solution est très réaliste, mais pose des problèmes d'interfaçages avec FSUIPC. Nous avons finalement choisi de basculer de Flight Simulator 2004 à Flight Simulator X. Celui-ci est légèrement plus cher et nécessite des ressources plus importantes. Toutefois, il contient un modèle d'aribus A321, très proche de l'A320. Il permet également d'extraire les données d'FSUIPC.
+Une des premières décision que nous avons eu à prendre concernait le choix de l'avion utilisé pour le projet. En effet, lors de la présentation, il avait été décidé que l'Airbus A 320 serait utilisé. Cependant, sur certains types d'appareils, FSUIPC ne retourne aucune donnée. Il était donc nécessaire de choisir un appareil où l'on pouvait accèder au maximum de données. Dans le cas de l'Airbus A 320, la modélisation la plus proche était WILCO, avec l'utilisation de brique MAGENTA. Cette solution est très réaliste car très proche de la réalité, mais pose des problèmes d'interfaçages avec FSUIPC. Nous avons finalement choisi de basculer de Flight Simulator 2004 à Flight Simulator X. Celui-ci est légèrement plus cher et nécessite des ressources plus importantes, toutefois, il contient un modèle d'aribus A321, très proche de l'A320 et permet d'extraire les données d'FSUIPC.
 
 \subsection{Les bus de données}
-L'équipe avait envisagé d'utiliser différents type de bus selon les parties à traiter avec notamment du CAN, de l'I2C, du LIN et de l'Ethernet.  Le bus LIN avait été retenu car il est très présent dans  les industries automobiles et aéronautiques et rentre donc dans le cadre de notre projet. Cependant, nous ne sommes pas assez nombreux pour développer quatre architectures de bus différentes. Le LIN est utilisé dans l'industrie uniquement pour des raisons économiques, car contrairement au CAN, il ne s'agit pas d'un protocole propriétaire, il n'y a donc pas de droits à payer pour l'implanter. C'est le seul avantage du LIN, il n'a donc pas été utilisé dans ce projet. En interne, chaque brique communique en I2C. Ces signaux sont ensuite convertis pour s'adapter au CAN qui relie l'ensemble des éléments. Enfin, les affichages issus directement de Flight Simulator utilisent de l'Ethernet. Les servo-moteurs de la commande des gaz sont reliés en série en RS232.
+L'équipe avait envisagé d'utiliser différents type de bus selon les parties à traiter avec notamment du CAN, de l'I2C, du LIN et de l'Ethernet.  Le bus LIN avait été retenu car il est très présent dans  les industries automobiles et aéronautiques et rentre donc dans le cadre de notre projet. Cependant, nous ne sommes pas assez nombreux pour développer quatre architectures de bus différentes. Le LIN est utilisé dans l'industrie uniquement pour des raisons économiques, car contrairement au CAN, il ne s'agit pas d'un protocole propriétaire, il n'y a donc pas de droits à payer pour l'implanter. C'est son seul avantage dans notre contexte, il n'a donc pas été utilisé dans ce projet. En interne, chaque brique (module CAN) communique en I2C. Ces signaux sont ensuite convertis pour s'adapter au CAN qui relie l'ensemble des éléments. Enfin, les affichages issus directement de Microsoft Flight Simulator X utilisent de l'Ethernet pour l'affichage de WideView. Les servo-moteurs (détaillés ci-dessous) de la commande des gaz sont reliés en série en RS232.
 
 \subsection{La partie Commande}
 
-Les commandes de gaz sont à la fois capteurs et actionneurs. En effet, en pilotage manuel, elles servent à régler la vitesse choisie. En pilotage automatique, leur position doit évoluer en fonction de la vitesse imposée par le calculateur. De plus, nous souhaitions pouvoir désactiver le pilote automatique et reprendre le contrôle de l'avion par une simple pression sur la poignée. Nous avons donc cherché un composant capable de détecter égalementle couple imposé.
+Les commandes de gaz sont à la fois capteurs et actionneurs. En effet, en pilotage manuel, elles servent à régler la vitesse choisie, en pilotage automatique, leur position doit évoluer en fonction de la vitesse imposée par le pilote automatique. De plus, nous souhaitions pouvoir désactiver le pilote automatique et reprendre le contrôle de l'avion par une simple pression sur la poignée. Nous avons donc cherché un composant capable de détecter égalementle couple imposé.
 
-Nous avons choisie d'utiliser les servo-moteurs AX12 de Bioloid. Cet élément est disponible en une version compatible avec le bus CAN, ce qui permet de rester dans une normalisation afin d'éviter de se diversifier en protocole. Il a également une interface RS 232 TTL. Cela permet de placer plusieurs éléments en série. Il fonctionne en maître / esclave avec deux types de commandes, une en interrogation - une en action. Parmis les commandes disponiblent sur ce composant, on trouve notamment la position, le couple ou la détection de couple (utile pour le dépassement). De plus, lors de l'accélération d'un avion réel, il y a un délai d'environ cinq secondes entre le mouvement sur la manette et la poussé des moteurs. Ce délai est très largement supérieur à ceux nécassaire en électronique. Nous n'avons donc pas de contrainte de vitesse sur ce composant.
+Nous avons choisie d'utiliser des servo-moteurs AX12 de Bioloid. Cet élément est disponible en une version compatible avec le bus CAN, ce qui permet de garder une architecture homogène. Il a également une interface série. Cela permet de placer plusieurs éléments en série sur un seul bus. Il fonctionne en maître / esclave avec deux types de commandes, une en interrogation - une en action. Parmis les commandes disponiblent sur ce composant, on trouve notamment la position, le couple ou la détection de couple (utile pour le dépassement). De plus, lors de l'accélération d'un avion réel, il y a un délai d'environ cinq secondes entre le mouvement sur la manette et la poussé des moteurs. Ce délai est très largement supérieur à ceux nécassaire en électronique. Nous n'avons donc pas de contrainte de vitesse sur ce composant.
 
 Cet élément permet donc d'acquérir une donnée, mais également de s'adapter à la consigne fixée par le pilote automatique.
 
-\subsection{Les affichages}
-Pour l'affichage de certaine partie, nous souhaitions tous réaliser avec des écrans, cependant la présence de boutons comme des interrupteurs, potentiomètre etc... au milieu a posé problèmes. Il a donc été nécessaire de ré-étudier le positionnement des écrans du glass-cockpit.
+\subsection{L'affichage des instruments}
+Pour l'affichage de certaines parties, nous souhaitions tout réaliser avec des écrans, cependant la présence de boutons comme des interrupteurs, potentiomètre etc... au milieu a posé problèmes. Il a donc été nécessaire de ré-étudier le positionnement des écrans du glass-cockpit.
 
-Pour les afficheurs du MFC, l'équipe avait proposée d'utiliser des afficheurs LCD afin de réaliser un bloc "universel" qui peut s'adapter à tous les affichages nécessaires, quelque soit le nombre de chiffres à afficher (et donc le nombre de bits d'entrés).  Mr Bouaziz a souhaité qu'une brique de base avec cinq afficheurs multisegements  soit réalisée (certains seront retirés ou cachés pour les applications nécessitant  moins d'afficheurs). Le circuit 1064 a été sélectionné. Il présente une interface LCD avec des afficheurs multisegements. Ces afficheurs sont reliés en I2C.
+Pour les afficheurs du MFC, l'équipe avait proposée d'utiliser des afficheurs LCD afin de réaliser un bloc générique qui peut s'adapter à tous les affichages nécessaires, quelque soit le nombre de chiffres à afficher (et donc le nombre de bits d'entrées).  Mr Bouaziz, notre tuteur, a souhaité qu'une brique de base avec cinq afficheurs sept segements  soit réalisée (certains seront retirés ou cachés pour les applications nécessitant  moins d'afficheurs). Le circuit SA1064 a été sélectionné pour réaliser cette fonctionnalité avec le module CAN associé. Il présente une interface LCD avec des afficheurs sept segements. Ces afficheurs sont reliés en I$^2$C.
 
-L'overhead n'a pas été réalisé. L'équipe avait envisagé de le réalisé à l'aide d'écran tactile. Il est nécessaire d'étudier cette possibilité. Cependant, est-il possible de schématiser des potentiomètres sur des écrans tactiles ? Certains blocs de composant de l'overhead ont été commandés.
+Par ailleurs, l'overhead n'a pas été réalisé. L'équipe avait envisagé de le réalisé à l'aide d'écran tactile. Cependant sa mise en place était trop compliquée pour l'intégrer au projet dés cette année.
 
 \subsection{Le monde extérieur}
-Pour afficher le monde extérieur, l'équipe avait proposé d'utiliser des projecteurs. Cette solution présentait l'avantage d'être moins coûteuse, facilement transportable et s'avèrait surtout moins destructrice pour la vues des personnes se trouvant dans le cockpit en ne plaçant pas des écrans à proximité des yeux. Cependant, cette solution présentait l'inconvénient d'obliger à déformer l'image, ce que ne permet pas Wide FS. Il a finalement été décidé d'utiliser des écrans 24 pouces, voir 32 pouces.
+Pour afficher le monde extérieur, l'équipe avait proposé d'utiliser des projecteurs. Cette solution présentait l'avantage d'être moins coûteuse, facilement transportable et s'avèrait surtout moins destructrice pour la vues des personnes se trouvant dans le cockpit en ne plaçant pas d'écrans à proximité des yeux. Cependant, cette solution présentait l'inconvénient d'obliger à déformer l'image, ce que ne permet pas Wide View. Il a finalement été décidé d'utiliser des écrans 24 pouces ou éventuellement 32 pouces) pour former la vue panoramique .
 
 \subsection{Les ordinateurs}
+Afin de faire fonctionner Microsoft Flight Simulator X sur plusieurs écrans et de pouvoir interfacer le programme vec l'ensemble des
+éléments du cockpit, nous avons du choisir le nombre de machines ainsi que leur configuration.
+Dans un premier temps nous nous sommes occupé de choisir le nombre de machines à acheter, et donc pour cela
+le nombre d'écrans à interfacer en tout et pour tout. Sachant qu'il avait été décidé de ne faire que la partie
+pilote du cokcpit et de délaisser la partie copilote, seulement une partie des instruments de bords avaient besoin
+de disposer d'un moniteur capable de faire l'affichage. On utilise deux écrans pour afficher les instruments de bord.
+Pour l'affichage du monde exterrieur, il a été choisi d'utiliser un
+ensemble de 4 écrans 24 pouces. Cela nous amène donc à interfacer 6 écrans au total.
+
+Nous avons décidé d'utiliser des cartes graphiques d'une puissance assez importante en raison de la taille des écrans utilisés. De
+plus, afin de limiter le coût des machines, nous avons fait le choix de n'utiliser qu'une seule carte graphique par
+ordinateur, les configurations multicarte ayant un prix nettement plius important pour des performances d'affichage
+qui peuvent baisser si on installe trop d'écrans sur chaque PC.
+
+Dans un deuxième temps il a fallu choisir le type de boitier a adopter. Le principal argument ayant orienté nore
+choix réside dans l'espace requis pour les boitiers. En effet, une des priorités était de pouvoir déplacer le ockpit
+pour faire des démonstrations, et dans ce cas de figure l'utilisation de PC en rack se trouvait beaucoup plus
+intéressante que l'utilisation d'un boitier classique. De plus ceci permettait de mettre dans le rack le switch que nous
+utilisons pour faire communiquer les pc entre eux.
+
+Afin de pouvoir supporter facilement la charge de travail imposée par Microsoft Flight Simulator X et ses programmes annexes (WideView, WideFS, FSUIPC),
+nous avons décidé de configurer une machine avec un processeur quatre coeur, ainsi que deux autres machines avec
+des processeurs double coeur s'occupant des affichages du monde exterrieur et des instruments de bords.
+
+
 
 \section{Organisation}
-Pour développer notre cockpit, nous avons établi des blocs fonctionnel, en fonction des fonction à réaliser. Ce découpage est réalisé selon la figure \ref{fig:schema_bloc}.
+Pour développer notre cockpit, nous avons établi des blocs fonctionnel, en fonction des éléments à réaliser. Ce découpage est réalisé selon la figure \ref{fig:schema_bloc}.
 
 \begin{figure}[htpb]
   \centering
