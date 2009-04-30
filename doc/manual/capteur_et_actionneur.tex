@@ -72,6 +72,7 @@ Au niveau du fonctionnement des PCF, il a été décidé de brancher les diodes en p
 il faudra appliquer un niveau zéro sur le PCF pour allumer une diode. De leur côté, les boutons 
 poussoirs et commutateurs à positions seront en position fermés quand un niveau 0 sera visualisé sur les PCF. Nous relierons
 donc l'ensemble des commutateurs et boutons poussoirs à la masse.
+Le schéma de routage est consultable en annexe \ref{sec:FrontPanel}
 
 
 \subsection{Afficheurs sept segments}
@@ -115,8 +116,6 @@ la pile. Si un message est reçu, il fait mis à jour l'affichage. Par la suite, i
 tableau. Quand le TIMER-FLAG est mis à 1. Le BECK vérifie s'il y a un changement de données et remet TIMER-FLAG à 0.  
 Si un changement de données est détecté, le BECK envoie un message CAN à PC et remet DataHasChanged (1 s'il y a un 
 changement de données) à 0.
-
-Mais le SAA1064 présente l'avantage de disposer d'un réglage d'intensité d'affichage.
 
 \subsubsection{Développement}
 
@@ -511,8 +510,8 @@ Cet automate intègre également une fonction can-msg-lookup(), qui surveille l'ar
 
 \subsubsection{Réalisation de la carte interface}
 
-La programmation du circuit GALisp22v10, a était faite en langage Abel à l'aide du logiciel Lattice IspDesignExpert, cf.ANNEXE Abel GAL, afin de réaliser la fonction half-duplex, expliquée dans la partie précèdente.
-Les chronogrammes,\ref{fig:chronogramme-gal} , montre bien que la fonction réalise bien son rôle:
+La programmation du circuit GALisp22v10, a était faite en langage Abel à l'aide du logiciel Lattice IspDesignExpert, \ref{sec:schematic-ax12}, afin de réaliser la fonction half-duplex, expliquée dans la partie précèdente.
+Les chronogrammes,\ref{fig:chronogramme half-duplex} , montre bien que la fonction réalise bien son rôle:
 
 \begin{figure}[htpb]
   \centering
