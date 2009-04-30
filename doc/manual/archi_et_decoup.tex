@@ -54,6 +54,9 @@ Après avoir étudié les tâches à réaliser et les différentes solutions envisageab
 \subsection{L'appareil}
 Une des premières décision que nous avons eu à prendre concernait le choix de l'avion utilisé pour le projet. En effet, lors de la présentation, il avait été décidé que l'Airbus A 320 serait utilisé. Cependant, sur certains types d'appareils, FSUIPC ne retourne aucune donnée. Il était donc nécessaire de choisir un appareil où l'on pouvait accèder au maximum de données. Dans le cas de l'Airbus A 320, la modélisation la plus proche était WILCO, avec l'utilisation de brique MAGENTA. Cette solution est très réaliste car très proche de la réalité, mais pose des problèmes d'interfaçages avec FSUIPC. Nous avons finalement choisi de basculer de Flight Simulator 2004 à Flight Simulator X. Celui-ci est légèrement plus cher et nécessite des ressources plus importantes, toutefois, il contient un modèle d'aribus A321, très proche de l'A320 et permet d'extraire les données d'FSUIPC.
 
+\footnote{FSUIPC est une librairie dynamique donnant accès aux variables de Fligh Simulator et permettant leur modification.}
+\footnote{WILCO est une société produisant des répliques d'éléments extérieurs d'avion.}
+\footnote{MAGENTA est une société developpant des logiciels et matériels pour le domaine de la simulation aéronautique.}
 \subsection{Les bus de données}
 L'équipe avait envisagé d'utiliser différents type de bus selon les parties à traiter avec notamment du CAN, de l'I2C, du LIN et de l'Ethernet.  Le bus LIN avait été retenu car il est très présent dans  les industries automobiles et aéronautiques et rentre donc dans le cadre de notre projet. Cependant, nous ne sommes pas assez nombreux pour développer quatre architectures de bus différentes. Le LIN est utilisé dans l'industrie uniquement pour des raisons économiques, car contrairement au CAN, il ne s'agit pas d'un protocole propriétaire, il n'y a donc pas de droits à payer pour l'implanter. C'est son seul avantage dans notre contexte, il n'a donc pas été utilisé dans ce projet. En interne, chaque brique (module CAN) communique en I2C. Ces signaux sont ensuite convertis pour s'adapter au CAN qui relie l'ensemble des éléments. Enfin, les affichages issus directement de Microsoft Flight Simulator X utilisent de l'Ethernet pour l'affichage de WideView. Les servo-moteurs (détaillés ci-dessous) de la commande des gaz sont reliés en série en RS232.
 
@@ -67,13 +70,18 @@ Cet élément permet donc d'acquérir une donnée, mais également de s'adapter à la 
 
 \subsection{L'affichage des instruments}
 Pour l'affichage de certaines parties, nous souhaitions tout réaliser avec des écrans, cependant la présence de boutons comme des interrupteurs, potentiomètre etc... au milieu a posé problèmes. Il a donc été nécessaire de ré-étudier le positionnement des écrans du glass-cockpit.
+\footnote{glass-cockpit: affichage numérique des instruments de vol. Ceci sont dupliqués avec les instruments analogiques.}
 
 Pour les afficheurs du MFC, l'équipe avait proposée d'utiliser des afficheurs LCD afin de réaliser un bloc générique qui peut s'adapter à tous les affichages nécessaires, quelque soit le nombre de chiffres à afficher (et donc le nombre de bits d'entrées).  Mr Bouaziz, notre tuteur, a souhaité qu'une brique de base avec cinq afficheurs sept segements  soit réalisée (certains seront retirés ou cachés pour les applications nécessitant  moins d'afficheurs). Le circuit SA1064 a été sélectionné pour réaliser cette fonctionnalité avec le module CAN associé. Il présente une interface LCD avec des afficheurs sept segements. Ces afficheurs sont reliés en I$^2$C.
 
 Par ailleurs, l'overhead n'a pas été réalisé. L'équipe avait envisagé de le réalisé à l'aide d'écran tactile. Cependant sa mise en place était trop compliquée pour l'intégrer au projet dés cette année.
 
+\footnote{MCP: panel central où se trouve les instruments du pilote automatique.}
+\footnote{Overhead: panel supérieur du cockpit où se trouve des capteurs et des actionneurs contrôlant les paramètres de l'avion.}
+
 \subsection{Le monde extérieur}
 Pour afficher le monde extérieur, l'équipe avait proposé d'utiliser des projecteurs. Cette solution présentait l'avantage d'être moins coûteuse, facilement transportable et s'avèrait surtout moins destructrice pour la vues des personnes se trouvant dans le cockpit en ne plaçant pas d'écrans à proximité des yeux. Cependant, cette solution présentait l'inconvénient d'obliger à déformer l'image, ce que ne permet pas Wide View. Il a finalement été décidé d'utiliser des écrans 24 pouces ou éventuellement 32 pouces) pour former la vue panoramique .
+\footnote{WideView: logiciel permettant d'afficher sur plusieurs écrans différentes vues issues d'un même ordinateur.}
 
 \subsection{Les ordinateurs}
 Afin de faire fonctionner Microsoft Flight Simulator X sur plusieurs écrans et de pouvoir interfacer le programme vec l'ensemble des
