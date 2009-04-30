@@ -1,6 +1,7 @@
 \chapter{Gestion ressources humaines et matérielles}
 \authors{
   \authorinfo{Romain}{Marchaudon} \\
+  \authorinfo{Marc}{de la Motte Rouge} \\
 }
 
 \section{Responsabilités au sein du projet}
@@ -25,8 +26,8 @@ fournisseurs sont pour leur part établies entre ces trois responsables en foncti
 différentes équipes.
 
 \section{Gestion des équipes de dévellopement}
-D'après les différents découpages qui ont été effectués, nous avons éclaté l'équipe en plusieurs entités
-différentes correspondant à des groupes de développement.
+D'après les différents découpages qui ont été effectués, nous avons répartis l'équipe en plusieurs entités
+différentes correspondant à des groupes de travails.
 
 C'est ainsi que plusieurs groupes de développement ont été définis comme suit:
 
@@ -39,15 +40,14 @@ C'est ainsi que plusieurs groupes de développement ont été définis comme suit:
   \item Groupe environnement
 \end{itemize}
 
-Tous ces groupes se sont retrouvés à travailler sur les noeuds importants définis dans le cadre du développement du
-cokcpit. le groupe FsAdapter était en charge du développement d'un code source permettant d'accéder au valeur
+Ces groupes ont travaillés sur les noeuds importants définis dans le cadre du développement du
+cokcpit. le groupe FSAdapter était en charge du développement d'un code source permettant d'accéder au valeur
 de FSX via l'interface de gestion FSUIPC. Tout ceci dans le but de pouvoir communiquer des informations aux
-différents blocs développé par les équipes et de respecter le fonctionnement d'un cockpit réel.
+différents blocs développés par les équipes et de respecter le fonctionnement d'un cockpit réel.
 
 Le groupe FrontPanel s'est occupé de trouver des solutions afin d'interfacer tous les élements du FrontPanel (MCP, contrôle des trains d'attérissage) sur un bus I$^2$C. C'est de ce groupe de travail qu'est venu l'idée du FPGA pour interfacer les encodeurs incrémentaux. Par la suite le groupe FPGA a vu sa charge de travail augmenter avec l'arrivée de nouvelle fonctionnalité à remplir.
 
-Le groupe FPGA, pour sa part, a eu comme tache de développer un code permettant de s'interfacer sur le bus I$^2$C
-, tout en étant capable de gérer les encodeurs incrémentaux et de faire l'interface pour la détection de l'appui sur
+Le groupe FPGA, pour sa part, a eu comme tache de développer un code permettant de s'interfacer sur le bus I$^2$C, tout en étant capable de gérer les encodeurs incrémentaux et de faire l'interface pour la détection de l'appui sur
 une touche du clavier matriciel du FMC. Cette dernière fonctionalité a été dévellopée en commun avec le groupe BECK.
 
 Le groupe de développement BECK avait lui pour tache de réaliser un code permettant au contrôleur BECK de communiquer
@@ -63,3 +63,5 @@ le couple appliqué sur les commandes de gaz du cockpit, tout ceci dans l'esprit 
 des gaz dans un cokcpit réel.
 
 Un groupe de gestion de l'environnement s'est occupé occasionellement des montages, soudures ou encore de tirer des typons pour le besoin du projet. Des cables ont aussi été coupés et mis en place (cables I$^2$C et CAN). C'est aussi dans ce groupe que les personnes se sont occupé de l'installation des différents logiciels sur les ordinateurs, de monter les cartes graphiques.
+
+Enfin il a été nécessaire d'établir les commandes. Pour cela, il a fallu étudier les parties de l'avion que nous souhaitions réaliser pour la partie mécanique du cockpit. Il a notamment fallu étudier les dimensions pour s'assurer de pouvoir placer les modules réalisés. Les commandes des composants ont évolués au cours du projet, en fonction des orientations technologiques prisent.
