@@ -4,7 +4,9 @@
   \authorinfo{Johnny}{Phor}\\
   \authorinfo{Salwa}{Bahji}\\
   \authorinfo{Alexandre}{Ouazan} \\
-  \authorinfo{Chunlin}{Zhu}
+  \authorinfo{Chunlin}{Zhu}\\
+  \authorinfo{Herilanja}{Ramanahadray}
+  
 
 }
 
@@ -296,7 +298,7 @@ FPGA.
 \section{Commande des gaz}
 \subsection{Description et contexte}
 
-	Pour la commande des gazs on veut être capable de contrôler les moteurs et le trim . On souhaite avoir accès aux commandes en position et en détection de dépassement de couple.
+	Pour la commande des gaz on veut être capable de contrôler les moteurs et le trim. On souhaite avoir accès aux commandes en position et en détection de dépassement de couple.
 
 	Nous souhaitons être capable d'envoyer, d'une part, vers FSUIPC les différentes positions des servomoteurs et dans le sens FSUIPC vers les AX12, autrement dit le mode pilote automatique,  les servomoteurs doivent être capables de se positionner à des angles bien précis. 
 Pour cela on doit interfacer les servomoteurs avec le bus CAN. On doit donc adapter les formats de trames, venant des servomoteurs ou venant du bus CAN, afin que ces deux entités puissent communiquer entre elles.
@@ -305,71 +307,91 @@ Pour la réalisation des commandes de gaz nous utiliserons des Servomoteur Dynami
 Ces moteurs ont une résolution de 1024 pas en position et une vitesse de rotation réglable également sur 1024 pas. En lecture, il est possible de connaître, entre autres, leur position courante et leur couple ce qui correspond bien à nos besoins.
 
 \subsection{Conception fonctionnelle}
-\textbf{}Description architecturale
-D'après la description des besoins pour les commandes de gaz et le trim énoncées précédemment,  notre réflexion sur la conception des commandes a abouti à la description architecturale représentée sur la figure \ref{fig:architecture fonctionnelle pour la commande des gazs}:
+\subsubsection{Description architecturale}
+
+D'après la description des besoins pour les commandes de gaz et le trim énoncées précédemment, notre réflexion sur la conception des commandes a abouti à la description architecturale représentée sur la figure \ref{fig:architecture fonctionnelle pour la commande des gaz}
 
 \begin{figure}[htpb]
   \centering
   \fbox{
     \includegraphics[scale=0.5]{images/archi2}
   }
-  \caption{archi2}
-  \label{fig:architecture fonctionnelle pour la commande des gazs}
+  \caption{architecture fonctionnelle pour la commande des gaz}
+  \label{fig:architecture fonctionnelle pour la commande des gaz}
 \end{figure}
 
 Au vu de cette architecture, on peut distinguer deux parties dans l'interfaçage du bus Can avec les servomoteurs :
 \begin{itemize}
+
   \item Le stockage des données 
   \item Les modules de traitement des données
+  
 \end{itemize}
 
-Le stockage des données:
+\textbf{Le stockage des données:}
+
 On doit être capable de pouvoir s'adapter en fonction des besoins en informations du FSUIPC et du débit du bus CAN. Aussi, afin d'avoir les mises à jour les plus récentes des positions des servomoteurs, nous avons pensé à stocker les positions des servomoteurs. Les positions de chaque servomoteur seront récupérées très fréquemment et les données les plus récentes seront déjà présentes dans la table au moment voulu.
 De plus, afin de ne pas surcharger le bus CAN et d'alléger les informations à destination de FSUIPC, une autre table (DATA CAN) serait souhaitable pour contenir toutes les mises à jour détectées dans la table.
-Cependant, pour ce faire des modules de récupérations, de traitement et d’envoi de données seront nécessaires.
-D'où l’existence de l'autre partie de l'architecture.
-Les modules de traitement des données:
-Cette partie doit comprendre plusieurs modules et dépend du sens de parcours des données : soit des servomoteurs vers le bus (en pilotage manuel), soit du bus CAN(FSUIPC) vers les servomoteurs (en pilotage automatique). Ces modules doivent donc être capables d'acheminer les données en format adapté  de la manière la plus fiable et la plus rapide possible afin d'obtenir des réactions des plus réalistes possibles.
+Cependant, pour ce faire, des modules de récupérations, de traitement et d'envoi de données seront nécessaires.
+D'où l'existence de l'autre partie de l'architecture.
+
+\textbf{Les modules de traitement des données:}
+
+Cette partie doit comprendre plusieurs modules et dépend du sens de parcours des données : soit des servomoteurs vers le bus (en pilotage manuel), soit du bus CAN(FSUIPC) vers les servomoteurs (en pilotage automatique). Ces modules doivent donc être capables d'acheminer les données en format adapté  de la manière la plus fiable et la plus rapide possible afin d'obtenir des réactions des plus réalistes.
 Ainsi, des servomoteurs vers le bus CAN, ces modules doivent comprendre :
+
 \begin{itemize}
-  \item Un module d’acquisition et de stockage des positions des servomoteurs fill data ax12  qui se chargera de récupérer assez fréquemment la position de chaque servomoteur. Ainsi, il doit être apte à :
+  \item Un module d'acquisition et de stockage des positions des servomoteurs \textbf{fill data ax12}  qui se chargera de récupérer assez fréquemment la position de chaque servomoteur. Ainsi, il doit être apte à :
   	\begin{itemize}
   	\item Envoyer les instructions nécessaires pour lire la position des servomoteurs 
   	\item Recevoir ces positions
   	\item Les stocker dans la table
 	\end{itemize}
-  
-  \item Un module qui sert à détecter chaque mise à jour de la table  detect table update. Ce module doit être capable de détecter si les servomoteurs ont changé de position, auquel cas elle transfère ces mises à jours dans la table DATA_CAN qui contient les valeurs les plus récentes et  prêtes à être envoyées à FSUIPC. 
+
+\item Un module qui sert à détecter chaque mise à jour de la table  \textbf{detect table update}. Ce module doit être capable de détecter si les servomoteurs ont changé de position, auquel cas elle transfère ces mises à jours dans la table DATA-CAN qui contient les valeurs les plus récentes et prêtes à être envoyées à FSUIPC. 
   
   Ces deux modules, puisqu'ils gèrent des tables de données doivent être capables de gérer également le dépassement de la taille de ces tables, de les mettre à jour.
   
-  \item Un module de conversion des positions des servomoteurs en puissance convert angle to power. Celle-ci préparera les données à envoyer à FSUIPC via le bus CAN. Données qui doivent directement être compréhensibles par FSUIPC. 
+  \item Un module de conversion des positions des servomoteurs en puissance \textbf{convert angle to power}. Celle-ci préparera les données à envoyer à FSUIPC via le bus CAN, données qui doivent directement être compréhensibles par FSUIPC. 
   
-  \item Un module qui créera le message CAN à envoyer create CAN msg. Ce module mettra en format adapté au bus CAN les valeurs des positions convertis en puissance et les enverra sur le bus.
+  \item Un module qui créera le message CAN à envoyer \textbf{create CAN msg}. Ce module mettra en format adapté au bus CAN les valeurs des positions convertis en puissance et les enverra sur le bus.
   
 \end{itemize}
-Dans l’autre sens (du bus CAN vers les servomoteurs) les modules feront les opérations inverses. Ainsi, elles vont comprendre :
+Dans l'autre sens (du bus CAN vers les servomoteurs) les modules feront les opérations inverses. Ainsi, elles vont comprendre :
 \begin{itemize}
-  	\item Un module qui reçoit les messages véhiculés sur le bus CAN qui sont destinés aux commandes des gaz \textbf{decode CAN msg}. Elle est également sensé décoder le message : savoir à quel servomoteur il est destiné, récupérer ses paramètres (valeurs de puissances à mettre) et pouvoir les fournir.
-  	\item Un module qui converti les valeurs de puissances en angles directement interprétable par les servomoteurs \textbf{convert power to angle}. Il préparera les données qui doivent être envoyés aux servomoteurs et les met en forme pour être contenu à l'intérieur des plages de positions.
+  	\item Un module qui reçoit les messages véhiculés sur le bus CAN qui sont destinés aux commandes des gaz \textbf{decode CAN msg}. Elle est également sensée décoder le message : savoir à quel servomoteur il est destiné, récupérer ses paramètres (valeurs de puissances à mettre) et pouvoir les fournir.
+  	\item Un module qui convertit les valeurs de puissances en angles directement interprétable par les servomoteurs \textbf{convert power to angle}. Il préparera les données qui doivent être envoyés aux servomoteurs et les met en forme pour être contenu à l'intérieur des plages de positions.
   	\item Un module qui crée les trames à envoyer aux servomoteurs \textbf{create ax12 frames}. Il doit recevoir l'angle converti et le numéro identifiant du servomoteur concerné. Il fournit une trame qu'on peut directement communiquer aux servomoteurs.
   	\item Un module qui envoie les trames déjà constitué \textbf{send ax12 frames}. Il doit envoyer successivement chaque octet de la trame suivant un ordre bien précis défini dans la documentation des servomoteurs.
   	\end{itemize}
   	
  Ces modules ainsi développés, il est nécessaire d'ordonner leur interaction afin d'obtenir des informations non-erronées, mis à jour et véhiculées le plus rapidement possible le tout d'une manière automatique. 
  
-\textbf{Description fonctionnelle de l'automate} 
-La manière dont vont s'interagir les différents modules est gérée par un automate scindé en deux parties : pilote automatique et pilote manuel.
-Néanmoins, ces deux parties sont fortement  liées, parce que pour basculer de l'une à l'autre, il suffit d'enclencher ou de déclencher le pilotage automatique.
+\subsubsection{Description fonctionnelle de l'automate}
+ 
+La manière dont vont s'interagir les différents modules est gérée par un automate scindé en deux parties : pilote automatique et pilote manuel, voir figure \ref{fig:automate Commande des Gaz et Trim}
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.4]{images/auto-ax12}
+  }
+  \caption{automate Commande des Gaz et Trim}
+  \label{fig:automate Commande des Gaz et Trim}
+\end{figure}
+
+Néanmoins, ces deux parties sont fortement liées, parce que pour basculer de l'une à l'autre, il suffit d'enclencher ou de déclencher le pilotage automatique.
 Chacune des deux parties fonctionne comme suit :
+
 \begin{itemize}
   \item \textbf{Pilote automatique:}
 Dans le cas du pilote automatique,  on commence par attendre la réception d'un message CAN. Une fois la réception achevée on décode le message de façon à ne garder que  les données utiles pour former les trames à envoyer aux servomoteurs. Cependant, les servomoteurs renvoient, à chaque fois qu'on communique avec, des trames de statut alors qu'on n'en a pas forcément besoin en pilote automatique. Voilà pourquoi nous devrons ajouter un autre état de latence afin d'éviter la réception de ces trames.
+
   \item \textbf{Pilote manuel:}
 Dans le cas du pilotage manuel, on commence par interroger chaque servomoteur afin de connaitre à quelle position il se trouve. Puis on attend que le servomoteur en question réponde. Une fois la trame de statut complète reçue, on remplit la table qui va contenir les données venant du servomoteur concerné. Après on détecte les mises à jour éventuelles de la table et on les transfère vers la table DATA-CAN. La table DATA-CAN remplie, on crée les messages CAN contenant les nouvelles positions du servomoteur. Comme les états précédents ne concernent qu'un seul servomoteur, on passe à un autre servomoteur afin de lui appliquer les mêmes opérations. Si l'ID courant équivaut à celui du dernier servomoteur, on revient au premier.
 \end{itemize}
  
-\textbf{Carte d'interface:}
+\subsubsection{Carte d'interface}
+
 Quand on étudie la documentation du Servomoteur Dynamixel, on remarque que ce dernier peut être contrôlé par un PC via un CM-5.
 Le CM-5 possède un circuit interne qui permet de convertir les signaux en half-duplex. Le diagramme réalisant cette conversion est \ref{fig:half_duplex}:
 
@@ -383,7 +405,7 @@ Le CM-5 possède un circuit interne qui permet de convertir les signaux en half-d
 \end{figure}
 
 On souhaite donc, que les signaux, de niveaux TTL, RxD et TxD dépendent du signal Direction-Port.
-Lorsque le signal Direction-Port est au niveau haut, le signal TxD en sortie représentera DATA et lorsque, le signal Direction-Port est au niveau bas, le signal DATA est l'entrée du signale RxD.
+Lorsque le signal Direction-Port est au niveau haut, le signal TxD est transmis vers DATA et lorsque, le signal Direction-Port est au niveau bas, le signal DATA est l'entrée du signal RxD.
 On constate donc qu'on peut s'affranchir du CM5, d'une part à cause de son coût élevé et d'une autre part pour notre propre apprentissage, en réalisant une carte électrique qui produirait cette fonctionnalité du CM5.
 
 Pour cela on pourra utiliser un GALisp22V10, qu'on implémentera via Abel.
@@ -392,26 +414,27 @@ Cette carte nous permettra également d'obtenir le signal data nécessaire pour le
 
 \subsection{Developpement et problèmes rencontrés}
 Pour construire ces modules et ordonner leur interaction, afin de développer le gestionnaire des commandes de gaz, nous avons utilisé une carte BECK SC123 présentée précédemment. Les modules et la façon dont  on veut qu'ils interagissent entre eux ont été réalisés en langage C (langage utilisée par la carte Beck). De plus la carte est fournie avec des API déjà prédéfinis, contenus dans des librairies spécifiques et qu'on peut directement utiliser notamment pour la communication le port Série.
-Les API qu'on a utilisé se trouvent dans la librairie <<Clib.h>> comme toutes les API du Beck et plus précisément dans <<Fossil.h>>(autre appellation de la communication Série).
-\textbf{Développement des modules:}
-Pour créer les différents modules initialement énoncés, nous avons créé une libraire propre aux servomoteurs<<ax12.c>>(Cf Annexe ??) dans laquelle ces modules sont représentés par des fonctions qui prennent en paramètre les données à traiter et retournent en sortie les données traités. 
+Les API qu'on a utilisé se trouvent dans la librairie "Clib.h" comme toutes les API du Beck et plus précisément dans "Fossil.h"(autre appellation de la communication Série).
+\subsubsection{Développement des modules}
+
+Pour créer les différents modules initialement énoncés, nous avons créé une libraire propre aux servomoteurs"ax12.c"(Cf Annexe ??) dans laquelle ces modules sont représentés par des fonctions qui prennent en paramètre les données à traiter et retournent en sortie les données traités. 
 Les fonctions ont été développées à l'aide des API de communication Série du Beck  et correspondent à la fois aux normes imposées par les servomoteurs et à celles imposées par la communication Série.
 Il existe ainsi des fonctions (modules) qui servent à :
 \begin{itemize}
-  	\item Ordonner aux servomoteurs de se placer à une certaine position avec une certaine vitesse de rotation qu'on a fixé : ….. Elle prend en entrée l'ID du servomoteur en question et l'angle auquel il doit se positionner puis lui envoie la trame. 
-  	\item Demander aux servomoteurs d'envoyer leurs positions courantes : … Prend en entrée l'ID du servomoteur dont on veut récupérer la position courante et envoie la trame de demande. 
-  	\item Remplir la table de position des servomoteurs :…prend en entrée la table dans laquelle vont être stockées l'ID et la position du servomoteur.
-  	\item Détecter les mises à jour de cette table puis les transférer à la table DATA CAN : … prend en entrées les deux tables DATA-AX12 et DATA-CAN et transfère les données de l'une à l'autre.
-  	\item Gérer les 2 tables : …. Elle a besoin de la table qu'elle va gérer, détecte si elle est pleine et lui enlève les plus anciennes valeurs stockées.
+  	\item Ordonner aux servomoteurs de se placer à une certaine position avec une certaine vitesse de rotation qu'on a fixé : \textbf{set-Angle}. Elle prend en entrée l'ID du servomoteur en question et l'angle auquel il doit se positionner puis lui envoie la trame. 
+  	\item Demander aux servomoteurs d'envoyer leurs positions courantes :\textbf{read-Angle} Prend en entrée l'ID du servomoteur dont on veut récupérer la position courante et envoie la trame de demande. 
+  	\item Remplir la table de position des servomoteurs : \textbf{fill-DataAX12}.prend en entrée la table dans laquelle vont être stockées l'ID et la position du servomoteur.
+  	\item Détecter les mises à jour de cette table puis les transférer à la table DATA CAN :\textbf{transfer-Data}. prend en entrées les deux tables DATA-AX12 et DATA-CAN et transfère les données de l'une à l'autre.
+  	\item Gérer les 2 tables : \textbf{manage-Data}. Elle a besoin de la table qu'elle va gérer, détecte si elle est pleine et lui enlève les plus anciennes valeurs stockées.
 
 \item Convertir la position en puissance et inversement : Elle dépend de l'entité à convertir (Angle/puissance)
 
 
-\item Décoder  un message CAN provenant de FSUIPC en pilotage automatique : .. .Elle prend en paramètre  un pointeur vers un message CAN  duquel on va extraire les champs ID et Angle nécessaire à la communication avec les servomoteurs.
+\item Décoder  un message CAN provenant de FSUIPC en pilotage automatique : \textbf{decode-msg}. .Elle prend en paramètre  un pointeur vers un message CAN  duquel on va extraire les champs ID et Angle nécessaire à la communication avec les servomoteurs.
 
-\item Créer un message CAN contenant l'ID du servomoteur en question et la position à laquelle il se trouve lorsqu'on est en pilotage manuel : .. Elle prend en paramètre un message CAN, complète ses champs avec les informations contenues dans DATA-CAN, puis l'envoie à FSUIPC.
+\item Créer un message CAN contenant l'ID du servomoteur en question et la position à laquelle il se trouve lorsqu'on est en pilotage manuel : \textbf{create-msg}. Elle prend en paramètre un message CAN, complète ses champs avec les informations contenues dans DATA-CAN, puis l'envoie à FSUIPC.
  \end{itemize}
-Il est nécessaire de préciser que pour pouvoir utiliser les API du Beck, il faut inclure dans le code les bibliothèques dans lesquelles sont les API. Dans notre cas, nous avons inclus <<Fossil.h>> car ce qui nous concernait était la communication Série. Le reste des fonctions utilise des fonctions standards du langage C.
+Il est nécessaire de préciser que pour pouvoir utiliser les API du Beck, il faut inclure dans le code les bibliothèques dans lesquelles sont les API. Dans notre cas, nous avons inclus "Fossil.h" car ce qui nous concernait était la communication Série. Le reste des fonctions utilise des fonctions standards du langage C.
 En outre, pour pouvoir recevoir et envoyer les messages CAN, nous étions en étroite collaboration avec l'équipe qui s'en occupait. Les bibliothèques qu'ils ont créées nous étaient d'une aide précieuse.
 
 \textbf{Difficultés rencontrées:}
@@ -420,17 +443,19 @@ Avec cette documentation, mieux adaptée,  nos fonctions ont pu être simplifiées.
 
 Nous avons aussi rencontré des problèmes portant sur les formats de données. Alors que nous nous apprêtions à utiliser des formats de données sur 32bits, nous nous sommes rendus compte que ces derniers ne peuvent pas être traités par le Beck. Nous avons  donc opté pour la solution suivante : utiliser une structure de données qui aura comme champs (de 8 bits chacun) : l'ID et l'Angle (position).
 
-\textbf{Développement de l'automate:}
-L'automate qui gère le transfert de données FSUIPC – Servomoteurs a été intégré dans une boucle infinie (while(1)) afin d'avoir des informations en temps réel sur les positions auxquelles est le servomoteur et auxquelles il doit se mettre. Il a été conçu pour être déterministe afin de ne pas pouvoir se perdre dans un état.  
+\subsubsection{Développement de l'automate}
+
+L'automate qui gère le transfert de données FSUIPC Servomoteurs a été intégré dans une boucle infinie afin d'avoir des informations en temps réel sur les positions auxquelles est le servomoteur et auxquelles il doit se mettre. Il a été conçu pour être déterministe afin de ne pas pouvoir se perdre dans un état.  
 Comme il a été énoncé précédemment cet automate va faire interagir les différents modules développés. Ainsi, chaque état de cet automate va utiliser ces modules.
 De l'état 1 à l'état 7, on est en pilotage manuel. Donc, les fonctions qui vont être utilisées seront celles qui interrogent l'état des servomoteurs, gèrent les données résultantes, et les transmettent au CAN.
 De l'état 8 à 12, on est en pilotage automatique. Aussi, les modules qui y seront utilisées seront celles qui traiteront les messages CAN, les décoderont et enverront les données aux servomoteurs.
 D'où cette liste d'appel de chaque module dans chacun des états : 
+
 \begin{itemize}
 \item Etat 1 : read-Angle(FOSSIL-COM, ID, output-Buff, nByteToRead );
 \item Etat 2 : fossil-readblock(FOSSIL-COM, input-Buff, nByteToRead);
-\item Etat 3 : fill-data_AX12(data-AX12, sizeDataAX12, input-Buff);
-\item dern-remplie(data-AX12, sizeDataAX12);
+\item Etat 3 : fill-data-AX12(data-AX12, sizeDataAX12, input-Buff);
+               dern-remplie(data-AX12, sizeDataAX12);
 \item Etat 4 : transfer-data(data-AX12, data-CAN, sizeDataAX12, sizeDataCAN);
 \item Etat 5 : create-msg-CAN(data-CAN, sizeDataCAN, msg );
 
@@ -441,32 +466,63 @@ D'où cette liste d'appel de chaque module dans chacun des états :
 Dans cet automate, les temps de latence nécessaires à la réponse des servomoteurs ont été intégrés automatiquement du fait qu'entre l'envoi des trames d'instruction et la réception des trames de statut, les taches qui y sont effectuées couvrent suffisamment ce délai d'attente requis.
 Cet automate intègre également une fonction can-msg-lookup(), qui surveille l'arrivée d'un message CAN.
 
-\textbf{Tests et résultats:}
+\subsubsection{Réalisation de la carte interface}
+
+La programmation du circuit GALisp22v10, a était faite en langage Abel à l'aide du logiciel Lattice IspDesignExpert, cf.ANNEXE Abel GAL, afin de réaliser la fonction half-duplex, expliquée dans la partie précèdente.
+Les chronogrammes,\ref{fig:chronogramme-gal} , montre bien que la fonction réalise bien son rôle:
+
+\begin{figure}[htpb]
+  \centering
+  \fbox{
+    \includegraphics[scale=0.5]{images/chronogramme-gal}
+  }
+  \caption{chronogramme half-duplex}
+  \label{fig:chronogramme half-duplex}
+\end{figure}
+
+On remarque effectivement que lorsque Direction-port est à 1, TxD est transmis sur DATA, et RxD se met en haute impédance. Puis lorsque Direction-port est à 0, DATA est transmis vers RxD et TxD en haute impédance.
+
+Pour la réalisation de la carte qui fait office d'interface entre le port rs232 et le servomoteur, nous avons opté pour un MAX233, car ce dernier éxige moins de condensateurs, ce qui facilite le routage du MAX232, qui lui possède 5 condensateurs, et ceci tout en gardant les mêmes propriétés.
+
+Pour l'alimentation de la carte, nous avons utilisé un régulateur 7805T, capable de fournir une tension stable de 5v (output) en sortie afin d'alimenter le circuit GAL et le MAX233 et d'avoir une tension de l'ordre de 9.6v (input) pour l'alimentation des AX12.
+
+
+\subsection{Tests et résultats}
+
 Pour les tests, nous nous sommes placés dans les conditions suivantes :
 \begin{itemize}
 \item Un servomoteur non encore initialisé : on ne savait ni à quel débit il communiquait, ni quelle était ses positions limites alors que dans notre développement on a choisi des positions variant de 0° à 300° (0x0000 à 0x03FF)
 \item Communication série mode RS232 initialisé à un débit de 57600 bauds, sans contrôle de flux grâce aux API qui y sont spécialement consacrés (FOSSILSETBAUD, FOSSILINIT, etc.).
  \end{itemize}
  
-Test de communication Beck-ax12 :
+\subsubsection{Test de communication Beck-ax12}
+
 En premier lieu, nous avons testé la partie pilote manuelle. Nous souhaitions vérifier que les servomoteurs reçoivent correctement les messages envoyés (Ex : Allumer la LED et se positionner à un angle donné).  
 	Aucun octet de la trame n'était reçu par le servomoteur, il n'y avait aucune communication entre le Beck et les servomoteurs. Cependant le bon nombre de trames a  été correctement envoyé.
-	Pour résoudre ce problème, il nous a fallu initialiser le servomoteur via le CM5. On lui a donné un débit de communication qui s'accorde avec celui du port série à défaut duquel aucune communication ne sera possible. Grâce à l'aide de Xynkui FENG, cette initialisation a pu être effectuée.
+	Pour résoudre ce problème, il nous a fallu initialiser le servomoteur via le CM5. On lui a donné un débit de communication qui s'accorde avec celui du port série à défaut duquel aucune communication ne sera possible. Grâce à l'aide de \textit{Xynkui FENG}, cette initialisation a pu être effectuée.
 	Nous avons recommencé les envois de trames d'essai vers le servomoteur. La réaction du servomoteur a été celle attendue (LED allumée, position changée). Cependant, on ne pouvait pas recevoir les trames de statut venant du servomoteur. Vu que ce qui nous intéressait était de récupérer la position du servomoteur contenue dans ces trames de statut, le résultat fut décevant. 
 	La résolution de ce problème a nécessité une recherche approfondie sur les communications Séries du Beck. Nous nous sommes rendus compte que le signal RTS (qui contrôle le flux de données) ne basculait jamais de son état initial (à 1). Donc, le Beck était tout le temps en émission et ne pouvait rien recevoir. De plus, ce signal ne nous a pas été accessible, on ne pouvait pas le contrôler manuellement. 
 Deux solutions ont été envisagées : 
+
 \begin{itemize}
 \item soit de relier, sur la carte d'interface entre le Beck et le servomoteur, les pins CTS et RTS afin que le CTS puisse être forcé à l'état haut une fois l'émission achevée.    
 \item Soit de passer du mode RS232 au RS485. Ce dernier, permettant de contrôler même automatiquement le RTS/CTS, autoriserait la réception.
-Aussi, nous avons opté pour la deuxième solution. En effet, elle était simple à réaliser, n’ayant que deux lignes de codes à écrire.
+\end{itemize}
+
+Aussi, nous avons opté pour la deuxième solution. En effet, elle était simple à réaliser, n'ayant que deux lignes de codes à écrire.
 Le résultat a été en partie satisfaisant car nous avons pu recevoir des octets de la trame de statut. Donc le Beck  pouvait se placer en mode  réception. 
 Néanmoins, on a du prendre en considération le temps de latence nécessaire au servomoteur pour réagir et envoyer la trame complète.
 Ce problème résolu, on a pu passer à d'autres tests.
 
-\textbf{Réalisation de la carte interface}
-La programmation du circuit GALisp22v10, a était faite en langage Abel à l'aide du logiciel Lattice IspDesignExpert, cf.ANNEXE Abel GAL, afin de réaliser la fonction half-duplex, expliquée dans la partie précèdente.
-Les chronogrammes, en l'ANNEXE Chronogrammes GAL, montre bien que la fonction réalise bien son rôle.
+\subsubsection{Test des fonctions de remplissage des tables et de détection de mises à jour }
 
-Pour la réalisation de la carte qui fait office d'interface entre le port rs232 et le servomoteur, nous avons opté pour un MAX233, car ce dernier éxige moins de condensateurs, ce qui facilite le routage du MAX232, qui lui possède 5 condensateurs, et ceci tout en gardant les mêmes propriétés.
+Dans un deuxième temps, nous avons testé si le remplissage des tables DATA-AX12 et DATA-CAN se fait correctement en affichant le dernier élément de chaque table. De plus, avec la boucle de l'automate qui tourne indéfiniment permet de tester si la gestion de la taille des tables s'effectue réellement comme on l'avait souhaité, qu'elle ne supprime que les plus anciennes valeurs. 
+La gestion des tables se faisait comme on l'avait espéré. Le dernier élément des tables est bien la position la plus récente des servomoteurs.
+On a essayé entre temps de changer la position du servomoteur au courant de la boucle, et la position affichée change en conséquence. 
+Ce résultat a été prévisible car le fonctionnement de tous les modules est basé sur l'émission d'une correcte trame d'instruction et la réception de la trame de statut adéquate.
 
-Pour l'alimentation de la carte, nous avons utilisé un régulateur 7805T, capable de fournir une tension stable de 5v (output) en sortie afin d'alimenter le circuit GAL et le MAX233 et d'avoir une tension de l'ordre de 9.6v (input) pour l'alimentation des AX12.
+\subsubsection{Bilan de la partie commande des gaz }
+
+Finalement, la communication Beck-Ax12 s'effectue correctement, comme nous l'avions espéré et aussi la gestion de l'arrivée des données  (remplissage des tables, détection de mises à jour et envoi des messages CAN). Cependant, la transmission Beck-CAN n'a pas pu être testée. On n'a donc pas pu vérifier si on envoie les trames correctes et si le simulateur réagi comme on l'aurait souhaité.
+
+
