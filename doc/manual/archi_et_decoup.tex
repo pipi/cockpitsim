@@ -76,6 +76,21 @@ A321, très proche de l'A320 et permet d'extraire les données d'FSUIPC.
 
 L'équipe avait envisagé d'utiliser différents type de bus selon les parties à traiter avec notamment du CAN, de l'I$^2$C, du LIN et de l'Ethernet.  Le bus LIN avait été retenu car il est très présent dans  les industries automobiles et aéronautiques et rentre donc dans le cadre de notre projet. Cependant, nous ne sommes pas assez nombreux pour développer quatre architectures de bus différentes. Le LIN est utilisé dans l'industrie uniquement pour des raisons économiques, car contrairement au CAN, il ne s'agit pas d'un protocole propriétaire, il n'y a donc pas de droits à payer pour l'implanter. C'est son seul avantage dans notre contexte, il n'a donc pas été utilisé dans ce projet. En interne, chaque brique (module CAN) communique en I$^2$C. Ces signaux sont ensuite convertis pour s'adapter au CAN qui relie l'ensemble des éléments. Enfin, les affichages issus directement de Microsoft Flight Simulator X utilisent de l'Ethernet pour l'affichage de WideView. Les servo-moteurs (leur choix sera détaillé dans la partie ci-dessous) de la commande des gaz sont reliés en série en RS232.
 
+\subsection{Les noeuds CAN}
+
+\subsubsection{Présentation}
+Nous avons utilisé deux modèles BECK différents : le sc123 et le sc 143 tous les deux de la famille sc1x3 donc très ressemblant. Le choix du BECK nous a parut évident car, tout d'abord, les encadrants de notre projet pouvaient nous en procurer rapidement, et surtout, parce que cette famille de contrôleur permettent facilement d'intégrer à la flois des réseaux CAN et I$^2$C, enfin la puissance de calcul suffisante et l'utilisation facile (code en C) a rendu le BECK très intéressant.
+
+\subsubsection{Les missions des BECK}
+Les BECK représentent la deuxième plus grande puissance de calcul du simulateur, de ce fait, ils auront de nombreuses missions à remplir :
+\begin{itemize}
+  \item correspondance messages CAN et message I$^2$C,
+  \item décodage du clavier matriciel du MCDU
+  \item gestion des AX-12 des manettes des gaz via le port RS-232.
+\end{itemize}
+
+
+
 \subsection{La partie commande de gaz}
 
 Les commandes de gaz sont à la fois capteurs et actionneurs. En effet, en pilotage manuel, elles servent à régler la vitesse choisie, en pilotage automatique, leur position doit évoluer en fonction de la vitesse imposée par de dernier. De plus, nous souhaitions pouvoir désactiver le pilote automatique et reprendre le contrôle de l'avion par une simple pression sur la poignée. Nous avons donc cherché un composant capable de détecter également le couple imposé.
