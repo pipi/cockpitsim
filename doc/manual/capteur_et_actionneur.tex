@@ -16,7 +16,7 @@
 \subsubsection{Bloc Front Panel : Utilisation de circuits directement ineffaçables I$^2$C : PCF 8575}
 
 Dans le cadre du projet il a été demandé de réaliser plusieurs parties distinctes du cockpit. Une de ces parties
-correspond au "front panel", et plus précisément la partie MCP ajoutée au contrôle des trains d'atterrissage de
+correspond au "front panel", et plus précisément la partie FCU ajoutée au contrôle des trains d'atterrissage de
 l'avion. Le but ici était de pouvoir appuyer sur un bouton physique tout en ayant l'action voulue au sein de FSX.
 Dans le même temps, les diodes indiquant l'état du bouton auquel elles sont attachées devait, lui, être commandé par
 le logiciel Flight Simulator.
@@ -39,7 +39,7 @@ notre disposition ont servit éprouver le fonctionnement du code implantsur les B
 déjà sur que ces circuits fonctionneraient parfaitement avec l'ensemble de la chaine de traitement implantée dans le cockpit.
 
 \subsubsection{Développement}
-Le MCP du cockpit n'ayant pu être en notre possession à temps, nous avons dû nous contenter des informations
+Le FCU du cockpit n'ayant pu être en notre possession à temps, nous avons dû nous contenter des informations
 dont nous disposions pour connaitre le nombre de boutons, diodes, commutateurs à positions et encodeurs incrémentaux 
 à interfacer. Pour faciliter les choses, nous avons choisi de regrouper sur les circuits PCF les boutons poussoirs
 entre eux, les diodes ainsi que de la même manière les commutateurs à positions. De cette manière nous utilisons
@@ -76,7 +76,7 @@ donc l'ensemble des commutateurs et boutons poussoirs à la masse.
 
 \subsection{Afficheurs sept segments}
 \subsubsection{Contexte et objectif}
-Dans le MCP du cockpit, en plus des boutons et autres commutateurs on peut trouver plusieurs blocs d'afficheurs
+Dans le FCU du cockpit, en plus des boutons et autres commutateurs on peut trouver plusieurs blocs d'afficheurs
 sept segments servant à afficher plusieurs données importantes comme par exemple l'altitude. Ces informations
 proviennent directement de FSX et il est donc important de pouvoir interfacer ces afficheurs avec l'ensemble de la
 chaine d'acquisition des données. Il est ici encore question de respecter le fonctionnement des afficheurs et des éléments
@@ -85,7 +85,7 @@ qui s'occupent d'envoyer la valeur à afficher à FSX, et ce sont aussi eux qui va
 sur le bouton poussoir incorporé.
 
 \subsubsection{Conception et choix techniques}
-Comme expliqué plus haut,  nous avons adopté l'afficheur 7 segments pour les affichages dans le MCP.
+Comme expliqué plus haut,  nous avons adopté l'afficheur 7 segments pour les affichages dans le FCU.
 Afin de valider ce bloc fonctionnel,
 nous n'avons eu à afficher qu'une seule valeur puisque tous les afficheurs du cockpit fonctionnent de la même manière.
 Il a donc suffit de tester l'affichage pour un paramètre. En prenant en compte 
@@ -94,7 +94,7 @@ qu'on disposait d'une chaine complète jusqu'a FSX pour l'affichage de l'altitude
 Une carte disposant d'une interface I$^2$C avec 4 afficheurs 7 segments était à notre disposition. C'est le
 circuit SAA1064 qui est intégré sur cette carte et qui multiplexe pour les quatres afficheurs.
 Le SAA1064 dispose de 2 bits modifiables dans leur adresse ce qui limite le nombre de circuits à 4 sur 
-chaque bus I$^2$C. Cela pose des  problèmes si on veut afficher l'ensemble des paramètres du MCP.
+chaque bus I$^2$C. Cela pose des  problèmes si on veut afficher l'ensemble des paramètres du FCU.
 
 Mais le SAA1064 présence l'avantage de disposer d'un réglage de l'intensité d'affichage.
 
