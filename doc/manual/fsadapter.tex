@@ -71,7 +71,7 @@ FCU est l'acronyme anglais de Flight Control Unit, qui contient, entre autres, l
 
 Pour différencier ces familles, on utilise directement l'identifiant du message CAN que nous utilisons de la manière 
 suivante: lorsque le message va de FSAdapter vers les modules CAN, les trois derniers bits de poids le plus faibles de l'identifiant 
-sont à 0. Dans le sens inverse, des modules CAN vers FSAdapter, les trois derniers bits permettent de déterminer quel paramètre de la trame qui correspond à la donnée qui a été modifiée. Les autres bits de l'identifiant permettent de différencier les familles entre
+sont à 0. Dans le sens inverse, des modules CAN vers FSAdapter, les trois derniers bits permettent de déterminer quel paramètre de la trame qui correspond à la donnée a été modifié. Les autres bits de l'identifiant permettent de différencier les familles entre
 elles.
 
 \section{Description du logiciel}
@@ -133,5 +133,5 @@ de changer notre approche du logiciel. Nous nous sommes donc concentré sur la cr
 
 Par la suite, face au retard que nous avions accumuler et à la complexité magré tout persistante, nous avons dû revoir nos choix, en
 particulier sur la solution à envisager au niveau de la programmation. Comme cela l'a été dit précédemment, nous sommes reparti de la 
-solution initiale en C++. Une fois cette le développement abouti, nous avons pu faire fonctionner notre logiciel comme interface avec 
+solution initiale en C++. Une fois le développement abouti, nous avons pu faire fonctionner notre logiciel comme interface avec 
 FSUIPC conformément à nos espérences.

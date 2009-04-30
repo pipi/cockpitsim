@@ -17,7 +17,7 @@ Lors du développement des interfaces du bus CAN et des bus I$^2$C, nous avons re
 \item deuxièmement, la forme des messages CAN dans la partie BECK et USB/CAN était complètement différente.
 \end{itemize}
 
-Nous avons donc voulu homogénéiser le tout en construisant une bibliothèque dont les fonctions d'envoi et de réception de messages CAN et I$^2$C de même syntaxe, et comportant une structure définissant de la même manière la forme des messages CAN. De plus, nous avons défini avant même qu'elles soient fonctionnelles les fonctions de gestion des bus, et de cette façon les autres équipes pouvaient d'ores et déjà les utiliser ; en somme c'est ce qu'on appelle fonctionner par contrat. Enfin, d'un point de vu communication inter-équipes, d'intégration des systèmes, et de déverminage, cette bibliothèque a été réellement une force.
+Nous avons donc voulu homogénéiser le tout en construisant une bibliothèque dont les fonctions d'envoi et de réception de messages CAN et I$^2$C ont la même syntaxe. De plus, nous avons défini avant même qu'elles soient fonctionnelles les fonctions de gestion des bus, et de cette façon les autres équipes pouvaient d'ores et déjà les utiliser ; en somme c'est ce qu'on appelle fonctionner par contrat. Enfin, d'un point de vu communication inter-équipes, d'intégration des systèmes, et de déverminage, cette bibliothèque a été réellement une force.
 
 \subsection{Développement}
 Cette bibliothèque est de haut niveau de complexité, nous avons donc décidé de créer des bibliothèques de plus bas niveau, et d'utiliser leurs fonctions pour en créer une de niveau de complexité supérieur. Nous avons donc construire can-i2c.h en trois niveaux (voir figure \ref{fig:bibliotheques}).
@@ -35,11 +35,12 @@ Cette bibliothèque est de haut niveau de complexité, nous avons donc décidé de c
 Après s'être mis d'accord sur la forme des fonctions nous nous sommes séparés en trois groupes :
 \begin{itemize}
 \item un groupe codait la partie I$^2$C,
-\item un autre qui codait la partie CAN du module USB/CAN,
-\item un autre qui codait la partie CAN sur le BECK.
+\item un autre codait la partie CAN du module USB/CAN,
+\item un autre codait la partie CAN sur le BECK.
 \end{itemize}
 
-La réalisation s'est déroulée rapidement et du fait qu'on soit parti de fonctions de bas niveau de complexité et que petit à petit nous avons créé des bibliothèques de plus haut niveau, les erreurs fûrent râres.
+La réalisation s'est déroulée rapidement. La décomposition en sous-ensembles indépendants a permis de minimiser
+l'apparition d'erreurs dans la suite du développement du projet.
 
 \subsection{Tests et résultats}
 Les tests furent validés rapidement. Cette partie nous a permis d'avoir des programmes homogènes et le développement des bibliothèques nous a permis d'avoir accès à des fonctions de haut niveau de complexité rapidement, et donc de développer des programmes de façon plus claire et plus rapide.
